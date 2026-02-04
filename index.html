@@ -1,1688 +1,1660 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DRB Advisory Analytics</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            drb: {
-              orange: '#F26522',
-              'orange-dark': '#D45A1E',
-              'orange-light': '#FF8C4B',
-              navy: '#1E2A3A',
-              'navy-light': '#2D3E50',
-              charcoal: '#333333',
-              gray: '#6B7280',
-              'gray-light': '#F5F7FA',
-              white: '#FFFFFF'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRB Advisory Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --drb-orange: #F26522;
+            --drb-navy: #1E2A3A;
+            --drb-charcoal: #333333;
+            --drb-blue: #3B82F6;
+            --drb-green: #10B981;
+            --drb-red: #EF4444;
+            --drb-yellow: #F59E0B;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--drb-navy);
+            padding: 1.5rem 1rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--drb-orange);
+        }
+
+        .logo-subtitle {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.75rem;
+        }
+
+        .nav-section-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-item {
+            display: block;
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            margin: 0.1rem 0;
+            border: none;
+            border-radius: 0.5rem;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.95);
+        }
+
+        .nav-item.active {
+            background: rgba(242, 101, 34, 0.15);
+            color: var(--drb-orange);
+            border-left: 3px solid var(--drb-orange);
+        }
+
+        .sidebar-divider {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin: 1rem 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--drb-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-name {
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .user-role {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.75rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--drb-navy);
+            margin-bottom: 0.25rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.75rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .card-grid-6 {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        /* Status Cards */
+        .status-card {
+            border-radius: 1rem;
+            padding: 1.25rem;
+            border-left: 4px solid;
+        }
+
+        .status-card.green {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-left-color: var(--drb-green);
+        }
+
+        .status-card.blue {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border-left-color: var(--drb-blue);
+        }
+
+        .status-card.yellow {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border-left-color: var(--drb-yellow);
+        }
+
+        .status-card.red {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+            border-left-color: var(--drb-red);
+        }
+
+        .status-card-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            margin-bottom: 0.25rem;
+        }
+
+        .status-card.green .status-card-label { color: #059669; }
+        .status-card.blue .status-card-label { color: #2563EB; }
+        .status-card.yellow .status-card-label { color: #D97706; }
+        .status-card.red .status-card-label { color: #DC2626; }
+
+        .status-card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .status-card.green .status-card-value { color: #065F46; }
+        .status-card.blue .status-card-value { color: #1E40AF; }
+        .status-card.yellow .status-card-value { color: #92400E; }
+        .status-card.red .status-card-value { color: #991B1B; }
+
+        .status-card-footer {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-card.green .status-card-footer { color: #047857; }
+        .status-card.blue .status-card-footer { color: #1D4ED8; }
+        .status-card.yellow .status-card-footer { color: #B45309; }
+        .status-card.red .status-card-footer { color: #B91C1C; }
+
+        /* KPI Cards */
+        .kpi-card {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .kpi-value.green { color: var(--drb-green); }
+        .kpi-value.red { color: var(--drb-red); }
+        .kpi-value.yellow { color: var(--drb-yellow); }
+
+        .kpi-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+
+        /* Metric Cards (smaller) */
+        .metric-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-left: 4px solid var(--gray-200);
+        }
+
+        .metric-card.critical { border-left-color: var(--drb-red); }
+        .metric-card.warning { border-left-color: var(--drb-orange); }
+        .metric-card.info { border-left-color: var(--drb-blue); }
+        .metric-card.success { border-left-color: var(--drb-green); }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .metric-card.critical .metric-value { color: #DC2626; }
+        .metric-card.warning .metric-value { color: #EA580C; }
+        .metric-card.info .metric-value { color: #2563EB; }
+        .metric-card.success .metric-value { color: #059669; }
+
+        /* Customer Header */
+        .customer-header {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+            border: 1px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .customer-info h2 {
+            margin-bottom: 0.25rem;
+        }
+
+        .customer-meta {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .customer-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .customer-stat {
+            text-align: center;
+        }
+
+        .customer-stat-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .customer-stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .customer-stat-value.green { color: var(--drb-green); }
+        .customer-stat-value.yellow { color: var(--drb-yellow); }
+        .customer-stat-value.red { color: var(--drb-red); }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: var(--gray-50);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-600);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge.critical {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .badge.warning {
+            background: #FFEDD5;
+            color: #EA580C;
+        }
+
+        .badge.healthy, .badge.success {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .badge.info {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        /* Form Controls */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            margin-bottom: 0.25rem;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--drb-orange);
+            box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.1);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-primary {
+            background: var(--drb-orange);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #E55A1B;
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 280px;
+            margin-top: 1rem;
+        }
+
+        .chart-container.small {
+            height: 200px;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .charts-row-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* Alert Cards */
+        .alert-card {
+            border-left: 4px solid;
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            background: white;
+        }
+
+        .alert-card.critical {
+            border-left-color: var(--drb-red);
+            background: linear-gradient(135deg, #FEF2F2 0%, #FFFFFF 100%);
+        }
+
+        .alert-card.warning {
+            border-left-color: var(--drb-orange);
+            background: linear-gradient(135deg, #FFF7ED 0%, #FFFFFF 100%);
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .alert-customer {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-message {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        /* Benchmark Cards */
+        .benchmark-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .benchmark-card h3 {
+            margin-bottom: 1rem;
+        }
+
+        .benchmark-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .benchmark-row:last-child {
+            border-bottom: none;
+        }
+
+        .benchmark-label {
+            color: var(--gray-500);
+        }
+
+        .benchmark-value {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .benchmark-value.green { color: var(--drb-green); }
+        .benchmark-value.red { color: var(--drb-red); }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-100);
+            color: var(--gray-400);
+            font-size: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .card-grid-6 {
+                grid-template-columns: repeat(3, 1fr);
             }
-          }
         }
-      }
-    }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .nav-btn.active { background: rgba(242, 101, 34, 0.1); color: #F26522; border-left: 3px solid #F26522; }
-    .sub-nav-btn.active { background: rgba(242, 101, 34, 0.15); color: #F26522; }
-    .deep-dive-section { display: none; }
-    .deep-dive-section.active { display: block; }
-    .mobile-nav { display: none; }
-    .sidebar { display: flex; }
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .mobile-nav { display: flex; }
-      .sidebar.open { display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 50; }
-    }
-    .card-gradient { background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%); }
-    .stat-card { transition: all 0.2s ease; }
-    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    .yoy-chart { display: flex; align-items: flex-end; gap: 2px; height: 60px; }
-    .yoy-bar { width: 8px; border-radius: 2px 2px 0 0; transition: all 0.2s; }
-    .yoy-bar:hover { opacity: 0.8; }
-    .trend-line { position: relative; height: 40px; }
-    .trend-dot { width: 6px; height: 6px; border-radius: 50%; position: absolute; }
-  </style>
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .card-grid-4, .card-grid-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+
+            .customer-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
-<body class="bg-drb-gray-light min-h-screen">
-  <div class="flex min-h-screen">
-    
-    <!-- Mobile Header -->
-    <div class="mobile-nav fixed top-0 left-0 right-0 h-14 bg-black z-40 items-center justify-between px-4">
-      <button onclick="toggleSidebar()" class="p-2 text-white">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-      <div class="text-white font-semibold text-sm" id="mobile-title">Portfolio Overview</div>
-      <div class="w-10"></div>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-text">DRB</span>
+                <span class="logo-subtitle">Advisory Analytics</span>
+            </div>
+
+            <p class="nav-section-title">Dashboard</p>
+            <nav>
+                <button class="nav-item active" data-page="portfolio">Portfolio Overview</button>
+                <button class="nav-item" data-page="operational">Operational Health</button>
+                <button class="nav-item" data-page="alerts">Risk Alerts</button>
+                <button class="nav-item" data-page="boap">Business on a Page</button>
+                <button class="nav-item" data-page="deepdive">Advisory Deep Dive</button>
+                <button class="nav-item" data-page="benchmarks">Industry Benchmarks</button>
+                <button class="nav-item" data-page="settings">Alert Configuration</button>
+            </nav>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="user-info">
+                <div class="user-avatar">MJ</div>
+                <div>
+                    <div class="user-name">Mike Johnson</div>
+                    <div class="user-role">Customer Success</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Portfolio Overview -->
+            <div id="portfolio" class="page active">
+                <h1>Portfolio Health</h1>
+                <p class="page-subtitle">Performance vs. industry benchmarks</p>
+
+                <div class="card-grid card-grid-4">
+                    <div class="status-card green">
+                        <div class="status-card-label">Outperforming</div>
+                        <div class="status-card-value">2</div>
+                        <div class="status-card-footer">33% of portfolio</div>
+                    </div>
+                    <div class="status-card blue">
+                        <div class="status-card-label">On Track</div>
+                        <div class="status-card-value">1</div>
+                        <div class="status-card-footer">17% of portfolio</div>
+                    </div>
+                    <div class="status-card yellow">
+                        <div class="status-card-label">Needs Attention</div>
+                        <div class="status-card-value">2</div>
+                        <div class="status-card-footer">33% of portfolio</div>
+                    </div>
+                    <div class="status-card red">
+                        <div class="status-card-label">Critical</div>
+                        <div class="status-card-value">1</div>
+                        <div class="status-card-footer">17% of portfolio</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Customer Overview</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Sites</th>
+                                    <th>Health</th>
+                                    <th>Capture %</th>
+                                    <th>Churn %</th>
+                                    <th>Traffic YoY</th>
+                                    <th>Revenue YoY</th>
+                                    <th>Status</th>
+                                    <th>CSM</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sparkle Clean Auto Spa</td>
+                                    <td>12</td>
+                                    <td>28</td>
+                                    <td>31%</td>
+                                    <td>8.2%</td>
+                                    <td>-18%</td>
+                                    <td>-18%</td>
+                                    <td><span class="badge critical">Critical</span></td>
+                                    <td>Mike Johnson</td>
+                                </tr>
+                                <tr>
+                                    <td>Metro Express Wash</td>
+                                    <td>8</td>
+                                    <td>45</td>
+                                    <td>35%</td>
+                                    <td>6.5%</td>
+                                    <td>-8%</td>
+                                    <td>-10%</td>
+                                    <td><span class="badge warning">Warning</span></td>
+                                    <td>Sarah Chen</td>
+                                </tr>
+                                <tr>
+                                    <td>Shine Time Car Wash</td>
+                                    <td>5</td>
+                                    <td>72</td>
+                                    <td>42%</td>
+                                    <td>4.2%</td>
+                                    <td>+5%</td>
+                                    <td>+6%</td>
+                                    <td><span class="badge healthy">Healthy</span></td>
+                                    <td>Mike Johnson</td>
+                                </tr>
+                                <tr>
+                                    <td>Quick Clean Express</td>
+                                    <td>156</td>
+                                    <td>38</td>
+                                    <td>33%</td>
+                                    <td>7.1%</td>
+                                    <td>-12%</td>
+                                    <td>-14%</td>
+                                    <td><span class="badge warning">Warning</span></td>
+                                    <td>Tom Wilson</td>
+                                </tr>
+                                <tr>
+                                    <td>Premier Auto Spa</td>
+                                    <td>234</td>
+                                    <td>85</td>
+                                    <td>48%</td>
+                                    <td>3.8%</td>
+                                    <td>+12%</td>
+                                    <td>+14%</td>
+                                    <td><span class="badge healthy">Healthy</span></td>
+                                    <td>Sarah Chen</td>
+                                </tr>
+                                <tr>
+                                    <td>Crystal Clear Wash</td>
+                                    <td>45</td>
+                                    <td>52</td>
+                                    <td>38%</td>
+                                    <td>5.9%</td>
+                                    <td>-3%</td>
+                                    <td>-2%</td>
+                                    <td><span class="badge info">On Track</span></td>
+                                    <td>Tom Wilson</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operational Health -->
+            <div id="operational" class="page">
+                <h1>Operational Health</h1>
+                <p class="page-subtitle">System performance and support metrics</p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Select Customer</label>
+                        <select id="customer-select" onchange="updateOperationalData()">
+                            <option value="bmw">BMW Kar Wash LLC (61 sites)</option>
+                            <option value="sparkle">Sparkle Clean Auto Spa (12 sites)</option>
+                            <option value="quick">Quick Clean Express (156 sites)</option>
+                            <option value="premier">Premier Auto Spa (234 sites)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Period</label>
+                        <select>
+                            <option>Last 30 Days</option>
+                            <option>Last 60 Days</option>
+                            <option>Last 90 Days</option>
+                            <option>Year to Date</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-secondary">Refresh Data</button>
+                    </div>
+                </div>
+
+                <div class="customer-header">
+                    <div class="customer-info">
+                        <h2 id="op-customer-name">BMW Kar Wash LLC</h2>
+                        <div class="customer-meta" id="op-customer-meta">61 Sites · MI · CSM: Morgan Malone</div>
+                    </div>
+                    <div class="customer-stats">
+                        <div class="customer-stat">
+                            <div class="customer-stat-label">Health Index</div>
+                            <div class="customer-stat-value green" id="op-health-index">Green</div>
+                        </div>
+                        <div class="customer-stat">
+                            <div class="customer-stat-label">Score</div>
+                            <div class="customer-stat-value" id="op-health-score">2.80</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Summary Metrics</h2>
+                <div class="card-grid card-grid-6">
+                    <div class="card kpi-card">
+                        <div class="kpi-value" id="op-uptime">99.92%</div>
+                        <div class="kpi-label">Uptime (30d)</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value" id="op-total-cases">572</div>
+                        <div class="kpi-label">Total Cases (30d)</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value" id="op-open-cases">4</div>
+                        <div class="kpi-label">Open Cases</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value" id="op-avg-ttr">2.24</div>
+                        <div class="kpi-label">Avg TTR (Days)</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value" id="op-hw-swaps">3</div>
+                        <div class="kpi-label">Hardware Swaps</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value" id="op-escalations">1</div>
+                        <div class="kpi-label">Escalations</div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="card">
+                        <h3>Case Volume by Product</h3>
+                        <div class="chart-container">
+                            <canvas id="caseByProductChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Monthly Case Volume</h3>
+                        <div class="chart-container">
+                            <canvas id="monthlyCaseChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="card">
+                        <h3>Monthly Hardware Swaps</h3>
+                        <div class="chart-container small">
+                            <canvas id="hardwareSwapsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Monthly Escalations</h3>
+                        <div class="chart-container small">
+                            <canvas id="escalationsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Site-Level Details</h2>
+                    <div class="form-row">
+                        <div class="form-group" style="min-width: 150px; flex: 0.5;">
+                            <label>Health Status</label>
+                            <select>
+                                <option>All</option>
+                                <option>Healthy</option>
+                                <option>Warning</option>
+                                <option>Critical</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="min-width: 150px; flex: 0.5;">
+                            <label>City</label>
+                            <select>
+                                <option>All Cities</option>
+                                <option>Detroit</option>
+                                <option>Chicago</option>
+                                <option>Milwaukee</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="min-width: 150px; flex: 0.5;">
+                            <label>Sort By</label>
+                            <select>
+                                <option>Cases (30d)</option>
+                                <option>Uptime %</option>
+                                <option>Open Cases</option>
+                                <option>Escalations</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="sites-table">
+                            <thead>
+                                <tr>
+                                    <th>Site</th>
+                                    <th>City</th>
+                                    <th>Health</th>
+                                    <th>Uptime %</th>
+                                    <th>Cases (30d)</th>
+                                    <th>Open</th>
+                                    <th>HW Swaps</th>
+                                    <th>Escalations</th>
+                                    <th>CSAT</th>
+                                    <th>Platform</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sites-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-secondary">Export to CSV</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Alerts -->
+            <div id="alerts" class="page">
+                <h1>Risk Alerts</h1>
+                <p class="page-subtitle">Automated warning detection</p>
+
+                <div class="card-grid card-grid-4">
+                    <div class="metric-card critical">
+                        <div class="metric-label">Critical</div>
+                        <div class="metric-value">4</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-label">Warning</div>
+                        <div class="metric-value">8</div>
+                    </div>
+                    <div class="metric-card info">
+                        <div class="metric-label">New (24h)</div>
+                        <div class="metric-value">3</div>
+                    </div>
+                    <div class="metric-card success">
+                        <div class="metric-label">Resolved (7d)</div>
+                        <div class="metric-value">6</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="min-width: 150px; flex: 0.5;">
+                        <label>Filter by Severity</label>
+                        <select>
+                            <option>All</option>
+                            <option>Critical</option>
+                            <option>Warning</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="min-width: 150px; flex: 0.5;">
+                        <label>Filter by Customer</label>
+                        <select>
+                            <option>All Customers</option>
+                            <option>Sparkle Clean Auto Spa</option>
+                            <option>Metro Express Wash</option>
+                            <option>Quick Clean Express</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="alert-card critical">
+                    <div class="alert-header">
+                        <span class="alert-title">Traffic Decline</span>
+                        <span class="badge critical">CRITICAL</span>
+                    </div>
+                    <div class="alert-customer">Sparkle Clean Auto Spa</div>
+                    <div class="alert-message">Traffic declined 18% YoY across all 12 sites</div>
+                </div>
+
+                <div class="alert-card critical">
+                    <div class="alert-header">
+                        <span class="alert-title">Churn Spike</span>
+                        <span class="badge critical">CRITICAL</span>
+                    </div>
+                    <div class="alert-customer">Sparkle Clean Auto Spa</div>
+                    <div class="alert-message">Voluntary churn spiked to 8.2%, up 2.7pts MoM</div>
+                </div>
+
+                <div class="alert-card warning">
+                    <div class="alert-header">
+                        <span class="alert-title">Capture Rate Drop</span>
+                        <span class="badge warning">WARNING</span>
+                    </div>
+                    <div class="alert-customer">Metro Express Wash</div>
+                    <div class="alert-message">Capture rate dropped from 41% to 35%</div>
+                </div>
+
+                <div class="alert-card warning">
+                    <div class="alert-header">
+                        <span class="alert-title">Member Loss</span>
+                        <span class="badge warning">WARNING</span>
+                    </div>
+                    <div class="alert-customer">Quick Clean Express</div>
+                    <div class="alert-message">Member count down 8% YoY (-340 members)</div>
+                </div>
+
+                <div class="alert-card critical">
+                    <div class="alert-header">
+                        <span class="alert-title">Revenue Decline</span>
+                        <span class="badge critical">CRITICAL</span>
+                    </div>
+                    <div class="alert-customer">Sparkle Clean Auto Spa</div>
+                    <div class="alert-message">Revenue declined 18% YoY (-$34K/month)</div>
+                </div>
+            </div>
+
+            <!-- Business on a Page -->
+            <div id="boap" class="page">
+                <h1>Business on a Page</h1>
+                <p class="page-subtitle">Customer performance summary</p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Select Customer</label>
+                        <select id="boap-customer-select">
+                            <option>Sparkle Clean Auto Spa</option>
+                            <option>Metro Express Wash</option>
+                            <option>Shine Time Car Wash</option>
+                            <option>Quick Clean Express</option>
+                            <option>Premier Auto Spa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="customer-header">
+                    <div class="customer-info">
+                        <h2>Sparkle Clean Auto Spa</h2>
+                        <div class="customer-meta">12 sites · Southwest · CSM: Mike Johnson</div>
+                    </div>
+                    <div class="customer-stats">
+                        <div class="customer-stat">
+                            <div class="customer-stat-label">Health Score</div>
+                            <div class="customer-stat-value red">28</div>
+                        </div>
+                        <div class="customer-stat">
+                            <div class="customer-stat-label">vs Industry</div>
+                            <div class="customer-stat-value red">-24%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-grid card-grid-6">
+                    <div class="card kpi-card">
+                        <div class="kpi-value">31%</div>
+                        <div class="kpi-label">Capture Rate</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value red">8.2%</div>
+                        <div class="kpi-label">Vol Churn</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value red">-18%</div>
+                        <div class="kpi-label">Traffic YoY</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value red">-12%</div>
+                        <div class="kpi-label">Members YoY</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value red">-18%</div>
+                        <div class="kpi-label">Revenue YoY</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value">4.1%</div>
+                        <div class="kpi-label">Invol Churn</div>
+                    </div>
+                </div>
+
+                <h2>24-Month Trends</h2>
+                <div class="charts-row">
+                    <div class="card">
+                        <h3>Monthly Revenue ($K)</h3>
+                        <div class="chart-container">
+                            <canvas id="boapRevenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Active Members</h3>
+                        <div class="chart-container">
+                            <canvas id="boapMembersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advisory Deep Dive -->
+            <div id="deepdive" class="page">
+                <h1>Advisory Deep Dive</h1>
+                <p class="page-subtitle">Detailed analytics by category</p>
+
+                <div class="form-row">
+                    <button class="btn btn-primary" id="dd-general">General KPIs</button>
+                    <button class="btn btn-secondary" id="dd-membership">Membership</button>
+                    <button class="btn btn-secondary" id="dd-retail">Retail</button>
+                    <button class="btn btn-secondary" id="dd-marketing">Marketing</button>
+                    <button class="btn btn-secondary" id="dd-operations">Operations</button>
+                </div>
+
+                <div class="card-grid card-grid-4" style="margin-top: 1.5rem;">
+                    <div class="card kpi-card">
+                        <div class="kpi-value">$1.87M</div>
+                        <div class="kpi-label">Total Revenue</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value">101K</div>
+                        <div class="kpi-label">Total Cars</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value">$28.50</div>
+                        <div class="kpi-label">Avg Ticket</div>
+                    </div>
+                    <div class="card kpi-card">
+                        <div class="kpi-value">58%</div>
+                        <div class="kpi-label">Member %</div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="card">
+                        <h3>Monthly Revenue ($K)</h3>
+                        <div class="chart-container">
+                            <canvas id="ddRevenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Cars Washed</h3>
+                        <div class="chart-container">
+                            <canvas id="ddCarsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Industry Benchmarks -->
+            <div id="benchmarks" class="page">
+                <h1>Industry Benchmarks</h1>
+                <p class="page-subtitle">Based on 2,400+ car wash locations</p>
+
+                <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="benchmark-card">
+                        <h3>Membership</h3>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Capture Rate</span>
+                            <span class="benchmark-value">39%</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Top Quartile</span>
+                            <span class="benchmark-value green">48%+</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Bottom Quartile</span>
+                            <span class="benchmark-value red">&lt;28%</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Avg Ticket</span>
+                            <span class="benchmark-value">$32.00</span>
+                        </div>
+                    </div>
+                    <div class="benchmark-card">
+                        <h3>Churn</h3>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Voluntary</span>
+                            <span class="benchmark-value">5.5%</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Top Quartile</span>
+                            <span class="benchmark-value green">&lt;4.0%</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Bottom Quartile</span>
+                            <span class="benchmark-value red">7.5%+</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Involuntary</span>
+                            <span class="benchmark-value">2.5%</span>
+                        </div>
+                    </div>
+                    <div class="benchmark-card">
+                        <h3>Traffic</h3>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Growth YoY</span>
+                            <span class="benchmark-value">+5%</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Top Quartile</span>
+                            <span class="benchmark-value green">+12%+</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Bottom Quartile</span>
+                            <span class="benchmark-value red">&lt;-2%</span>
+                        </div>
+                        <div class="benchmark-row">
+                            <span class="benchmark-label">Member %</span>
+                            <span class="benchmark-value">62%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alert Configuration -->
+            <div id="settings" class="page">
+                <h1>Alert Configuration</h1>
+                <p class="page-subtitle">Set custom thresholds to trigger alerts</p>
+
+                <div class="card-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="card">
+                        <h3>Capture Rate</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Warning (Below)</label>
+                                <input type="number" value="35" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Critical (Below)</label>
+                                <input type="number" value="28" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Voluntary Churn</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Warning (Above)</label>
+                                <input type="number" value="6.0" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Critical (Above)</label>
+                                <input type="number" value="7.5" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Traffic YoY</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Warning (Below)</label>
+                                <input type="number" value="-5" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Critical (Below)</label>
+                                <input type="number" value="-15" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Revenue YoY</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Warning (Below)</label>
+                                <input type="number" value="-5" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Critical (Below)</label>
+                                <input type="number" value="-12" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Health Score</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Warning (Below)</label>
+                                <input type="number" value="50" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Critical (Below)</label>
+                                <input type="number" value="35" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Average Ticket</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Warning (Below)</label>
+                                <input type="number" value="28" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Critical (Below)</label>
+                                <input type="number" value="24" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <button class="btn btn-primary">Save Configuration</button>
+                    <button class="btn btn-secondary" style="margin-left: 0.5rem;">Reset to Defaults</button>
+                </div>
+            </div>
+
+            <div class="footer">
+                Data as of: <span id="current-date"></span> · DRB Advisory Analytics
+            </div>
+        </main>
     </div>
 
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar w-64 bg-black flex-col flex-shrink-0">
-      <div class="p-5 border-b border-white/10 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <!-- DRB Logo -->
-          <img src="DRB-RGB-PBV-White.png" alt="DRB" class="h-8">
-          <div class="h-6 w-px bg-white/20"></div>
-          <span class="text-white/80 text-xs font-medium">Advisory Analytics</span>
-        </div>
-        <button onclick="toggleSidebar()" class="md:hidden p-1 text-white/60 hover:text-white">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <nav class="flex-1 py-4 overflow-y-auto">
-        <div class="px-3 mb-2">
-          <span class="text-white/40 text-xs font-medium uppercase tracking-wider">Dashboard</span>
-        </div>
-        <div class="space-y-0.5 px-2">
-          <button onclick="showTab('portfolio')" id="nav-portfolio" class="nav-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-sm font-medium text-white/70 hover:bg-white/5 border-l-3 border-transparent transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-            Portfolio Overview
-          </button>
-          <button onclick="showTab('alerts')" id="nav-alerts" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-sm font-medium text-white/70 hover:bg-white/5 border-l-3 border-transparent transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            Risk Alerts
-            <span class="ml-auto px-2 py-0.5 rounded-full text-xs bg-drb-orange text-white font-semibold">12</span>
-          </button>
-          <button onclick="showTab('boap')" id="nav-boap" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-sm font-medium text-white/70 hover:bg-white/5 border-l-3 border-transparent transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            Business on a Page
-          </button>
-          <button onclick="showTab('deepdive')" id="nav-deepdive" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-sm font-medium text-white/70 hover:bg-white/5 border-l-3 border-transparent transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            Advisory Deep Dive
-          </button>
-          <button onclick="showTab('benchmarks')" id="nav-benchmarks" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-sm font-medium text-white/70 hover:bg-white/5 border-l-3 border-transparent transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-            Industry Benchmarks
-          </button>
-        </div>
-        <div class="px-3 mt-6 mb-2">
-          <span class="text-white/40 text-xs font-medium uppercase tracking-wider">Settings</span>
-        </div>
-        <div class="space-y-0.5 px-2">
-          <button onclick="showTab('alertconfig')" id="nav-alertconfig" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-sm font-medium text-white/70 hover:bg-white/5 border-l-3 border-transparent transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            Alert Configuration
-          </button>
-        </div>
-      </nav>
-      <div class="p-4 border-t border-white/10">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-full bg-drb-orange flex items-center justify-center text-white font-bold text-sm">MJ</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-white text-sm font-medium truncate">Mike Johnson</div>
-            <div class="text-white/50 text-xs">Customer Success</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(this.dataset.page).classList.add('active');
+                
+                // Initialize charts when page becomes visible
+                if (this.dataset.page === 'operational') {
+                    initOperationalCharts();
+                } else if (this.dataset.page === 'boap') {
+                    initBoapCharts();
+                } else if (this.dataset.page === 'deepdive') {
+                    initDeepDiveCharts();
+                }
+            });
+        });
 
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col w-full">
-      <!-- Desktop Header -->
-      <header class="hidden md:flex h-16 border-b border-gray-200 items-center justify-between px-6 bg-white">
-        <h1 id="page-title" class="text-drb-charcoal font-semibold text-lg">Portfolio Overview</h1>
-        <div class="flex items-center gap-4">
-          <div class="text-drb-gray text-sm">Data as of: <span class="text-drb-charcoal font-medium">Jan 26, 2026</span></div>
-        </div>
-      </header>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', month: 'long', day: 'numeric' 
+        });
 
-      <main class="flex-1 overflow-auto p-4 md:p-6 pt-16 md:pt-6">
-        
-        <!-- PORTFOLIO TAB -->
-        <div id="tab-portfolio" class="tab-content active space-y-5">
-          <div>
-            <h2 class="text-xl md:text-2xl font-bold text-drb-charcoal">Portfolio Health</h2>
-            <p class="text-drb-gray text-sm mt-1">Performance vs. industry benchmarks</p>
-          </div>
-          
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <div class="stat-card card-gradient border border-gray-100 rounded-xl p-4 shadow-sm">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                <span class="text-drb-gray text-xs font-medium">Outperforming</span>
-              </div>
-              <div class="text-2xl md:text-3xl font-bold text-drb-charcoal">68</div>
-              <div class="text-drb-gray text-xs mt-1">31% of portfolio</div>
-            </div>
-            <div class="stat-card card-gradient border border-gray-100 rounded-xl p-4 shadow-sm">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                <span class="text-drb-gray text-xs font-medium">On Track</span>
-              </div>
-              <div class="text-2xl md:text-3xl font-bold text-drb-charcoal">88</div>
-              <div class="text-drb-gray text-xs mt-1">41% of portfolio</div>
-            </div>
-            <div class="stat-card card-gradient border border-gray-100 rounded-xl p-4 shadow-sm">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-2 h-2 rounded-full bg-drb-orange"></div>
-                <span class="text-drb-gray text-xs font-medium">Underperforming</span>
-              </div>
-              <div class="text-2xl md:text-3xl font-bold text-drb-charcoal">42</div>
-              <div class="text-drb-gray text-xs mt-1">19% of portfolio</div>
-            </div>
-            <div class="stat-card card-gradient border border-gray-100 rounded-xl p-4 shadow-sm">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-2 h-2 rounded-full bg-red-500"></div>
-                <span class="text-drb-gray text-xs font-medium">Needs Attention</span>
-              </div>
-              <div class="text-2xl md:text-3xl font-bold text-drb-charcoal">18</div>
-              <div class="text-drb-gray text-xs mt-1">8% of portfolio</div>
-            </div>
-          </div>
-          
-          <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-5">
-              <h3 class="text-base font-semibold text-drb-charcoal">Portfolio vs. Benchmarks</h3>
-              <div class="flex items-center gap-3 text-xs">
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-drb-orange"></span>Your Avg</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-drb-navy"></span>Benchmark</span>
-              </div>
-            </div>
-            <div class="space-y-5 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-              <div class="space-y-2">
-                <div class="flex justify-between text-sm"><span class="text-drb-gray">Capture Rate</span><div><span class="text-drb-charcoal font-bold">42%</span> <span class="text-emerald-600 text-xs ml-1">+3%</span></div></div>
-                <div class="h-2.5 bg-gray-100 rounded-full relative"><div class="h-full bg-drb-orange rounded-full" style="width:42%"></div><div class="absolute top-0 bottom-0 w-0.5 bg-drb-navy" style="left:39%"></div></div>
-              </div>
-              <div class="space-y-2">
-                <div class="flex justify-between text-sm"><span class="text-drb-gray">Voluntary Churn</span><div><span class="text-drb-charcoal font-bold">4.8%</span> <span class="text-emerald-600 text-xs ml-1">-0.7%</span></div></div>
-                <div class="h-2.5 bg-gray-100 rounded-full relative"><div class="h-full bg-drb-orange rounded-full" style="width:48%"></div><div class="absolute top-0 bottom-0 w-0.5 bg-drb-navy" style="left:55%"></div></div>
-              </div>
-              <div class="space-y-2">
-                <div class="flex justify-between text-sm"><span class="text-drb-gray">Member Growth YoY</span><div><span class="text-drb-charcoal font-bold">+8.2%</span> <span class="text-red-500 text-xs ml-1">-3.8%</span></div></div>
-                <div class="h-2.5 bg-gray-100 rounded-full relative"><div class="h-full bg-drb-orange rounded-full" style="width:41%"></div><div class="absolute top-0 bottom-0 w-0.5 bg-drb-navy" style="left:60%"></div></div>
-              </div>
-              <div class="space-y-2">
-                <div class="flex justify-between text-sm"><span class="text-drb-gray">Avg Member Ticket</span><div><span class="text-drb-charcoal font-bold">$34.20</span> <span class="text-emerald-600 text-xs ml-1">+$2.20</span></div></div>
-                <div class="h-2.5 bg-gray-100 rounded-full relative"><div class="h-full bg-drb-orange rounded-full" style="width:57%"></div><div class="absolute top-0 bottom-0 w-0.5 bg-drb-navy" style="left:53%"></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        // Sample data
+        const customerData = {
+            bmw: {
+                name: 'BMW Kar Wash LLC',
+                sites: 61,
+                region: 'MI',
+                csm: 'Morgan Malone',
+                health: 'Green',
+                score: 2.80,
+                uptime: '99.92%',
+                totalCases: 572,
+                openCases: 4,
+                avgTtr: 2.24,
+                hwSwaps: 3,
+                escalations: 1
+            },
+            sparkle: {
+                name: 'Sparkle Clean Auto Spa',
+                sites: 12,
+                region: 'AZ',
+                csm: 'Mike Johnson',
+                health: 'Red',
+                score: 1.20,
+                uptime: '97.45%',
+                totalCases: 89,
+                openCases: 8,
+                avgTtr: 4.5,
+                hwSwaps: 5,
+                escalations: 3
+            },
+            quick: {
+                name: 'Quick Clean Express',
+                sites: 156,
+                region: 'TX',
+                csm: 'Tom Wilson',
+                health: 'Green',
+                score: 3.50,
+                uptime: '99.78%',
+                totalCases: 1240,
+                openCases: 12,
+                avgTtr: 1.8,
+                hwSwaps: 8,
+                escalations: 2
+            },
+            premier: {
+                name: 'Premier Auto Spa',
+                sites: 234,
+                region: 'CA',
+                csm: 'Sarah Chen',
+                health: 'Green',
+                score: 4.20,
+                uptime: '99.95%',
+                totalCases: 1890,
+                openCases: 6,
+                avgTtr: 1.2,
+                hwSwaps: 4,
+                escalations: 0
+            }
+        };
 
-        <!-- ALERTS TAB -->
-        <div id="tab-alerts" class="tab-content space-y-5">
-          <div>
-            <h2 class="text-xl md:text-2xl font-bold text-drb-charcoal">Risk Alerts</h2>
-            <p class="text-drb-gray text-sm mt-1">Automated warning detection</p>
-          </div>
-          
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-white border-l-4 border-red-500 rounded-lg p-3 shadow-sm">
-              <div class="text-drb-gray text-xs font-medium">Critical</div>
-              <div class="text-2xl font-bold text-drb-charcoal">4</div>
-            </div>
-            <div class="bg-white border-l-4 border-drb-orange rounded-lg p-3 shadow-sm">
-              <div class="text-drb-gray text-xs font-medium">Warning</div>
-              <div class="text-2xl font-bold text-drb-charcoal">8</div>
-            </div>
-            <div class="bg-white border-l-4 border-blue-500 rounded-lg p-3 shadow-sm">
-              <div class="text-drb-gray text-xs font-medium">New</div>
-              <div class="text-2xl font-bold text-drb-charcoal">3</div>
-            </div>
-            <div class="bg-white border-l-4 border-emerald-500 rounded-lg p-3 shadow-sm">
-              <div class="text-drb-gray text-xs font-medium">Resolved</div>
-              <div class="text-2xl font-bold text-drb-charcoal">6</div>
-            </div>
-          </div>
-          
-          <div class="space-y-3">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm border-l-4 border-l-red-500">
-              <div class="flex flex-wrap items-center gap-2 mb-2">
-                <span class="text-drb-charcoal font-semibold text-sm">Traffic Decline</span>
-                <span class="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-medium">CRITICAL</span>
-              </div>
-              <div class="text-drb-charcoal text-sm mb-2">Sparkle Clean Auto Spa</div>
-              <p class="text-drb-gray text-sm">Traffic declined <span class="text-red-600 font-semibold">18% YoY</span> across all 12 sites.</p>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm border-l-4 border-l-drb-orange">
-              <div class="flex flex-wrap items-center gap-2 mb-2">
-                <span class="text-drb-charcoal font-semibold text-sm">Capture Rate Drop</span>
-                <span class="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-drb-orange font-medium">WARNING</span>
-              </div>
-              <div class="text-drb-charcoal text-sm mb-2">Metro Express Wash</div>
-              <p class="text-drb-gray text-sm">Capture rate dropped from <span class="text-drb-orange font-semibold">41% to 35%</span>.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- BUSINESS ON A PAGE TAB -->
-        <div id="tab-boap" class="tab-content space-y-5">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <select class="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-drb-charcoal w-full md:w-auto shadow-sm">
-              <option>Sparkle Clean Auto Spa</option>
-              <option>Metro Express Wash</option>
-            </select>
-            <button class="px-4 py-2 bg-drb-orange text-white rounded-lg text-sm font-medium hover:bg-drb-orange-dark transition-colors w-full md:w-auto shadow-sm">
-              Export PDF
-            </button>
-          </div>
-          
-          <!-- Customer Header -->
-          <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-xl bg-drb-navy flex items-center justify-center text-white font-bold text-lg flex-shrink-0">SC</div>
-                <div>
-                  <div class="flex flex-wrap items-center gap-2">
-                    <h2 class="text-lg md:text-xl font-bold text-drb-charcoal">Sparkle Clean Auto Spa</h2>
-                    <span class="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-medium">Needs Attention</span>
-                  </div>
-                  <div class="text-sm text-drb-gray mt-1">12 sites • Southwest • CSM: Mike Johnson</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-6 pt-3 md:pt-0 border-t md:border-t-0 border-gray-100">
-                <div class="text-center">
-                  <div class="text-drb-gray text-xs">Health Score</div>
-                  <div class="text-3xl font-bold text-red-500">28</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-drb-gray text-xs">vs Industry</div>
-                  <div class="text-xl font-bold text-red-500">-24%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- KPI Grid -->
-          <div class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
-            <div class="bg-white border border-gray-100 rounded-lg p-3 text-center shadow-sm">
-              <div class="text-drb-gray text-xs">Capture</div>
-              <div class="text-lg md:text-xl font-bold text-red-500">31%</div>
-              <div class="text-red-500 text-xs">↓8%</div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-lg p-3 text-center shadow-sm">
-              <div class="text-drb-gray text-xs">Vol Churn</div>
-              <div class="text-lg md:text-xl font-bold text-red-500">8.2%</div>
-              <div class="text-red-500 text-xs">↑2.7%</div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-lg p-3 text-center shadow-sm">
-              <div class="text-drb-gray text-xs">Traffic</div>
-              <div class="text-lg md:text-xl font-bold text-red-500">-18%</div>
-              <div class="text-red-500 text-xs">↓23%</div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-lg p-3 text-center shadow-sm">
-              <div class="text-drb-gray text-xs">Members</div>
-              <div class="text-lg md:text-xl font-bold text-red-500">-12%</div>
-              <div class="text-red-500 text-xs">↓24%</div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-lg p-3 text-center shadow-sm">
-              <div class="text-drb-gray text-xs">Avg Ticket</div>
-              <div class="text-lg md:text-xl font-bold text-drb-orange">$28.50</div>
-              <div class="text-drb-orange text-xs">↓$3.50</div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-lg p-3 text-center shadow-sm">
-              <div class="text-drb-gray text-xs">Invol Churn</div>
-              <div class="text-lg md:text-xl font-bold text-red-500">4.1%</div>
-              <div class="text-red-500 text-xs">↑1.6%</div>
-            </div>
-          </div>
-
-          <!-- 24-Month YoY Charts Section -->
-          <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-            <h3 class="text-base font-semibold text-drb-charcoal mb-4">24-Month Year-over-Year Trends</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <!-- Revenue YoY Chart -->
-              <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-drb-charcoal">Revenue YoY %</span>
-                  <span class="text-xs text-red-500 font-medium">-18% current</span>
-                </div>
-                <div class="yoy-chart" id="revenue-yoy">
-                  <div class="yoy-bar bg-emerald-400" style="height:85%" title="Jan '24: +12%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:80%" title="Feb '24: +10%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:75%" title="Mar '24: +8%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:70%" title="Apr '24: +6%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:65%" title="May '24: +4%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:60%" title="Jun '24: +2%"></div>
-                  <div class="yoy-bar bg-gray-300" style="height:50%" title="Jul '24: 0%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:45%" title="Aug '24: -2%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:40%" title="Sep '24: -5%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:35%" title="Oct '24: -8%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:30%" title="Nov '24: -10%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:25%" title="Dec '24: -12%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:22%" title="Jan '25: -14%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:20%" title="Feb '25: -15%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:18%" title="Mar '25: -16%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:17%" title="Apr '25: -16%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:16%" title="May '25: -17%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:15%" title="Jun '25: -17%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:14%" title="Jul '25: -17%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:13%" title="Aug '25: -18%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:12%" title="Sep '25: -18%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:12%" title="Oct '25: -18%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:11%" title="Nov '25: -18%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:10%" title="Dec '25: -18%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-drb-gray">
-                  <span>Jan '24</span>
-                  <span>Dec '25</span>
-                </div>
-              </div>
-
-              <!-- Traffic YoY Chart -->
-              <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-drb-charcoal">Traffic YoY %</span>
-                  <span class="text-xs text-red-500 font-medium">-22% current</span>
-                </div>
-                <div class="yoy-chart">
-                  <div class="yoy-bar bg-emerald-400" style="height:80%" title="Jan '24: +8%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:75%" title="Feb '24: +6%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:68%" title="Mar '24: +4%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:60%" title="Apr '24: +2%"></div>
-                  <div class="yoy-bar bg-gray-300" style="height:50%" title="May '24: 0%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:45%" title="Jun '24: -3%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:40%" title="Jul '24: -5%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:35%" title="Aug '24: -8%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:30%" title="Sep '24: -10%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:25%" title="Oct '24: -12%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:22%" title="Nov '24: -14%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:20%" title="Dec '24: -15%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:18%" title="Jan '25: -16%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:16%" title="Feb '25: -17%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:15%" title="Mar '25: -18%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:14%" title="Apr '25: -19%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:13%" title="May '25: -19%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:12%" title="Jun '25: -20%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:11%" title="Jul '25: -20%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:10%" title="Aug '25: -21%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:9%" title="Sep '25: -21%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:8%" title="Oct '25: -22%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:8%" title="Nov '25: -22%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:7%" title="Dec '25: -22%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-drb-gray">
-                  <span>Jan '24</span>
-                  <span>Dec '25</span>
-                </div>
-              </div>
-
-              <!-- Capture Rate YoY Chart -->
-              <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-drb-charcoal">Capture Rate YoY %</span>
-                  <span class="text-xs text-red-500 font-medium">-8% current</span>
-                </div>
-                <div class="yoy-chart">
-                  <div class="yoy-bar bg-emerald-400" style="height:70%" title="Jan '24: +5%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:65%" title="Feb '24: +4%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:62%" title="Mar '24: +3%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:58%" title="Apr '24: +2%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:55%" title="May '24: +1%"></div>
-                  <div class="yoy-bar bg-gray-300" style="height:50%" title="Jun '24: 0%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:45%" title="Jul '24: -1%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:42%" title="Aug '24: -2%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:38%" title="Sep '24: -3%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:35%" title="Oct '24: -4%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:32%" title="Nov '24: -5%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:30%" title="Dec '24: -5%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:28%" title="Jan '25: -6%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:26%" title="Feb '25: -6%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:24%" title="Mar '25: -6%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:22%" title="Apr '25: -7%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:20%" title="May '25: -7%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:18%" title="Jun '25: -7%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:16%" title="Jul '25: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:15%" title="Aug '25: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:14%" title="Sep '25: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:13%" title="Oct '25: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:12%" title="Nov '25: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:12%" title="Dec '25: -8%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-drb-gray">
-                  <span>Jan '24</span>
-                  <span>Dec '25</span>
-                </div>
-              </div>
-
-              <!-- Member Count YoY Chart -->
-              <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-drb-charcoal">Member Count YoY %</span>
-                  <span class="text-xs text-red-500 font-medium">-12% current</span>
-                </div>
-                <div class="yoy-chart">
-                  <div class="yoy-bar bg-emerald-400" style="height:75%" title="Jan '24: +6%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:70%" title="Feb '24: +5%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:65%" title="Mar '24: +3%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:58%" title="Apr '24: +2%"></div>
-                  <div class="yoy-bar bg-gray-300" style="height:50%" title="May '24: 0%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:45%" title="Jun '24: -2%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:40%" title="Jul '24: -3%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:35%" title="Aug '24: -5%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:32%" title="Sep '24: -6%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:28%" title="Oct '24: -7%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:25%" title="Nov '24: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:22%" title="Dec '24: -9%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:20%" title="Jan '25: -9%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:18%" title="Feb '25: -10%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:16%" title="Mar '25: -10%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:15%" title="Apr '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:14%" title="May '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:13%" title="Jun '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:12%" title="Jul '25: -12%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:11%" title="Aug '25: -12%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:10%" title="Sep '25: -12%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:10%" title="Oct '25: -12%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:9%" title="Nov '25: -12%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:9%" title="Dec '25: -12%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-drb-gray">
-                  <span>Jan '24</span>
-                  <span>Dec '25</span>
-                </div>
-              </div>
-
-              <!-- Churn Rate YoY Chart -->
-              <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-drb-charcoal">Churn Rate (inverted)</span>
-                  <span class="text-xs text-red-500 font-medium">8.2% current</span>
-                </div>
-                <div class="yoy-chart">
-                  <div class="yoy-bar bg-emerald-400" style="height:80%" title="Jan '24: 4.2%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:78%" title="Feb '24: 4.4%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:75%" title="Mar '24: 4.5%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:72%" title="Apr '24: 4.8%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:68%" title="May '24: 5.0%"></div>
-                  <div class="yoy-bar bg-drb-orange" style="height:62%" title="Jun '24: 5.3%"></div>
-                  <div class="yoy-bar bg-drb-orange" style="height:58%" title="Jul '24: 5.5%"></div>
-                  <div class="yoy-bar bg-drb-orange" style="height:52%" title="Aug '24: 5.8%"></div>
-                  <div class="yoy-bar bg-drb-orange" style="height:48%" title="Sep '24: 6.0%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:42%" title="Oct '24: 6.4%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:38%" title="Nov '24: 6.7%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:34%" title="Dec '24: 7.0%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:32%" title="Jan '25: 7.2%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:30%" title="Feb '25: 7.4%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:28%" title="Mar '25: 7.5%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:26%" title="Apr '25: 7.6%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:24%" title="May '25: 7.7%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:22%" title="Jun '25: 7.8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:20%" title="Jul '25: 7.9%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:18%" title="Aug '25: 8.0%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:16%" title="Sep '25: 8.0%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:14%" title="Oct '25: 8.1%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:12%" title="Nov '25: 8.1%"></div>
-                  <div class="yoy-bar bg-red-600" style="height:10%" title="Dec '25: 8.2%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-drb-gray">
-                  <span>Jan '24</span>
-                  <span>Dec '25</span>
-                </div>
-              </div>
-
-              <!-- Avg Ticket YoY Chart -->
-              <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-drb-charcoal">Avg Ticket YoY %</span>
-                  <span class="text-xs text-drb-orange font-medium">-11% current</span>
-                </div>
-                <div class="yoy-chart">
-                  <div class="yoy-bar bg-emerald-400" style="height:72%" title="Jan '24: +4%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:68%" title="Feb '24: +3%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:62%" title="Mar '24: +2%"></div>
-                  <div class="yoy-bar bg-emerald-400" style="height:55%" title="Apr '24: +1%"></div>
-                  <div class="yoy-bar bg-gray-300" style="height:50%" title="May '24: 0%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:46%" title="Jun '24: -1%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:42%" title="Jul '24: -2%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:38%" title="Aug '24: -4%"></div>
-                  <div class="yoy-bar bg-red-400" style="height:35%" title="Sep '24: -5%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:32%" title="Oct '24: -6%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:28%" title="Nov '24: -7%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:25%" title="Dec '24: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:23%" title="Jan '25: -8%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:21%" title="Feb '25: -9%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:19%" title="Mar '25: -9%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:17%" title="Apr '25: -10%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:16%" title="May '25: -10%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:15%" title="Jun '25: -10%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:14%" title="Jul '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:13%" title="Aug '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:12%" title="Sep '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:11%" title="Oct '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:10%" title="Nov '25: -11%"></div>
-                  <div class="yoy-bar bg-red-500" style="height:10%" title="Dec '25: -11%"></div>
-                </div>
-                <div class="flex justify-between text-xs text-drb-gray">
-                  <span>Jan '24</span>
-                  <span>Dec '25</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Insights & Actions -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-base font-semibold text-drb-charcoal mb-3">Key Insights</h3>
-              <div class="space-y-2">
-                <div class="p-3 bg-red-50 border border-red-100 rounded-lg">
-                  <div class="text-red-700 font-medium text-sm mb-1">Traffic Decline</div>
-                  <p class="text-drb-gray text-sm">Declining 4x faster than competitors.</p>
-                </div>
-                <div class="p-3 bg-red-50 border border-red-100 rounded-lg">
-                  <div class="text-red-700 font-medium text-sm mb-1">High Churn</div>
-                  <p class="text-drb-gray text-sm">Exit surveys cite pricing and wait times.</p>
-                </div>
-                <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                  <div class="text-blue-700 font-medium text-sm mb-1">Opportunity</div>
-                  <p class="text-drb-gray text-sm">Patheon could improve capture 15-20%.</p>
-                </div>
-              </div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-base font-semibold text-drb-charcoal mb-3">Recommended Actions</h3>
-              <div class="space-y-2">
-                <div class="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <span class="px-2 py-0.5 rounded text-xs bg-red-100 text-red-700 font-medium">HIGH</span>
-                  <p class="text-drb-charcoal text-sm mt-1.5">Schedule executive business review</p>
-                </div>
-                <div class="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <span class="px-2 py-0.5 rounded text-xs bg-red-100 text-red-700 font-medium">HIGH</span>
-                  <p class="text-drb-charcoal text-sm mt-1.5">Prepare Patheon ROI analysis</p>
-                </div>
-                <div class="p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <span class="px-2 py-0.5 rounded text-xs bg-orange-100 text-drb-orange font-medium">MED</span>
-                  <p class="text-drb-charcoal text-sm mt-1.5">Share competitor pricing analysis</p>
-                </div>
-              </div>
-              <button onclick="showTab('deepdive')" class="w-full mt-3 py-2.5 bg-drb-navy text-white rounded-lg text-sm font-medium hover:bg-drb-navy-light transition-colors">
-                View Full Deep Dive →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ADVISORY DEEP DIVE TAB -->
-        <div id="tab-deepdive" class="tab-content space-y-5">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <select class="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-drb-charcoal w-full md:w-auto shadow-sm">
-              <option>Sparkle Clean Auto Spa</option>
-              <option>Metro Express Wash</option>
-            </select>
-            <button class="px-4 py-2 bg-drb-orange text-white rounded-lg text-sm font-medium hover:bg-drb-orange-dark transition-colors w-full md:w-auto shadow-sm">
-              Export Report
-            </button>
-          </div>
-          
-          <!-- Sub Navigation -->
-          <div class="flex gap-1 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 bg-white rounded-lg p-1 shadow-sm border border-gray-100">
-            <button onclick="showDeepDiveSection('general')" id="dd-nav-general" class="sub-nav-btn active px-4 py-2 rounded-md text-xs md:text-sm text-drb-gray font-medium whitespace-nowrap flex-shrink-0 transition-colors">General KPIs</button>
-            <button onclick="showDeepDiveSection('membership')" id="dd-nav-membership" class="sub-nav-btn px-4 py-2 rounded-md text-xs md:text-sm text-drb-gray font-medium whitespace-nowrap flex-shrink-0 transition-colors">Membership</button>
-            <button onclick="showDeepDiveSection('sites')" id="dd-nav-sites" class="sub-nav-btn px-4 py-2 rounded-md text-xs md:text-sm text-drb-gray font-medium whitespace-nowrap flex-shrink-0 transition-colors">Site by Site</button>
-            <button onclick="showDeepDiveSection('pricing')" id="dd-nav-pricing" class="sub-nav-btn px-4 py-2 rounded-md text-xs md:text-sm text-drb-gray font-medium whitespace-nowrap flex-shrink-0 transition-colors">Pricing</button>
-            <button onclick="showDeepDiveSection('actions')" id="dd-nav-actions" class="sub-nav-btn px-4 py-2 rounded-md text-xs md:text-sm text-drb-gray font-medium whitespace-nowrap flex-shrink-0 transition-colors">Actions</button>
-          </div>
-
-          <!-- General KPIs -->
-          <div id="dd-general" class="deep-dive-section active space-y-4">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-1">Wash Performance</h3>
-              <p class="text-drb-gray text-sm mb-4">Revenue and cars washed over time</p>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">$156K</div>
-                  <div class="text-drb-gray text-xs">Monthly Rev</div>
-                  <div class="text-red-500 text-xs mt-1">↓18% YoY</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">8,420</div>
-                  <div class="text-drb-gray text-xs">Total Cars</div>
-                  <div class="text-red-500 text-xs mt-1">↓22% YoY</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">55%</div>
-                  <div class="text-drb-gray text-xs">Member Traffic</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">35%</div>
-                  <div class="text-drb-gray text-xs">Retail Traffic</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 24-Month Revenue & Traffic Charts -->
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-4">24-Month Performance Trends</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Monthly Revenue Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">Monthly Revenue ($K)</span>
-                    <span class="text-xs text-red-500 font-medium">$156K current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:80px;">
-                    <div class="yoy-bar bg-drb-navy" style="height:95%" title="Jan '24: $192K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:92%" title="Feb '24: $188K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:90%" title="Mar '24: $185K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:88%" title="Apr '24: $182K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:86%" title="May '24: $180K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:84%" title="Jun '24: $178K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:82%" title="Jul '24: $175K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:80%" title="Aug '24: $172K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:78%" title="Sep '24: $170K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:76%" title="Oct '24: $168K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:74%" title="Nov '24: $166K"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:72%" title="Dec '24: $164K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:70%" title="Jan '25: $162K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:68%" title="Feb '25: $161K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:67%" title="Mar '25: $160K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:66%" title="Apr '25: $159K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:65%" title="May '25: $159K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:64%" title="Jun '25: $158K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:63%" title="Jul '25: $158K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:62%" title="Aug '25: $157K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:61%" title="Sep '25: $157K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:60%" title="Oct '25: $156K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:59%" title="Nov '25: $156K"></div>
-                    <div class="yoy-bar bg-red-500" style="height:58%" title="Dec '25: $156K"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-
-                <!-- Monthly Cars Washed Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">Cars Washed (Monthly)</span>
-                    <span class="text-xs text-red-500 font-medium">8,420 current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:80px;">
-                    <div class="yoy-bar bg-drb-navy" style="height:100%" title="Jan '24: 10,800"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:97%" title="Feb '24: 10,500"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:94%" title="Mar '24: 10,200"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:91%" title="Apr '24: 9,900"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:88%" title="May '24: 9,600"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:86%" title="Jun '24: 9,400"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:84%" title="Jul '24: 9,200"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:82%" title="Aug '24: 9,000"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:80%" title="Sep '24: 8,800"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:78%" title="Oct '24: 8,600"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:76%" title="Nov '24: 8,500"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:75%" title="Dec '24: 8,400"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:74%" title="Jan '25: 8,350"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:73%" title="Feb '25: 8,320"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:72%" title="Mar '25: 8,300"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:71%" title="Apr '25: 8,280"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:70%" title="May '25: 8,260"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:69%" title="Jun '25: 8,250"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:68%" title="Jul '25: 8,240"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:67%" title="Aug '25: 8,230"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:66%" title="Sep '25: 8,225"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:65%" title="Oct '25: 8,220"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:64%" title="Nov '25: 8,420"></div>
-                    <div class="yoy-bar bg-red-500" style="height:63%" title="Dec '25: 8,420"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-3">Traffic Patterns</h3>
-              <div class="grid grid-cols-7 gap-1 md:gap-2">
-                <div class="text-center"><div class="text-drb-gray text-xs mb-1">M</div><div class="h-16 md:h-20 bg-gray-100 rounded relative"><div class="absolute bottom-0 left-0 right-0 bg-drb-navy rounded-b" style="height:45%"></div></div></div>
-                <div class="text-center"><div class="text-drb-gray text-xs mb-1">T</div><div class="h-16 md:h-20 bg-gray-100 rounded relative"><div class="absolute bottom-0 left-0 right-0 bg-drb-navy rounded-b" style="height:40%"></div></div></div>
-                <div class="text-center"><div class="text-drb-gray text-xs mb-1">W</div><div class="h-16 md:h-20 bg-gray-100 rounded relative"><div class="absolute bottom-0 left-0 right-0 bg-drb-navy rounded-b" style="height:50%"></div></div></div>
-                <div class="text-center"><div class="text-drb-gray text-xs mb-1">T</div><div class="h-16 md:h-20 bg-gray-100 rounded relative"><div class="absolute bottom-0 left-0 right-0 bg-drb-navy rounded-b" style="height:55%"></div></div></div>
-                <div class="text-center"><div class="text-drb-gray text-xs mb-1">F</div><div class="h-16 md:h-20 bg-gray-100 rounded relative"><div class="absolute bottom-0 left-0 right-0 bg-drb-orange rounded-b" style="height:85%"></div></div></div>
-                <div class="text-center"><div class="text-drb-gray text-xs mb-1">S</div><div class="h-16 md:h-20 bg-gray-100 rounded relative"><div class="absolute bottom-0 left-0 right-0 bg-drb-orange rounded-b" style="height:100%"></div></div></div>
-                <div class="text-center"><div class="text-drb-gray text-xs mb-1">S</div><div class="h-16 md:h-20 bg-gray-100 rounded relative"><div class="absolute bottom-0 left-0 right-0 bg-drb-orange rounded-b" style="height:75%"></div></div></div>
-              </div>
-              <p class="text-drb-gray text-xs mt-3">Peak traffic Friday-Sunday</p>
-            </div>
-          </div>
-
-          <!-- Membership -->
-          <div id="dd-membership" class="deep-dive-section space-y-4">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-3">Membership Overview</h3>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">2,140</div>
-                  <div class="text-drb-gray text-xs">Active Members</div>
-                  <div class="text-red-500 text-xs mt-1">↓12% YoY</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">$28.50</div>
-                  <div class="text-drb-gray text-xs">Avg Price</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">$61K</div>
-                  <div class="text-drb-gray text-xs">Monthly MRR</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3 text-center">
-                  <div class="text-xl md:text-2xl font-bold text-drb-charcoal">63</div>
-                  <div class="text-drb-gray text-xs">Family Plans</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 24-Month Membership Charts -->
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-4">24-Month Membership Trends</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Active Members Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">Active Members</span>
-                    <span class="text-xs text-red-500 font-medium">2,140 current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:70px;">
-                    <div class="yoy-bar bg-drb-navy" style="height:100%" title="Jan '24: 2,430"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:97%" title="Feb '24: 2,410"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:94%" title="Mar '24: 2,385"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:91%" title="Apr '24: 2,360"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:88%" title="May '24: 2,335"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:86%" title="Jun '24: 2,310"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:84%" title="Jul '24: 2,290"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:82%" title="Aug '24: 2,270"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:80%" title="Sep '24: 2,250"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:78%" title="Oct '24: 2,230"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:76%" title="Nov '24: 2,210"></div>
-                    <div class="yoy-bar bg-drb-navy" style="height:74%" title="Dec '24: 2,195"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:72%" title="Jan '25: 2,180"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:71%" title="Feb '25: 2,175"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:70%" title="Mar '25: 2,170"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:69%" title="Apr '25: 2,165"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:68%" title="May '25: 2,160"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:67%" title="Jun '25: 2,155"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:66%" title="Jul '25: 2,152"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:65%" title="Aug '25: 2,148"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:64%" title="Sep '25: 2,145"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:63%" title="Oct '25: 2,143"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:62%" title="Nov '25: 2,141"></div>
-                    <div class="yoy-bar bg-red-500" style="height:61%" title="Dec '25: 2,140"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-
-                <!-- MRR Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">Monthly MRR ($K)</span>
-                    <span class="text-xs text-red-500 font-medium">$61K current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:70px;">
-                    <div class="yoy-bar bg-emerald-500" style="height:100%" title="Jan '24: $72K"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:97%" title="Feb '24: $71K"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:94%" title="Mar '24: $70K"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:91%" title="Apr '24: $69K"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:89%" title="May '24: $68K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:87%" title="Jun '24: $67K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:85%" title="Jul '24: $66K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:83%" title="Aug '24: $65K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:81%" title="Sep '24: $64K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:79%" title="Oct '24: $64K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:77%" title="Nov '24: $63K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:75%" title="Dec '24: $63K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:73%" title="Jan '25: $62K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:72%" title="Feb '25: $62K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:71%" title="Mar '25: $62K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:70%" title="Apr '25: $62K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:69%" title="May '25: $61K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:68%" title="Jun '25: $61K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:67%" title="Jul '25: $61K"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:66%" title="Aug '25: $61K"></div>
-                    <div class="yoy-bar bg-red-500" style="height:65%" title="Sep '25: $61K"></div>
-                    <div class="yoy-bar bg-red-500" style="height:64%" title="Oct '25: $61K"></div>
-                    <div class="yoy-bar bg-red-500" style="height:63%" title="Nov '25: $61K"></div>
-                    <div class="yoy-bar bg-red-500" style="height:62%" title="Dec '25: $61K"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-
-                <!-- New Signups Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">New Signups</span>
-                    <span class="text-xs text-red-500 font-medium">142 current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:70px;">
-                    <div class="yoy-bar bg-emerald-500" style="height:100%" title="Jan '24: 285"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:95%" title="Feb '24: 272"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:90%" title="Mar '24: 258"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:85%" title="Apr '24: 245"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:80%" title="May '24: 232"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:75%" title="Jun '24: 218"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:70%" title="Jul '24: 205"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:66%" title="Aug '24: 195"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:62%" title="Sep '24: 185"></div>
-                    <div class="yoy-bar bg-red-400" style="height:58%" title="Oct '24: 175"></div>
-                    <div class="yoy-bar bg-red-400" style="height:55%" title="Nov '24: 168"></div>
-                    <div class="yoy-bar bg-red-500" style="height:52%" title="Dec '24: 162"></div>
-                    <div class="yoy-bar bg-red-500" style="height:50%" title="Jan '25: 158"></div>
-                    <div class="yoy-bar bg-red-500" style="height:48%" title="Feb '25: 155"></div>
-                    <div class="yoy-bar bg-red-500" style="height:47%" title="Mar '25: 152"></div>
-                    <div class="yoy-bar bg-red-500" style="height:46%" title="Apr '25: 150"></div>
-                    <div class="yoy-bar bg-red-500" style="height:45%" title="May '25: 148"></div>
-                    <div class="yoy-bar bg-red-500" style="height:44%" title="Jun '25: 146"></div>
-                    <div class="yoy-bar bg-red-500" style="height:43%" title="Jul '25: 145"></div>
-                    <div class="yoy-bar bg-red-500" style="height:42%" title="Aug '25: 144"></div>
-                    <div class="yoy-bar bg-red-500" style="height:41%" title="Sep '25: 143"></div>
-                    <div class="yoy-bar bg-red-500" style="height:40%" title="Oct '25: 143"></div>
-                    <div class="yoy-bar bg-red-500" style="height:39%" title="Nov '25: 142"></div>
-                    <div class="yoy-bar bg-red-600" style="height:38%" title="Dec '25: 142"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-
-                <!-- Cancellations Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">Cancellations</span>
-                    <span class="text-xs text-red-500 font-medium">176 current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:70px;">
-                    <div class="yoy-bar bg-emerald-500" style="height:35%" title="Jan '24: 98"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:38%" title="Feb '24: 105"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:42%" title="Mar '24: 112"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:45%" title="Apr '24: 118"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:50%" title="May '24: 125"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:55%" title="Jun '24: 132"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:60%" title="Jul '24: 140"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:65%" title="Aug '24: 148"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:70%" title="Sep '24: 155"></div>
-                    <div class="yoy-bar bg-red-400" style="height:75%" title="Oct '24: 160"></div>
-                    <div class="yoy-bar bg-red-400" style="height:78%" title="Nov '24: 165"></div>
-                    <div class="yoy-bar bg-red-500" style="height:82%" title="Dec '24: 168"></div>
-                    <div class="yoy-bar bg-red-500" style="height:85%" title="Jan '25: 170"></div>
-                    <div class="yoy-bar bg-red-500" style="height:87%" title="Feb '25: 171"></div>
-                    <div class="yoy-bar bg-red-500" style="height:88%" title="Mar '25: 172"></div>
-                    <div class="yoy-bar bg-red-500" style="height:89%" title="Apr '25: 173"></div>
-                    <div class="yoy-bar bg-red-500" style="height:90%" title="May '25: 173"></div>
-                    <div class="yoy-bar bg-red-500" style="height:92%" title="Jun '25: 174"></div>
-                    <div class="yoy-bar bg-red-500" style="height:94%" title="Jul '25: 174"></div>
-                    <div class="yoy-bar bg-red-500" style="height:96%" title="Aug '25: 175"></div>
-                    <div class="yoy-bar bg-red-600" style="height:97%" title="Sep '25: 175"></div>
-                    <div class="yoy-bar bg-red-600" style="height:98%" title="Oct '25: 176"></div>
-                    <div class="yoy-bar bg-red-600" style="height:99%" title="Nov '25: 176"></div>
-                    <div class="yoy-bar bg-red-600" style="height:100%" title="Dec '25: 176"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-
-                <!-- Net Change Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">Net Member Change</span>
-                    <span class="text-xs text-red-500 font-medium">-34 current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:70px;">
-                    <div class="yoy-bar bg-emerald-500" style="height:95%" title="Jan '24: +187"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:88%" title="Feb '24: +167"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:80%" title="Mar '24: +146"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:72%" title="Apr '24: +127"></div>
-                    <div class="yoy-bar bg-emerald-400" style="height:63%" title="May '24: +107"></div>
-                    <div class="yoy-bar bg-emerald-400" style="height:55%" title="Jun '24: +86"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:48%" title="Jul '24: +65"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:42%" title="Aug '24: +47"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:38%" title="Sep '24: +30"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:35%" title="Oct '24: +15"></div>
-                    <div class="yoy-bar bg-gray-300" style="height:32%" title="Nov '24: +3"></div>
-                    <div class="yoy-bar bg-red-400" style="height:28%" title="Dec '24: -6"></div>
-                    <div class="yoy-bar bg-red-400" style="height:25%" title="Jan '25: -12"></div>
-                    <div class="yoy-bar bg-red-400" style="height:22%" title="Feb '25: -16"></div>
-                    <div class="yoy-bar bg-red-500" style="height:20%" title="Mar '25: -20"></div>
-                    <div class="yoy-bar bg-red-500" style="height:18%" title="Apr '25: -23"></div>
-                    <div class="yoy-bar bg-red-500" style="height:16%" title="May '25: -25"></div>
-                    <div class="yoy-bar bg-red-500" style="height:14%" title="Jun '25: -28"></div>
-                    <div class="yoy-bar bg-red-500" style="height:12%" title="Jul '25: -29"></div>
-                    <div class="yoy-bar bg-red-500" style="height:11%" title="Aug '25: -31"></div>
-                    <div class="yoy-bar bg-red-500" style="height:10%" title="Sep '25: -32"></div>
-                    <div class="yoy-bar bg-red-600" style="height:9%" title="Oct '25: -33"></div>
-                    <div class="yoy-bar bg-red-600" style="height:8%" title="Nov '25: -34"></div>
-                    <div class="yoy-bar bg-red-600" style="height:7%" title="Dec '25: -34"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-
-                <!-- Avg Member Tenure Chart -->
-                <div class="space-y-2">
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-drb-charcoal">Avg Tenure (months)</span>
-                    <span class="text-xs text-drb-orange font-medium">8.2 current</span>
-                  </div>
-                  <div class="yoy-chart" style="height:70px;">
-                    <div class="yoy-bar bg-emerald-500" style="height:100%" title="Jan '24: 11.2"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:97%" title="Feb '24: 11.0"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:94%" title="Mar '24: 10.8"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:91%" title="Apr '24: 10.6"></div>
-                    <div class="yoy-bar bg-emerald-500" style="height:88%" title="May '24: 10.4"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:85%" title="Jun '24: 10.2"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:82%" title="Jul '24: 9.9"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:79%" title="Aug '24: 9.6"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:76%" title="Sep '24: 9.4"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:74%" title="Oct '24: 9.2"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:72%" title="Nov '24: 9.0"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:70%" title="Dec '24: 8.8"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:68%" title="Jan '25: 8.7"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:67%" title="Feb '25: 8.6"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:66%" title="Mar '25: 8.5"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:65%" title="Apr '25: 8.4"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:64%" title="May '25: 8.4"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:63%" title="Jun '25: 8.3"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:62%" title="Jul '25: 8.3"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:61%" title="Aug '25: 8.2"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:60%" title="Sep '25: 8.2"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:59%" title="Oct '25: 8.2"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:58%" title="Nov '25: 8.2"></div>
-                    <div class="yoy-bar bg-drb-orange" style="height:57%" title="Dec '25: 8.2"></div>
-                  </div>
-                  <div class="flex justify-between text-xs text-drb-gray">
-                    <span>Jan '24</span>
-                    <span>Dec '25</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-3">Capture vs Churn</h3>
-              <div class="space-y-4 md:grid md:grid-cols-3 md:gap-4 md:space-y-0">
-                <div class="bg-gray-50 rounded-lg p-3">
-                  <div class="text-drb-gray text-xs">Capture Rate</div>
-                  <div class="text-2xl font-bold text-red-500 my-1">31%</div>
-                  <div class="h-2 bg-gray-200 rounded-full"><div class="h-full bg-red-500 rounded-full" style="width:31%"></div></div>
-                  <div class="text-drb-gray text-xs mt-1">Benchmark: 39%</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3">
-                  <div class="text-drb-gray text-xs">Voluntary Churn</div>
-                  <div class="text-2xl font-bold text-red-500 my-1">8.2%</div>
-                  <div class="h-2 bg-gray-200 rounded-full"><div class="h-full bg-red-500 rounded-full" style="width:82%"></div></div>
-                  <div class="text-drb-gray text-xs mt-1">Benchmark: 5.5%</div>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-3">
-                  <div class="text-drb-gray text-xs">Involuntary Churn</div>
-                  <div class="text-2xl font-bold text-red-500 my-1">4.1%</div>
-                  <div class="h-2 bg-gray-200 rounded-full"><div class="h-full bg-red-500 rounded-full" style="width:68%"></div></div>
-                  <div class="text-drb-gray text-xs mt-1">Benchmark: 2.5%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Site by Site -->
-          <div id="dd-sites" class="deep-dive-section space-y-4">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-3">Site Performance</h3>
-              <div class="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-                <table class="w-full min-w-[500px] text-sm">
-                  <thead><tr class="text-left text-drb-gray border-b border-gray-200"><th class="px-2 py-2 font-medium">Site</th><th class="px-2 py-2 font-medium">Cars</th><th class="px-2 py-2 font-medium">Rev</th><th class="px-2 py-2 font-medium">Capture</th><th class="px-2 py-2 font-medium">Status</th></tr></thead>
-                  <tbody>
-                    <tr class="border-b border-gray-100 bg-emerald-50/50"><td class="px-2 py-2.5 text-drb-charcoal font-medium">Harbison Blvd</td><td class="px-2 py-2.5 text-drb-charcoal">1,420</td><td class="px-2 py-2.5 text-drb-charcoal">$42.8K</td><td class="px-2 py-2.5 text-emerald-600 font-medium">44%</td><td class="px-2 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 font-medium">Top</span></td></tr>
-                    <tr class="border-b border-gray-100 bg-emerald-50/50"><td class="px-2 py-2.5 text-drb-charcoal font-medium">Cane Bay</td><td class="px-2 py-2.5 text-drb-charcoal">1,280</td><td class="px-2 py-2.5 text-drb-charcoal">$38.4K</td><td class="px-2 py-2.5 text-emerald-600 font-medium">42%</td><td class="px-2 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 font-medium">Top</span></td></tr>
-                    <tr class="border-b border-gray-100"><td class="px-2 py-2.5 text-drb-charcoal font-medium">Forest Dr</td><td class="px-2 py-2.5 text-drb-charcoal">980</td><td class="px-2 py-2.5 text-drb-charcoal">$29.4K</td><td class="px-2 py-2.5 text-drb-charcoal">35%</td><td class="px-2 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-drb-gray font-medium">Avg</span></td></tr>
-                    <tr class="border-b border-gray-100 bg-red-50/50"><td class="px-2 py-2.5 text-drb-charcoal font-medium">Two Notch</td><td class="px-2 py-2.5 text-drb-charcoal">620</td><td class="px-2 py-2.5 text-drb-charcoal">$18.6K</td><td class="px-2 py-2.5 text-red-500 font-medium">24%</td><td class="px-2 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-medium">Low</span></td></tr>
-                    <tr class="border-b border-gray-100 bg-red-50/50"><td class="px-2 py-2.5 text-drb-charcoal font-medium">Sam Rittenberg</td><td class="px-2 py-2.5 text-drb-charcoal">540</td><td class="px-2 py-2.5 text-drb-charcoal">$16.2K</td><td class="px-2 py-2.5 text-red-500 font-medium">22%</td><td class="px-2 py-2.5"><span class="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-medium">Low</span></td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pricing -->
-          <div id="dd-pricing" class="deep-dive-section space-y-4">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-1">Pricing Health Check</h3>
-              <p class="text-drb-gray text-sm mb-4">Price optimization opportunities</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <div class="text-drb-charcoal text-sm font-medium mb-3">Retail Pricing</div>
-                  <div class="space-y-2">
-                    <div class="flex justify-between p-2.5 bg-gray-50 rounded-lg text-sm"><span class="text-drb-charcoal">Basic</span><span class="text-drb-charcoal font-bold">$12</span></div>
-                    <div class="text-center text-red-500 text-xs font-medium">⚠️ $6 gap too large</div>
-                    <div class="flex justify-between p-2.5 bg-gray-50 rounded-lg text-sm"><span class="text-drb-charcoal">Lava</span><span class="text-drb-charcoal font-bold">$18</span></div>
-                    <div class="flex justify-between p-2.5 bg-gray-50 rounded-lg text-sm"><span class="text-drb-charcoal">Ceramic</span><span class="text-drb-charcoal font-bold">$22</span></div>
-                    <div class="flex justify-between p-2.5 bg-drb-orange/10 rounded-lg text-sm border border-drb-orange/30"><span class="text-drb-charcoal">Graphene</span><span class="text-drb-charcoal font-bold">$26</span></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="text-drb-charcoal text-sm font-medium mb-3">Membership Pricing</div>
-                  <div class="space-y-2">
-                    <div class="flex justify-between p-2.5 bg-gray-50 rounded-lg text-sm"><span class="text-drb-charcoal">Basic</span><span class="text-drb-charcoal font-bold">$19.99</span></div>
-                    <div class="flex justify-between p-2.5 bg-gray-50 rounded-lg text-sm"><span class="text-drb-charcoal">Premium</span><span class="text-drb-charcoal font-bold">$29.99</span></div>
-                    <div class="flex justify-between p-2.5 bg-orange-50 rounded-lg text-sm border border-drb-orange/30"><span class="text-drb-charcoal">Ultimate</span><span class="text-drb-charcoal font-bold">$39.99</span></div>
-                    <div class="flex justify-between p-2.5 bg-orange-50 rounded-lg text-sm border border-drb-orange/30"><span class="text-drb-charcoal">Unlimited+</span><span class="text-drb-charcoal font-bold">$39.99</span></div>
-                  </div>
-                  <div class="text-drb-orange text-xs mt-2 font-medium">⚠️ Top 2 same price — lost revenue</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div id="dd-actions" class="deep-dive-section space-y-4">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-lg font-bold text-drb-charcoal mb-3">Strategic Recommendations</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 class="text-drb-charcoal font-medium text-sm mb-2">Seasonal & Campaigns</h4>
-                  <ul class="space-y-1.5 text-sm text-drb-gray">
-                    <li class="flex gap-2"><span class="text-drb-orange">•</span>Launch retail-targeted campaign</li>
-                    <li class="flex gap-2"><span class="text-drb-orange">•</span>Major pushes in April & October</li>
-                    <li class="flex gap-2"><span class="text-drb-orange">•</span>Nov/Dec gift cards & bundles</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="text-drb-charcoal font-medium text-sm mb-2">Pricing & Membership</h4>
-                  <ul class="space-y-1.5 text-sm text-drb-gray">
-                    <li class="flex gap-2"><span class="text-drb-orange">•</span>Close Basic/Lava retail gap</li>
-                    <li class="flex gap-2"><span class="text-drb-orange">•</span>Differentiate top membership tiers</li>
-                    <li class="flex gap-2"><span class="text-drb-orange">•</span>Consolidate membership plans</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="bg-drb-navy rounded-xl p-4">
-              <h3 class="text-lg font-bold text-white mb-3">Next Steps</h3>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div class="p-3 bg-white/10 rounded-lg"><div class="text-drb-orange font-medium text-sm mb-1">1. Onsite Visit</div><p class="text-white/70 text-xs">Review local performance</p></div>
-                <div class="p-3 bg-white/10 rounded-lg"><div class="text-drb-orange font-medium text-sm mb-1">2. Catalyst Demo</div><p class="text-white/70 text-xs">Showcase marketing tools</p></div>
-                <div class="p-3 bg-white/10 rounded-lg"><div class="text-drb-orange font-medium text-sm mb-1">3. Patheon Review</div><p class="text-white/70 text-xs">Discuss tablet integration</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- BENCHMARKS TAB -->
-        <div id="tab-benchmarks" class="tab-content space-y-5">
-          <div>
-            <h2 class="text-xl md:text-2xl font-bold text-drb-charcoal">Industry Benchmarks</h2>
-            <p class="text-drb-gray text-sm mt-1">Based on 2,400+ car wash locations</p>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-drb-charcoal font-semibold mb-3">Membership</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Capture Rate</span><span class="text-drb-charcoal font-bold">39%</span></div>
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Top Quartile</span><span class="text-emerald-600 font-medium">48%+</span></div>
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Bottom Quartile</span><span class="text-red-500 font-medium">&lt;28%</span></div>
-                <div class="flex justify-between py-2"><span class="text-drb-gray">Avg Ticket</span><span class="text-drb-charcoal font-medium">$32.00</span></div>
-              </div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-drb-charcoal font-semibold mb-3">Churn</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Voluntary</span><span class="text-drb-charcoal font-bold">5.5%</span></div>
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Top Quartile</span><span class="text-emerald-600 font-medium">&lt;4.0%</span></div>
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Bottom Quartile</span><span class="text-red-500 font-medium">7.5%+</span></div>
-                <div class="flex justify-between py-2"><span class="text-drb-gray">Involuntary</span><span class="text-drb-charcoal font-medium">2.5%</span></div>
-              </div>
-            </div>
-            <div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-              <h3 class="text-drb-charcoal font-semibold mb-3">Traffic</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Growth YoY</span><span class="text-drb-charcoal font-bold">+5%</span></div>
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Top Quartile</span><span class="text-emerald-600 font-medium">+12%+</span></div>
-                <div class="flex justify-between py-2 border-b border-gray-100"><span class="text-drb-gray">Bottom Quartile</span><span class="text-red-500 font-medium">&lt;-2%</span></div>
-                <div class="flex justify-between py-2"><span class="text-drb-gray">Member %</span><span class="text-drb-charcoal font-medium">62%</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ALERT CONFIGURATION TAB -->
-        <div id="tab-alertconfig" class="tab-content space-y-5">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div>
-              <h2 class="text-xl md:text-2xl font-bold text-drb-charcoal">Alert Configuration</h2>
-              <p class="text-drb-gray text-sm mt-1">Set custom thresholds to trigger alerts on the Risk Alerts page</p>
-            </div>
-            <div class="flex gap-2">
-              <button onclick="resetToDefaults()" class="px-4 py-2 bg-gray-100 text-drb-charcoal rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors shadow-sm">
-                Reset to Defaults
-              </button>
-              <button onclick="saveThresholds()" class="px-4 py-2 bg-drb-orange text-white rounded-lg text-sm font-medium hover:bg-drb-orange-dark transition-colors shadow-sm">
-                Save Changes
-              </button>
-            </div>
-          </div>
-
-          <!-- Alert Categories -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        // Generate sites data
+        function generateSitesData(numSites) {
+            const cities = ['Detroit', 'Chicago', 'Milwaukee', 'Cleveland', 'Indianapolis'];
+            const platforms = ['SW & PATH', 'SW Only', 'PATH Only', 'XPT & SW'];
+            const sites = [];
             
-            <!-- Capture Rate Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Capture Rate</h3>
-                    <p class="text-drb-gray text-xs">% of retail customers converting to members</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="capture-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="35" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="capture-warning">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="28" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="capture-critical">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Voluntary Churn Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Voluntary Churn</h3>
-                    <p class="text-drb-gray text-xs">% of members who cancel by choice</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="volchurn-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Above</span>
-                      <input type="number" value="6.0" step="0.1" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="volchurn-warning">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Above</span>
-                      <input type="number" value="7.5" step="0.1" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="volchurn-critical">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Involuntary Churn Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Involuntary Churn</h3>
-                    <p class="text-drb-gray text-xs">% of members lost due to payment failures</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="involchurn-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Above</span>
-                      <input type="number" value="3.0" step="0.1" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="involchurn-warning">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Above</span>
-                      <input type="number" value="4.5" step="0.1" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="involchurn-critical">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Traffic YoY Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Traffic YoY Change</h3>
-                    <p class="text-drb-gray text-xs">Year-over-year change in total cars washed</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="traffic-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="-5" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="traffic-warning">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="-15" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="traffic-critical">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Member Count YoY Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Member Count YoY</h3>
-                    <p class="text-drb-gray text-xs">Year-over-year change in active members</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="members-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="-3" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="members-warning">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="-10" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="members-critical">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Revenue YoY Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Revenue YoY Change</h3>
-                    <p class="text-drb-gray text-xs">Year-over-year change in total revenue</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="revenue-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="-5" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="revenue-warning">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="-12" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="revenue-critical">
-                      <span class="text-drb-gray text-sm">%</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Average Ticket Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-cyan-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Average Ticket</h3>
-                    <p class="text-drb-gray text-xs">Average revenue per transaction</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="ticket-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <span class="text-drb-gray text-sm">$</span>
-                      <input type="number" value="28" step="0.50" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="ticket-warning">
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <span class="text-drb-gray text-sm">$</span>
-                      <input type="number" value="24" step="0.50" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="ticket-critical">
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Health Score Thresholds -->
-            <div class="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-rose-50 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-drb-charcoal font-semibold">Health Score</h3>
-                    <p class="text-drb-gray text-xs">Composite score (0-100) across all metrics</p>
-                  </div>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked id="health-enabled">
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-drb-orange"></div>
-                </label>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Warning Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="50" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="health-warning">
-                      <span class="text-drb-gray text-sm">pts</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-drb-orange"></div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1">
-                    <label class="text-xs text-drb-gray font-medium block mb-1">Critical Threshold</label>
-                    <div class="flex items-center gap-2">
-                      <span class="text-drb-gray text-sm">Below</span>
-                      <input type="number" value="35" class="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm text-drb-charcoal focus:ring-2 focus:ring-drb-orange focus:border-drb-orange" id="health-critical">
-                      <span class="text-drb-gray text-sm">pts</span>
-                    </div>
-                  </div>
-                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Alert Preview -->
-          <div class="bg-drb-navy rounded-xl p-5 shadow-sm">
-            <h3 class="text-white font-semibold mb-3">Current Threshold Summary</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-              <div class="bg-white/10 rounded-lg p-3">
-                <div class="text-white/60 text-xs mb-1">Capture Rate</div>
-                <div class="text-white">Warning: &lt;35% | Critical: &lt;28%</div>
-              </div>
-              <div class="bg-white/10 rounded-lg p-3">
-                <div class="text-white/60 text-xs mb-1">Vol. Churn</div>
-                <div class="text-white">Warning: &gt;6.0% | Critical: &gt;7.5%</div>
-              </div>
-              <div class="bg-white/10 rounded-lg p-3">
-                <div class="text-white/60 text-xs mb-1">Traffic YoY</div>
-                <div class="text-white">Warning: &lt;-5% | Critical: &lt;-15%</div>
-              </div>
-              <div class="bg-white/10 rounded-lg p-3">
-                <div class="text-white/60 text-xs mb-1">Health Score</div>
-                <div class="text-white">Warning: &lt;50 | Critical: &lt;35</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </main>
-    </div>
-  </div>
-
-  <script>
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-    function showTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + tabId).classList.add('active');
-      document.getElementById('nav-' + tabId).classList.add('active');
-      const titles = {'portfolio':'Portfolio Overview','alerts':'Risk Alerts','boap':'Business on a Page','deepdive':'Advisory Deep Dive','benchmarks':'Industry Benchmarks','alertconfig':'Alert Configuration'};
-      document.getElementById('page-title').textContent = titles[tabId];
-      document.getElementById('mobile-title').textContent = titles[tabId];
-      document.getElementById('sidebar').classList.remove('open');
-    }
-    function showDeepDiveSection(sectionId) {
-      document.querySelectorAll('.deep-dive-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('dd-' + sectionId).classList.add('active');
-      document.getElementById('dd-nav-' + sectionId).classList.add('active');
-    }
-    
-    // Alert Configuration Functions
-    const defaultThresholds = {
-      capture: { warning: 35, critical: 28 },
-      volchurn: { warning: 6.0, critical: 7.5 },
-      involchurn: { warning: 3.0, critical: 4.5 },
-      traffic: { warning: -5, critical: -15 },
-      members: { warning: -3, critical: -10 },
-      revenue: { warning: -5, critical: -12 },
-      ticket: { warning: 28, critical: 24 },
-      health: { warning: 50, critical: 35 }
-    };
-    
-    function saveThresholds() {
-      const thresholds = {
-        capture: { 
-          enabled: document.getElementById('capture-enabled').checked,
-          warning: parseFloat(document.getElementById('capture-warning').value),
-          critical: parseFloat(document.getElementById('capture-critical').value)
-        },
-        volchurn: { 
-          enabled: document.getElementById('volchurn-enabled').checked,
-          warning: parseFloat(document.getElementById('volchurn-warning').value),
-          critical: parseFloat(document.getElementById('volchurn-critical').value)
-        },
-        involchurn: { 
-          enabled: document.getElementById('involchurn-enabled').checked,
-          warning: parseFloat(document.getElementById('involchurn-warning').value),
-          critical: parseFloat(document.getElementById('involchurn-critical').value)
-        },
-        traffic: { 
-          enabled: document.getElementById('traffic-enabled').checked,
-          warning: parseFloat(document.getElementById('traffic-warning').value),
-          critical: parseFloat(document.getElementById('traffic-critical').value)
-        },
-        members: { 
-          enabled: document.getElementById('members-enabled').checked,
-          warning: parseFloat(document.getElementById('members-warning').value),
-          critical: parseFloat(document.getElementById('members-critical').value)
-        },
-        revenue: { 
-          enabled: document.getElementById('revenue-enabled').checked,
-          warning: parseFloat(document.getElementById('revenue-warning').value),
-          critical: parseFloat(document.getElementById('revenue-critical').value)
-        },
-        ticket: { 
-          enabled: document.getElementById('ticket-enabled').checked,
-          warning: parseFloat(document.getElementById('ticket-warning').value),
-          critical: parseFloat(document.getElementById('ticket-critical').value)
-        },
-        health: { 
-          enabled: document.getElementById('health-enabled').checked,
-          warning: parseFloat(document.getElementById('health-warning').value),
-          critical: parseFloat(document.getElementById('health-critical').value)
+            for (let i = 1; i <= Math.min(numSites, 20); i++) {
+                const health = Math.random() > 0.8 ? 'warning' : Math.random() > 0.95 ? 'critical' : 'healthy';
+                sites.push({
+                    name: `Location ${i}`,
+                    city: cities[Math.floor(Math.random() * cities.length)],
+                    health: health,
+                    uptime: (95 + Math.random() * 5).toFixed(2),
+                    cases: Math.floor(Math.random() * 25),
+                    open: Math.floor(Math.random() * 5),
+                    swaps: Math.floor(Math.random() * 3),
+                    escalations: Math.floor(Math.random() * 2),
+                    csat: (85 + Math.random() * 15).toFixed(1),
+                    platform: platforms[Math.floor(Math.random() * platforms.length)]
+                });
+            }
+            return sites;
         }
-      };
-      
-      // In production, this would save to backend/Snowflake
-      localStorage.setItem('alertThresholds', JSON.stringify(thresholds));
-      
-      // Show success message
-      showNotification('Thresholds saved successfully!', 'success');
-    }
-    
-    function resetToDefaults() {
-      if (confirm('Reset all thresholds to default values?')) {
-        document.getElementById('capture-warning').value = defaultThresholds.capture.warning;
-        document.getElementById('capture-critical').value = defaultThresholds.capture.critical;
-        document.getElementById('volchurn-warning').value = defaultThresholds.volchurn.warning;
-        document.getElementById('volchurn-critical').value = defaultThresholds.volchurn.critical;
-        document.getElementById('involchurn-warning').value = defaultThresholds.involchurn.warning;
-        document.getElementById('involchurn-critical').value = defaultThresholds.involchurn.critical;
-        document.getElementById('traffic-warning').value = defaultThresholds.traffic.warning;
-        document.getElementById('traffic-critical').value = defaultThresholds.traffic.critical;
-        document.getElementById('members-warning').value = defaultThresholds.members.warning;
-        document.getElementById('members-critical').value = defaultThresholds.members.critical;
-        document.getElementById('revenue-warning').value = defaultThresholds.revenue.warning;
-        document.getElementById('revenue-critical').value = defaultThresholds.revenue.critical;
-        document.getElementById('ticket-warning').value = defaultThresholds.ticket.warning;
-        document.getElementById('ticket-critical').value = defaultThresholds.ticket.critical;
-        document.getElementById('health-warning').value = defaultThresholds.health.warning;
-        document.getElementById('health-critical').value = defaultThresholds.health.critical;
-        
-        // Enable all toggles
-        ['capture','volchurn','involchurn','traffic','members','revenue','ticket','health'].forEach(id => {
-          document.getElementById(id + '-enabled').checked = true;
+
+        function updateOperationalData() {
+            const select = document.getElementById('customer-select');
+            const data = customerData[select.value];
+            
+            document.getElementById('op-customer-name').textContent = data.name;
+            document.getElementById('op-customer-meta').textContent = `${data.sites} Sites · ${data.region} · CSM: ${data.csm}`;
+            document.getElementById('op-health-index').textContent = data.health;
+            document.getElementById('op-health-index').className = `customer-stat-value ${data.health.toLowerCase()}`;
+            document.getElementById('op-health-score').textContent = data.score.toFixed(2);
+            document.getElementById('op-uptime').textContent = data.uptime;
+            document.getElementById('op-total-cases').textContent = data.totalCases;
+            document.getElementById('op-open-cases').textContent = data.openCases;
+            document.getElementById('op-avg-ttr').textContent = data.avgTtr;
+            document.getElementById('op-hw-swaps').textContent = data.hwSwaps;
+            document.getElementById('op-escalations').textContent = data.escalations;
+            
+            // Update sites table
+            const sites = generateSitesData(data.sites);
+            const tbody = document.getElementById('sites-table-body');
+            tbody.innerHTML = sites.map(site => `
+                <tr>
+                    <td>${site.name}</td>
+                    <td>${site.city}</td>
+                    <td><span class="badge ${site.health}">${site.health}</span></td>
+                    <td>${site.uptime}%</td>
+                    <td>${site.cases}</td>
+                    <td>${site.open}</td>
+                    <td>${site.swaps}</td>
+                    <td>${site.escalations}</td>
+                    <td>${site.csat}%</td>
+                    <td>${site.platform}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Chart instances
+        let caseByProductChart, monthlyCaseChart, hardwareSwapsChart, escalationsChart;
+        let boapRevenueChart, boapMembersChart;
+        let ddRevenueChart, ddCarsChart;
+
+        // Generate months
+        function getMonthLabels(count) {
+            const months = [];
+            const now = new Date();
+            for (let i = count - 1; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                months.push(d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }));
+            }
+            return months;
+        }
+
+        // Chart options
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false }
+                },
+                y: {
+                    grid: { color: '#F1F5F9', drawBorder: false }
+                }
+            }
+        };
+
+        function initOperationalCharts() {
+            const months = getMonthLabels(12);
+            
+            // Case by Product Chart
+            if (caseByProductChart) caseByProductChart.destroy();
+            caseByProductChart = new Chart(document.getElementById('caseByProductChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['XPT/Kiosk', 'Cashier', 'Gate', 'TunnelWatch', 'Server', 'XCC', 'OTT', 'ARM'],
+                    datasets: [{
+                        data: [572, 157, 119, 111, 110, 57, 51, 44],
+                        backgroundColor: '#3B82F6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    indexAxis: 'y'
+                }
+            });
+
+            // Monthly Case Chart
+            if (monthlyCaseChart) monthlyCaseChart.destroy();
+            monthlyCaseChart = new Chart(document.getElementById('monthlyCaseChart'), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data: [85, 92, 78, 95, 110, 88, 76, 102, 98, 115, 89, 95],
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: chartOptions
+            });
+
+            // Hardware Swaps Chart
+            if (hardwareSwapsChart) hardwareSwapsChart.destroy();
+            hardwareSwapsChart = new Chart(document.getElementById('hardwareSwapsChart'), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data: [2, 1, 3, 2, 4, 1, 2, 3, 1, 2, 3, 2],
+                        borderColor: '#F26522',
+                        backgroundColor: 'rgba(242, 101, 34, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: chartOptions
+            });
+
+            // Escalations Chart
+            if (escalationsChart) escalationsChart.destroy();
+            escalationsChart = new Chart(document.getElementById('escalationsChart'), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data: [1, 0, 2, 1, 1, 2, 0, 1, 2, 1, 0, 1],
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: chartOptions
+            });
+
+            // Initialize sites table
+            updateOperationalData();
+        }
+
+        function initBoapCharts() {
+            const months = getMonthLabels(24);
+            
+            if (boapRevenueChart) boapRevenueChart.destroy();
+            boapRevenueChart = new Chart(document.getElementById('boapRevenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data: Array.from({length: 24}, (_, i) => 180 - i * 3 + Math.random() * 20),
+                        backgroundColor: '#F26522',
+                        borderRadius: 4
+                    }]
+                },
+                options: chartOptions
+            });
+
+            if (boapMembersChart) boapMembersChart.destroy();
+            boapMembersChart = new Chart(document.getElementById('boapMembersChart'), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data: Array.from({length: 24}, (_, i) => 2400 - i * 50 + Math.random() * 100),
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+
+        function initDeepDiveCharts() {
+            const months = getMonthLabels(24);
+            
+            if (ddRevenueChart) ddRevenueChart.destroy();
+            ddRevenueChart = new Chart(document.getElementById('ddRevenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data: Array.from({length: 24}, () => 150 + Math.random() * 50),
+                        backgroundColor: '#F26522',
+                        borderRadius: 4
+                    }]
+                },
+                options: chartOptions
+            });
+
+            if (ddCarsChart) ddCarsChart.destroy();
+            ddCarsChart = new Chart(document.getElementById('ddCarsChart'), {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        data: Array.from({length: 24}, () => 8000 + Math.random() * 4000),
+                        backgroundColor: '#3B82F6',
+                        borderRadius: 4
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Default page is portfolio, no charts needed
         });
-        
-        showNotification('Thresholds reset to defaults', 'info');
-      }
-    }
-    
-    function showNotification(message, type) {
-      const notification = document.createElement('div');
-      notification.className = `fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium z-50 ${type === 'success' ? 'bg-emerald-500' : 'bg-blue-500'}`;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-      setTimeout(() => notification.remove(), 3000);
-    }
-    
-    // Load saved thresholds on page load
-    function loadThresholds() {
-      const saved = localStorage.getItem('alertThresholds');
-      if (saved) {
-        const thresholds = JSON.parse(saved);
-        Object.keys(thresholds).forEach(key => {
-          const config = thresholds[key];
-          const enabledEl = document.getElementById(key + '-enabled');
-          const warningEl = document.getElementById(key + '-warning');
-          const criticalEl = document.getElementById(key + '-critical');
-          if (enabledEl) enabledEl.checked = config.enabled;
-          if (warningEl) warningEl.value = config.warning;
-          if (criticalEl) criticalEl.value = config.critical;
-        });
-      }
-    }
-    
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', loadThresholds);
-  </script>
+    </script>
 </body>
 </html>
