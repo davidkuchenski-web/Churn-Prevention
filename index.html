@@ -4,648 +4,145 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DRB Advisory Analytics</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --drb-orange: #F26522;
-            --drb-navy: #1E2A3A;
-            --drb-charcoal: #333333;
-            --drb-blue: #3B82F6;
-            --drb-green: #10B981;
-            --drb-red: #EF4444;
-            --drb-yellow: #F59E0B;
-            --gray-50: #F8FAFC;
-            --gray-100: #F1F5F9;
-            --gray-200: #E2E8F0;
-            --gray-400: #94A3B8;
-            --gray-500: #64748B;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1E293B;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-800);
-            line-height: 1.5;
-        }
-
-        /* Layout */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background-color: var(--drb-navy);
-            padding: 1.5rem 1rem;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--drb-orange);
-        }
-
-        .logo-subtitle {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.75rem;
-        }
-
-        .nav-section-title {
-            color: rgba(255,255,255,0.4);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
-        }
-
-        .nav-item {
-            display: block;
-            width: 100%;
-            padding: 0.65rem 0.75rem;
-            margin: 0.1rem 0;
-            border: none;
-            border-radius: 0.5rem;
-            background: transparent;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .nav-item:hover {
-            background: rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.95);
-        }
-
-        .nav-item.active {
-            background: rgba(242, 101, 34, 0.15);
-            color: var(--drb-orange);
-            border-left: 3px solid var(--drb-orange);
-        }
-
-        .sidebar-divider {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin: 1rem 0;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--drb-orange);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .user-name {
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .user-role {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.75rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 2rem;
-            min-height: 100vh;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* Typography */
-        h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--drb-navy);
-            margin-bottom: 0.25rem;
-        }
-
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-800);
-            margin-bottom: 1rem;
-        }
-
-        h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 0.75rem;
-        }
-
-        .page-subtitle {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-grid-4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .card-grid-6 {
-            grid-template-columns: repeat(6, 1fr);
-        }
-
-        /* Status Cards */
-        .status-card {
-            border-radius: 1rem;
-            padding: 1.25rem;
-            border-left: 4px solid;
-        }
-
-        .status-card.green {
-            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
-            border-left-color: var(--drb-green);
-        }
-
-        .status-card.blue {
-            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
-            border-left-color: var(--drb-blue);
-        }
-
-        .status-card.yellow {
-            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-            border-left-color: var(--drb-yellow);
-        }
-
-        .status-card.red {
-            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-            border-left-color: var(--drb-red);
-        }
-
-        .status-card-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            margin-bottom: 0.25rem;
-        }
-
-        .status-card.green .status-card-label { color: #059669; }
-        .status-card.blue .status-card-label { color: #2563EB; }
-        .status-card.yellow .status-card-label { color: #D97706; }
-        .status-card.red .status-card-label { color: #DC2626; }
-
-        .status-card-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1.1;
-        }
-
-        .status-card.green .status-card-value { color: #065F46; }
-        .status-card.blue .status-card-value { color: #1E40AF; }
-        .status-card.yellow .status-card-value { color: #92400E; }
-        .status-card.red .status-card-value { color: #991B1B; }
-
-        .status-card-footer {
-            font-size: 0.8rem;
-            margin-top: 0.25rem;
-        }
-
-        .status-card.green .status-card-footer { color: #047857; }
-        .status-card.blue .status-card-footer { color: #1D4ED8; }
-        .status-card.yellow .status-card-footer { color: #B45309; }
-        .status-card.red .status-card-footer { color: #B91C1C; }
-
-        /* KPI Cards */
-        .kpi-card {
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .kpi-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--gray-800);
-        }
-
-        .kpi-value.green { color: var(--drb-green); }
-        .kpi-value.red { color: var(--drb-red); }
-        .kpi-value.yellow { color: var(--drb-yellow); }
-
-        .kpi-label {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-            margin-top: 0.25rem;
-        }
-
-        /* Metric Cards (smaller) */
-        .metric-card {
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            border-left: 4px solid var(--gray-200);
-        }
-
-        .metric-card.critical { border-left-color: var(--drb-red); }
-        .metric-card.warning { border-left-color: var(--drb-orange); }
-        .metric-card.info { border-left-color: var(--drb-blue); }
-        .metric-card.success { border-left-color: var(--drb-green); }
-
-        .metric-label {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-
-        .metric-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-        }
-
-        .metric-card.critical .metric-value { color: #DC2626; }
-        .metric-card.warning .metric-value { color: #EA580C; }
-        .metric-card.info .metric-value { color: #2563EB; }
-        .metric-card.success .metric-value { color: #059669; }
-
-        /* Customer Header */
-        .customer-header {
-            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-            border: 1px solid var(--gray-200);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .customer-info h2 {
-            margin-bottom: 0.25rem;
-        }
-
-        .customer-meta {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-        }
-
-        .customer-stats {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .customer-stat {
-            text-align: center;
-        }
-
-        .customer-stat-label {
-            font-size: 0.7rem;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .customer-stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-        }
-
-        .customer-stat-value.green { color: var(--drb-green); }
-        .customer-stat-value.yellow { color: var(--drb-yellow); }
-        .customer-stat-value.red { color: var(--drb-red); }
-
-        /* Tables */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-        }
-
-        th {
-            background: var(--gray-50);
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--gray-600);
-            border-bottom: 2px solid var(--gray-200);
-        }
-
-        td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        tr:hover {
-            background: var(--gray-50);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .badge.critical {
-            background: #FEE2E2;
-            color: #DC2626;
-        }
-
-        .badge.warning {
-            background: #FFEDD5;
-            color: #EA580C;
-        }
-
-        .badge.healthy, .badge.success {
-            background: #D1FAE5;
-            color: #059669;
-        }
-
-        .badge.info {
-            background: #DBEAFE;
-            color: #2563EB;
-        }
-
-        /* Form Controls */
-        .form-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--gray-600);
-            margin-bottom: 0.25rem;
-        }
-
-        select, input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--gray-200);
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            background: white;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: var(--drb-orange);
-            box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.1);
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .btn-primary {
-            background: var(--drb-orange);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #E55A1B;
-        }
-
-        .btn-secondary {
-            background: var(--gray-100);
-            color: var(--gray-700);
-        }
-
-        .btn-secondary:hover {
-            background: var(--gray-200);
-        }
-
-        /* Charts */
-        .chart-container {
-            position: relative;
-            height: 280px;
-            margin-top: 1rem;
-        }
-
-        .chart-container.small {
-            height: 200px;
-        }
-
-        .charts-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .charts-row-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        /* Alert Cards */
-        .alert-card {
-            border-left: 4px solid;
-            padding: 1rem 1.25rem;
-            border-radius: 0.75rem;
-            margin-bottom: 0.75rem;
-            background: white;
-        }
-
-        .alert-card.critical {
-            border-left-color: var(--drb-red);
-            background: linear-gradient(135deg, #FEF2F2 0%, #FFFFFF 100%);
-        }
-
-        .alert-card.warning {
-            border-left-color: var(--drb-orange);
-            background: linear-gradient(135deg, #FFF7ED 0%, #FFFFFF 100%);
-        }
-
-        .alert-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .alert-title {
-            font-weight: 600;
-            color: var(--gray-800);
-        }
-
-        .alert-customer {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .alert-message {
-            color: var(--gray-500);
-            font-size: 0.85rem;
-        }
-
-        /* Benchmark Cards */
-        .benchmark-card {
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 1rem;
-            padding: 1.5rem;
-        }
-
-        .benchmark-card h3 {
-            margin-bottom: 1rem;
-        }
-
-        .benchmark-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        .benchmark-row:last-child {
-            border-bottom: none;
-        }
-
-        .benchmark-label {
-            color: var(--gray-500);
-        }
-
-        .benchmark-value {
-            font-weight: 600;
-            color: var(--gray-800);
-        }
-
-        .benchmark-value.green { color: var(--drb-green); }
-        .benchmark-value.red { color: var(--drb-red); }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 1.5rem;
-            border-top: 1px solid var(--gray-100);
-            color: var(--gray-400);
-            font-size: 0.8rem;
-            margin-top: 2rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .card-grid-6 {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .card-grid-4, .card-grid-6 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
-
-            .customer-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
+            --drb-orange: #F26522; --drb-navy: #1E2A3A; --drb-charcoal: #333333;
+            --drb-blue: #3B82F6; --drb-green: #10B981; --drb-red: #EF4444; --drb-yellow: #F59E0B;
+            --drb-purple: #8B5CF6; --drb-teal: #14B8A6;
+            --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0; --gray-400: #94A3B8;
+            --gray-500: #64748B; --gray-600: #475569; --gray-700: #334155; --gray-800: #1E293B;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: var(--gray-50); color: var(--gray-800); line-height: 1.5; }
+        .app-container { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background-color: var(--drb-navy); padding: 1.5rem 1rem; position: fixed; height: 100vh; overflow-y: auto; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; color: var(--drb-orange); }
+        .logo-subtitle { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
+        .nav-section-title { color: rgba(255,255,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+        .nav-item { display: block; width: 100%; padding: 0.65rem 0.75rem; margin: 0.1rem 0; border: none; border-radius: 0.5rem; background: transparent; color: rgba(255,255,255,0.7); font-size: 0.875rem; font-weight: 500; text-align: left; cursor: pointer; transition: all 0.15s ease; }
+        .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); }
+        .nav-item.active { background: rgba(242,101,34,0.15); color: var(--drb-orange); border-left: 3px solid var(--drb-orange); }
+        .sidebar-divider { border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0; }
+        .user-info { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
+        .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--drb-orange); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem; }
+        .user-name { color: white; font-size: 0.875rem; font-weight: 500; }
+        .user-role { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
+        .main-content { flex: 1; margin-left: 260px; padding: 2rem; min-height: 100vh; }
+        .page { display: none; } .page.active { display: block; }
+        h1 { font-size: 1.75rem; font-weight: 700; color: var(--drb-navy); margin-bottom: 0.25rem; }
+        h2 { font-size: 1.25rem; font-weight: 600; color: var(--gray-800); margin-bottom: 1rem; }
+        h3 { font-size: 1rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.75rem; }
+        .page-subtitle { color: var(--gray-500); font-size: 0.875rem; margin-bottom: 1.5rem; }
+        .card { background: white; border: 1px solid var(--gray-200); border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .card-grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .card-grid-5 { grid-template-columns: repeat(5, 1fr); }
+        .card-grid-6 { grid-template-columns: repeat(6, 1fr); }
+        .status-card { border-radius: 1rem; padding: 1.25rem; border-left: 4px solid; }
+        .status-card.green { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); border-left-color: var(--drb-green); }
+        .status-card.blue { background: linear-gradient(135deg, #EFF6FF, #DBEAFE); border-left-color: var(--drb-blue); }
+        .status-card.yellow { background: linear-gradient(135deg, #FFFBEB, #FEF3C7); border-left-color: var(--drb-yellow); }
+        .status-card.red { background: linear-gradient(135deg, #FEF2F2, #FEE2E2); border-left-color: var(--drb-red); }
+        .status-card-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em; margin-bottom: 0.25rem; }
+        .status-card.green .status-card-label { color: #059669; } .status-card.blue .status-card-label { color: #2563EB; }
+        .status-card.yellow .status-card-label { color: #D97706; } .status-card.red .status-card-label { color: #DC2626; }
+        .status-card-value { font-size: 2.5rem; font-weight: 700; line-height: 1.1; }
+        .status-card.green .status-card-value { color: #065F46; } .status-card.blue .status-card-value { color: #1E40AF; }
+        .status-card.yellow .status-card-value { color: #92400E; } .status-card.red .status-card-value { color: #991B1B; }
+        .status-card-footer { font-size: 0.8rem; margin-top: 0.25rem; }
+        .status-card.green .status-card-footer { color: #047857; } .status-card.blue .status-card-footer { color: #1D4ED8; }
+        .status-card.yellow .status-card-footer { color: #B45309; } .status-card.red .status-card-footer { color: #B91C1C; }
+        .kpi-card { text-align: center; padding: 1rem; }
+        .kpi-value { font-size: 1.75rem; font-weight: 700; color: var(--gray-800); }
+        .kpi-value.green { color: var(--drb-green); } .kpi-value.red { color: var(--drb-red); } .kpi-value.yellow { color: var(--drb-yellow); } .kpi-value.blue { color: var(--drb-blue); } .kpi-value.purple { color: var(--drb-purple); } .kpi-value.teal { color: var(--drb-teal); }
+        .kpi-label { font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem; }
+        .kpi-sublabel { font-size: 0.7rem; color: var(--gray-400); margin-top: 0.15rem; }
+        .metric-card { background: white; border: 1px solid var(--gray-200); border-radius: 0.5rem; padding: 1rem; border-left: 4px solid var(--gray-200); }
+        .metric-card.critical { border-left-color: var(--drb-red); } .metric-card.warning { border-left-color: var(--drb-orange); }
+        .metric-card.info { border-left-color: var(--drb-blue); } .metric-card.success { border-left-color: var(--drb-green); }
+        .metric-label { font-size: 0.75rem; color: var(--gray-500); }
+        .metric-value { font-size: 1.75rem; font-weight: 700; }
+        .metric-card.critical .metric-value { color: #DC2626; } .metric-card.warning .metric-value { color: #EA580C; }
+        .metric-card.info .metric-value { color: #2563EB; } .metric-card.success .metric-value { color: #059669; }
+        .customer-header { background: linear-gradient(135deg, #FFFFFF, #F8FAFC); border: 1px solid var(--gray-200); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .customer-info h2 { margin-bottom: 0.25rem; } .customer-meta { color: var(--gray-500); font-size: 0.875rem; }
+        .customer-stats { display: flex; gap: 2rem; } .customer-stat { text-align: center; }
+        .customer-stat-label { font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; }
+        .customer-stat-value { font-size: 1.75rem; font-weight: 700; }
+        .customer-stat-value.green { color: var(--drb-green); } .customer-stat-value.yellow { color: var(--drb-yellow); } .customer-stat-value.red { color: var(--drb-red); }
+        .table-container { overflow-x: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        th { background: var(--gray-50); padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: var(--gray-600); border-bottom: 2px solid var(--gray-200); }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--gray-100); }
+        tr:hover { background: var(--gray-50); }
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+        .badge.critical { background: #FEE2E2; color: #DC2626; } .badge.warning { background: #FFEDD5; color: #EA580C; }
+        .badge.healthy, .badge.success { background: #D1FAE5; color: #059669; } .badge.info { background: #DBEAFE; color: #2563EB; }
+        .form-row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .form-group { flex: 1; min-width: 200px; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 500; color: var(--gray-600); margin-bottom: 0.25rem; }
+        select, input[type="text"], input[type="number"] { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--gray-200); border-radius: 0.5rem; font-size: 0.875rem; background: white; }
+        select:focus, input:focus { outline: none; border-color: var(--drb-orange); box-shadow: 0 0 0 3px rgba(242,101,34,0.1); }
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s ease; }
+        .btn-primary { background: var(--drb-orange); color: white; } .btn-primary:hover { background: #E55A1B; }
+        .btn-secondary { background: var(--gray-100); color: var(--gray-700); } .btn-secondary:hover { background: var(--gray-200); }
+        .chart-container { position: relative; height: 280px; margin-top: 1rem; }
+        .chart-container.small { height: 200px; }
+        .chart-container.tall { height: 340px; }
+        .chart-container canvas { width: 100% !important; height: 100% !important; }
+        .charts-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .alert-card { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0.75rem; margin-bottom: 0.75rem; background: white; transition: all 0.3s ease; }
+        .alert-card.resolving { opacity: 0; transform: translateX(30px); max-height: 0; padding: 0 1.25rem; margin-bottom: 0; overflow: hidden; }
+        .alert-actions { margin-top: 0.5rem; display: flex; justify-content: flex-end; }
+        .btn-resolve { padding: 0.35rem 0.85rem; border: 1px solid var(--drb-green); border-radius: 0.5rem; background: #ECFDF5; color: #059669; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
+        .btn-resolve:hover { background: var(--drb-green); color: white; }
+        .no-alerts { text-align: center; padding: 3rem 1rem; color: var(--gray-400); font-size: 1rem; }
+        .alert-card.critical { border-left-color: var(--drb-red); background: linear-gradient(135deg, #FEF2F2, #FFFFFF); }
+        .alert-card.warning { border-left-color: var(--drb-orange); background: linear-gradient(135deg, #FFF7ED, #FFFFFF); }
+        .alert-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .alert-title { font-weight: 600; color: var(--gray-800); }
+        .alert-customer { color: var(--gray-600); font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; }
+        .alert-message { color: var(--gray-500); font-size: 0.85rem; }
+        .benchmark-card { background: white; border: 1px solid var(--gray-200); border-radius: 1rem; padding: 1.5rem; }
+        .benchmark-card h3 { margin-bottom: 1rem; }
+        .benchmark-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-100); }
+        .benchmark-row:last-child { border-bottom: none; }
+        .benchmark-label { color: var(--gray-500); } .benchmark-value { font-weight: 600; color: var(--gray-800); }
+        .benchmark-value.green { color: var(--drb-green); } .benchmark-value.red { color: var(--drb-red); }
+        .footer { text-align: center; padding: 1.5rem; border-top: 1px solid var(--gray-100); color: var(--gray-400); font-size: 0.8rem; margin-top: 2rem; }
+
+        /* Deep Dive Tab Styles */
+        .dd-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .dd-tab { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s ease; background: var(--gray-100); color: var(--gray-700); }
+        .dd-tab:hover { background: var(--gray-200); }
+        .dd-tab.active { background: var(--drb-orange); color: white; }
+        .dd-panel { display: none; }
+        .dd-panel.active { display: block; }
+        .insight-box { background: linear-gradient(135deg, #FFF7ED, #FFFFFF); border: 1px solid #FDBA74; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+        .insight-box p { color: var(--gray-600); font-size: 0.875rem; line-height: 1.6; }
+        .insight-box .insight-title { font-weight: 600; color: var(--drb-orange); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; }
+        .section-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; margin-top: 1.5rem; }
+        .section-header h2 { margin-bottom: 0; }
+        .section-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .section-icon.orange { background: #FFF7ED; color: var(--drb-orange); }
+        .section-icon.blue { background: #EFF6FF; color: var(--drb-blue); }
+        .section-icon.green { background: #ECFDF5; color: var(--drb-green); }
+        .section-icon.red { background: #FEF2F2; color: var(--drb-red); }
+        .section-icon.purple { background: #F5F3FF; color: var(--drb-purple); }
+        .cohort-table { font-size: 0.8rem; }
+        .cohort-table th, .cohort-table td { padding: 0.5rem 0.65rem; text-align: center; }
+        .cohort-table .cohort-header { background: var(--drb-navy); color: white; font-size: 0.75rem; }
+        .cohort-cell { border-radius: 4px; }
+
+        @media (max-width: 768px) { .sidebar { width: 100%; height: auto; position: relative; } .main-content { margin-left: 0; } .card-grid-4, .card-grid-5, .card-grid-6 { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="logo">
-                <span class="logo-text">DRB</span>
-                <span class="logo-subtitle">Advisory Analytics</span>
-            </div>
-
+            <div class="logo"><span class="logo-text">DRB</span><span class="logo-subtitle">Advisory Analytics</span></div>
             <p class="nav-section-title">Dashboard</p>
             <nav>
                 <button class="nav-item active" data-page="portfolio">Portfolio Overview</button>
@@ -656,1005 +153,836 @@
                 <button class="nav-item" data-page="benchmarks">Industry Benchmarks</button>
                 <button class="nav-item" data-page="settings">Alert Configuration</button>
             </nav>
-
             <div class="sidebar-divider"></div>
-
             <div class="user-info">
                 <div class="user-avatar">MJ</div>
-                <div>
-                    <div class="user-name">Mike Johnson</div>
-                    <div class="user-role">Customer Success</div>
-                </div>
+                <div><div class="user-name">Mike Johnson</div><div class="user-role">Customer Success</div></div>
             </div>
         </aside>
-
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Portfolio Overview -->
+            <!-- ==================== PORTFOLIO ==================== -->
             <div id="portfolio" class="page active">
-                <h1>Portfolio Health</h1>
-                <p class="page-subtitle">Performance vs. industry benchmarks</p>
-
+                <h1>Portfolio Health</h1><p class="page-subtitle">Performance vs. industry benchmarks</p>
                 <div class="card-grid card-grid-4">
-                    <div class="status-card green">
-                        <div class="status-card-label">Outperforming</div>
-                        <div class="status-card-value">2</div>
-                        <div class="status-card-footer">33% of portfolio</div>
-                    </div>
-                    <div class="status-card blue">
-                        <div class="status-card-label">On Track</div>
-                        <div class="status-card-value">1</div>
-                        <div class="status-card-footer">17% of portfolio</div>
-                    </div>
-                    <div class="status-card yellow">
-                        <div class="status-card-label">Needs Attention</div>
-                        <div class="status-card-value">2</div>
-                        <div class="status-card-footer">33% of portfolio</div>
-                    </div>
-                    <div class="status-card red">
-                        <div class="status-card-label">Critical</div>
-                        <div class="status-card-value">1</div>
-                        <div class="status-card-footer">17% of portfolio</div>
-                    </div>
+                    <div class="status-card green"><div class="status-card-label">Outperforming</div><div class="status-card-value">2</div><div class="status-card-footer">33% of portfolio</div></div>
+                    <div class="status-card blue"><div class="status-card-label">On Track</div><div class="status-card-value">1</div><div class="status-card-footer">17% of portfolio</div></div>
+                    <div class="status-card yellow"><div class="status-card-label">Needs Attention</div><div class="status-card-value">2</div><div class="status-card-footer">33% of portfolio</div></div>
+                    <div class="status-card red"><div class="status-card-label">Critical</div><div class="status-card-value">1</div><div class="status-card-footer">17% of portfolio</div></div>
                 </div>
-
                 <div class="card">
                     <h2>Customer Overview</h2>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Customer</th>
-                                    <th>Sites</th>
-                                    <th>Health</th>
-                                    <th>Capture %</th>
-                                    <th>Churn %</th>
-                                    <th>Traffic YoY</th>
-                                    <th>Revenue YoY</th>
-                                    <th>Status</th>
-                                    <th>CSM</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Sparkle Clean Auto Spa</td>
-                                    <td>12</td>
-                                    <td>28</td>
-                                    <td>31%</td>
-                                    <td>8.2%</td>
-                                    <td>-18%</td>
-                                    <td>-18%</td>
-                                    <td><span class="badge critical">Critical</span></td>
-                                    <td>Mike Johnson</td>
-                                </tr>
-                                <tr>
-                                    <td>Metro Express Wash</td>
-                                    <td>8</td>
-                                    <td>45</td>
-                                    <td>35%</td>
-                                    <td>6.5%</td>
-                                    <td>-8%</td>
-                                    <td>-10%</td>
-                                    <td><span class="badge warning">Warning</span></td>
-                                    <td>Sarah Chen</td>
-                                </tr>
-                                <tr>
-                                    <td>Shine Time Car Wash</td>
-                                    <td>5</td>
-                                    <td>72</td>
-                                    <td>42%</td>
-                                    <td>4.2%</td>
-                                    <td>+5%</td>
-                                    <td>+6%</td>
-                                    <td><span class="badge healthy">Healthy</span></td>
-                                    <td>Mike Johnson</td>
-                                </tr>
-                                <tr>
-                                    <td>Quick Clean Express</td>
-                                    <td>156</td>
-                                    <td>38</td>
-                                    <td>33%</td>
-                                    <td>7.1%</td>
-                                    <td>-12%</td>
-                                    <td>-14%</td>
-                                    <td><span class="badge warning">Warning</span></td>
-                                    <td>Tom Wilson</td>
-                                </tr>
-                                <tr>
-                                    <td>Premier Auto Spa</td>
-                                    <td>234</td>
-                                    <td>85</td>
-                                    <td>48%</td>
-                                    <td>3.8%</td>
-                                    <td>+12%</td>
-                                    <td>+14%</td>
-                                    <td><span class="badge healthy">Healthy</span></td>
-                                    <td>Sarah Chen</td>
-                                </tr>
-                                <tr>
-                                    <td>Crystal Clear Wash</td>
-                                    <td>45</td>
-                                    <td>52</td>
-                                    <td>38%</td>
-                                    <td>5.9%</td>
-                                    <td>-3%</td>
-                                    <td>-2%</td>
-                                    <td><span class="badge info">On Track</span></td>
-                                    <td>Tom Wilson</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="table-container"><table><thead><tr><th>Customer</th><th>Sites</th><th>Health</th><th>Capture %</th><th>Churn %</th><th>Traffic YoY</th><th>Revenue YoY</th><th>Status</th><th>CSM</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sparkle Clean Auto Spa</td><td>12</td><td>28</td><td>31%</td><td>8.2%</td><td>-18%</td><td>-18%</td><td><span class="badge critical">Critical</span></td><td>Mike Johnson</td></tr>
+                        <tr><td>Metro Express Wash</td><td>8</td><td>45</td><td>35%</td><td>6.5%</td><td>-8%</td><td>-10%</td><td><span class="badge warning">Warning</span></td><td>Sarah Chen</td></tr>
+                        <tr><td>Shine Time Car Wash</td><td>5</td><td>72</td><td>42%</td><td>4.2%</td><td>+5%</td><td>+6%</td><td><span class="badge healthy">Healthy</span></td><td>Mike Johnson</td></tr>
+                        <tr><td>Quick Clean Express</td><td>156</td><td>38</td><td>33%</td><td>7.1%</td><td>-12%</td><td>-14%</td><td><span class="badge warning">Warning</span></td><td>Tom Wilson</td></tr>
+                        <tr><td>Premier Auto Spa</td><td>234</td><td>85</td><td>48%</td><td>3.8%</td><td>+12%</td><td>+14%</td><td><span class="badge healthy">Healthy</span></td><td>Sarah Chen</td></tr>
+                        <tr><td>Crystal Clear Wash</td><td>45</td><td>52</td><td>38%</td><td>5.9%</td><td>-3%</td><td>-2%</td><td><span class="badge info">On Track</span></td><td>Tom Wilson</td></tr>
+                    </tbody></table></div>
                 </div>
             </div>
 
-            <!-- Operational Health -->
+            <!-- ==================== OPERATIONAL HEALTH ==================== -->
             <div id="operational" class="page">
-                <h1>Operational Health</h1>
-                <p class="page-subtitle">System performance and support metrics</p>
-
+                <h1>Operational Health</h1><p class="page-subtitle">System performance and support metrics</p>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Select Customer</label>
-                        <select id="customer-select" onchange="updateOperationalData()">
-                            <option value="bmw">BMW Kar Wash LLC (61 sites)</option>
-                            <option value="sparkle">Sparkle Clean Auto Spa (12 sites)</option>
-                            <option value="quick">Quick Clean Express (156 sites)</option>
-                            <option value="premier">Premier Auto Spa (234 sites)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Time Period</label>
-                        <select>
-                            <option>Last 30 Days</option>
-                            <option>Last 60 Days</option>
-                            <option>Last 90 Days</option>
-                            <option>Year to Date</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="display: flex; align-items: flex-end;">
-                        <button class="btn btn-secondary">Refresh Data</button>
-                    </div>
+                    <div class="form-group"><label>Select Customer</label><select id="customer-select" onchange="updateOperationalData()"><option value="bmw">BMW Kar Wash LLC (61 sites)</option><option value="sparkle">Sparkle Clean Auto Spa (12 sites)</option><option value="quick">Quick Clean Express (156 sites)</option><option value="premier">Premier Auto Spa (234 sites)</option></select></div>
+                    <div class="form-group"><label>Time Period</label><select><option>Last 30 Days</option><option>Last 60 Days</option><option>Last 90 Days</option></select></div>
                 </div>
-
                 <div class="customer-header">
-                    <div class="customer-info">
-                        <h2 id="op-customer-name">BMW Kar Wash LLC</h2>
-                        <div class="customer-meta" id="op-customer-meta">61 Sites · MI · CSM: Morgan Malone</div>
-                    </div>
+                    <div class="customer-info"><h2 id="op-customer-name">BMW Kar Wash LLC</h2><div class="customer-meta" id="op-customer-meta">61 Sites &middot; MI &middot; CSM: Morgan Malone</div></div>
                     <div class="customer-stats">
-                        <div class="customer-stat">
-                            <div class="customer-stat-label">Health Index</div>
-                            <div class="customer-stat-value green" id="op-health-index">Green</div>
-                        </div>
-                        <div class="customer-stat">
-                            <div class="customer-stat-label">Score</div>
-                            <div class="customer-stat-value" id="op-health-score">2.80</div>
-                        </div>
+                        <div class="customer-stat"><div class="customer-stat-label">Health Index</div><div class="customer-stat-value green" id="op-health-index">Green</div></div>
+                        <div class="customer-stat"><div class="customer-stat-label">Score</div><div class="customer-stat-value" id="op-health-score">2.80</div></div>
                     </div>
                 </div>
-
                 <h2>Summary Metrics</h2>
                 <div class="card-grid card-grid-6">
-                    <div class="card kpi-card">
-                        <div class="kpi-value" id="op-uptime">99.92%</div>
-                        <div class="kpi-label">Uptime (30d)</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value" id="op-total-cases">572</div>
-                        <div class="kpi-label">Total Cases (30d)</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value" id="op-open-cases">4</div>
-                        <div class="kpi-label">Open Cases</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value" id="op-avg-ttr">2.24</div>
-                        <div class="kpi-label">Avg TTR (Days)</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value" id="op-hw-swaps">3</div>
-                        <div class="kpi-label">Hardware Swaps</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value" id="op-escalations">1</div>
-                        <div class="kpi-label">Escalations</div>
-                    </div>
+                    <div class="card kpi-card"><div class="kpi-value" id="op-uptime">99.92%</div><div class="kpi-label">Uptime (30d)</div></div>
+                    <div class="card kpi-card"><div class="kpi-value" id="op-total-cases">572</div><div class="kpi-label">Total Cases (30d)</div></div>
+                    <div class="card kpi-card"><div class="kpi-value" id="op-open-cases">4</div><div class="kpi-label">Open Cases</div></div>
+                    <div class="card kpi-card"><div class="kpi-value" id="op-avg-ttr">2.24</div><div class="kpi-label">Avg TTR (Days)</div></div>
+                    <div class="card kpi-card"><div class="kpi-value" id="op-hw-swaps">3</div><div class="kpi-label">Hardware Swaps</div></div>
+                    <div class="card kpi-card"><div class="kpi-value" id="op-escalations">1</div><div class="kpi-label">Escalations</div></div>
                 </div>
-
                 <div class="charts-row">
-                    <div class="card">
-                        <h3>Case Volume by Product</h3>
-                        <div class="chart-container">
-                            <canvas id="caseByProductChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Monthly Case Volume</h3>
-                        <div class="chart-container">
-                            <canvas id="monthlyCaseChart"></canvas>
-                        </div>
-                    </div>
+                    <div class="card"><h3>Case Volume by Product</h3><div class="chart-container"><canvas id="caseByProductChart"></canvas></div></div>
+                    <div class="card"><h3>Monthly Case Volume</h3><div class="chart-container"><canvas id="monthlyCaseChart"></canvas></div></div>
                 </div>
-
                 <div class="charts-row">
-                    <div class="card">
-                        <h3>Monthly Hardware Swaps</h3>
-                        <div class="chart-container small">
-                            <canvas id="hardwareSwapsChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Monthly Escalations</h3>
-                        <div class="chart-container small">
-                            <canvas id="escalationsChart"></canvas>
-                        </div>
-                    </div>
+                    <div class="card"><h3>Monthly Hardware Swaps</h3><div class="chart-container small"><canvas id="hardwareSwapsChart"></canvas></div></div>
+                    <div class="card"><h3>Monthly Escalations</h3><div class="chart-container small"><canvas id="escalationsChart"></canvas></div></div>
                 </div>
-
-                <div class="card">
-                    <h2>Site-Level Details</h2>
-                    <div class="form-row">
-                        <div class="form-group" style="min-width: 150px; flex: 0.5;">
-                            <label>Health Status</label>
-                            <select>
-                                <option>All</option>
-                                <option>Healthy</option>
-                                <option>Warning</option>
-                                <option>Critical</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="min-width: 150px; flex: 0.5;">
-                            <label>City</label>
-                            <select>
-                                <option>All Cities</option>
-                                <option>Detroit</option>
-                                <option>Chicago</option>
-                                <option>Milwaukee</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="min-width: 150px; flex: 0.5;">
-                            <label>Sort By</label>
-                            <select>
-                                <option>Cases (30d)</option>
-                                <option>Uptime %</option>
-                                <option>Open Cases</option>
-                                <option>Escalations</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table id="sites-table">
-                            <thead>
-                                <tr>
-                                    <th>Site</th>
-                                    <th>City</th>
-                                    <th>Health</th>
-                                    <th>Uptime %</th>
-                                    <th>Cases (30d)</th>
-                                    <th>Open</th>
-                                    <th>HW Swaps</th>
-                                    <th>Escalations</th>
-                                    <th>CSAT</th>
-                                    <th>Platform</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sites-table-body">
-                                <!-- Populated by JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div style="margin-top: 1rem;">
-                        <button class="btn btn-secondary">Export to CSV</button>
-                    </div>
+                <div class="card"><h2>Site-Level Details</h2>
+                    <div class="table-container"><table><thead><tr><th>Site</th><th>City</th><th>Health</th><th>Uptime %</th><th>Cases (30d)</th><th>Open</th><th>HW Swaps</th><th>Escalations</th><th>CSAT</th><th>Platform</th></tr></thead><tbody id="sites-table-body"></tbody></table></div>
                 </div>
             </div>
 
-            <!-- Risk Alerts -->
+            <!-- ==================== RISK ALERTS ==================== -->
             <div id="alerts" class="page">
-                <h1>Risk Alerts</h1>
-                <p class="page-subtitle">Automated warning detection</p>
-
+                <h1>Risk Alerts</h1><p class="page-subtitle">Automated warning detection</p>
                 <div class="card-grid card-grid-4">
-                    <div class="metric-card critical">
-                        <div class="metric-label">Critical</div>
-                        <div class="metric-value">4</div>
-                    </div>
-                    <div class="metric-card warning">
-                        <div class="metric-label">Warning</div>
-                        <div class="metric-value">8</div>
-                    </div>
-                    <div class="metric-card info">
-                        <div class="metric-label">New (24h)</div>
-                        <div class="metric-value">3</div>
-                    </div>
-                    <div class="metric-card success">
-                        <div class="metric-label">Resolved (7d)</div>
-                        <div class="metric-value">6</div>
-                    </div>
+                    <div class="metric-card critical"><div class="metric-label">Critical</div><div class="metric-value">4</div></div>
+                    <div class="metric-card warning"><div class="metric-label">Warning</div><div class="metric-value">8</div></div>
+                    <div class="metric-card info"><div class="metric-label">New (24h)</div><div class="metric-value">3</div></div>
+                    <div class="metric-card success"><div class="metric-label">Resolved (7d)</div><div class="metric-value">6</div></div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group" style="min-width: 150px; flex: 0.5;">
-                        <label>Filter by Severity</label>
-                        <select>
-                            <option>All</option>
-                            <option>Critical</option>
-                            <option>Warning</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="min-width: 150px; flex: 0.5;">
-                        <label>Filter by Customer</label>
-                        <select>
-                            <option>All Customers</option>
-                            <option>Sparkle Clean Auto Spa</option>
-                            <option>Metro Express Wash</option>
-                            <option>Quick Clean Express</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="alert-card critical">
-                    <div class="alert-header">
-                        <span class="alert-title">Traffic Decline</span>
-                        <span class="badge critical">CRITICAL</span>
-                    </div>
-                    <div class="alert-customer">Sparkle Clean Auto Spa</div>
-                    <div class="alert-message">Traffic declined 18% YoY across all 12 sites</div>
-                </div>
-
-                <div class="alert-card critical">
-                    <div class="alert-header">
-                        <span class="alert-title">Churn Spike</span>
-                        <span class="badge critical">CRITICAL</span>
-                    </div>
-                    <div class="alert-customer">Sparkle Clean Auto Spa</div>
-                    <div class="alert-message">Voluntary churn spiked to 8.2%, up 2.7pts MoM</div>
-                </div>
-
-                <div class="alert-card warning">
-                    <div class="alert-header">
-                        <span class="alert-title">Capture Rate Drop</span>
-                        <span class="badge warning">WARNING</span>
-                    </div>
-                    <div class="alert-customer">Metro Express Wash</div>
-                    <div class="alert-message">Capture rate dropped from 41% to 35%</div>
-                </div>
-
-                <div class="alert-card warning">
-                    <div class="alert-header">
-                        <span class="alert-title">Member Loss</span>
-                        <span class="badge warning">WARNING</span>
-                    </div>
-                    <div class="alert-customer">Quick Clean Express</div>
-                    <div class="alert-message">Member count down 8% YoY (-340 members)</div>
-                </div>
-
-                <div class="alert-card critical">
-                    <div class="alert-header">
-                        <span class="alert-title">Revenue Decline</span>
-                        <span class="badge critical">CRITICAL</span>
-                    </div>
-                    <div class="alert-customer">Sparkle Clean Auto Spa</div>
-                    <div class="alert-message">Revenue declined 18% YoY (-$34K/month)</div>
+                <div id="alerts-container">
+                <div class="alert-card critical"><div class="alert-header"><span class="alert-title">Traffic Decline</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-message">Traffic declined 18% YoY across all 12 sites</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card critical"><div class="alert-header"><span class="alert-title">Churn Spike</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-message">Voluntary churn spiked to 8.2%, up 2.7pts MoM</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card warning"><div class="alert-header"><span class="alert-title">Capture Rate Drop</span><span class="badge warning">WARNING</span></div><div class="alert-customer">Metro Express Wash</div><div class="alert-message">Capture rate dropped from 41% to 35%</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card warning"><div class="alert-header"><span class="alert-title">Member Loss</span><span class="badge warning">WARNING</span></div><div class="alert-customer">Quick Clean Express</div><div class="alert-message">Member count down 8% YoY (-340 members)</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card critical"><div class="alert-header"><span class="alert-title">Revenue Decline</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-message">Revenue declined 18% YoY (-$34K/month)</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
                 </div>
             </div>
 
-            <!-- Business on a Page -->
+            <!-- ==================== BUSINESS ON A PAGE ==================== -->
             <div id="boap" class="page">
-                <h1>Business on a Page</h1>
-                <p class="page-subtitle">Customer performance summary</p>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Select Customer</label>
-                        <select id="boap-customer-select">
-                            <option>Sparkle Clean Auto Spa</option>
-                            <option>Metro Express Wash</option>
-                            <option>Shine Time Car Wash</option>
-                            <option>Quick Clean Express</option>
-                            <option>Premier Auto Spa</option>
-                        </select>
-                    </div>
-                </div>
-
+                <h1>Business on a Page</h1><p class="page-subtitle">Customer performance summary</p>
+                <div class="form-row"><div class="form-group"><label>Select Customer</label><select><option>Sparkle Clean Auto Spa</option><option>Metro Express Wash</option><option>Shine Time Car Wash</option></select></div></div>
                 <div class="customer-header">
-                    <div class="customer-info">
-                        <h2>Sparkle Clean Auto Spa</h2>
-                        <div class="customer-meta">12 sites · Southwest · CSM: Mike Johnson</div>
-                    </div>
+                    <div class="customer-info"><h2>Sparkle Clean Auto Spa</h2><div class="customer-meta">12 sites &middot; Southwest &middot; CSM: Mike Johnson</div></div>
                     <div class="customer-stats">
-                        <div class="customer-stat">
-                            <div class="customer-stat-label">Health Score</div>
-                            <div class="customer-stat-value red">28</div>
-                        </div>
-                        <div class="customer-stat">
-                            <div class="customer-stat-label">vs Industry</div>
-                            <div class="customer-stat-value red">-24%</div>
-                        </div>
+                        <div class="customer-stat"><div class="customer-stat-label">Health Score</div><div class="customer-stat-value red">28</div></div>
+                        <div class="customer-stat"><div class="customer-stat-label">vs Industry</div><div class="customer-stat-value red">-24%</div></div>
                     </div>
                 </div>
-
                 <div class="card-grid card-grid-6">
-                    <div class="card kpi-card">
-                        <div class="kpi-value">31%</div>
-                        <div class="kpi-label">Capture Rate</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value red">8.2%</div>
-                        <div class="kpi-label">Vol Churn</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value red">-18%</div>
-                        <div class="kpi-label">Traffic YoY</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value red">-12%</div>
-                        <div class="kpi-label">Members YoY</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value red">-18%</div>
-                        <div class="kpi-label">Revenue YoY</div>
-                    </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value">4.1%</div>
-                        <div class="kpi-label">Invol Churn</div>
-                    </div>
+                    <div class="card kpi-card"><div class="kpi-value">31%</div><div class="kpi-label">Capture Rate</div></div>
+                    <div class="card kpi-card"><div class="kpi-value red">8.2%</div><div class="kpi-label">Vol Churn</div></div>
+                    <div class="card kpi-card"><div class="kpi-value red">-18%</div><div class="kpi-label">Traffic YoY</div></div>
+                    <div class="card kpi-card"><div class="kpi-value red">-12%</div><div class="kpi-label">Members YoY</div></div>
+                    <div class="card kpi-card"><div class="kpi-value red">-18%</div><div class="kpi-label">Revenue YoY</div></div>
+                    <div class="card kpi-card"><div class="kpi-value">4.1%</div><div class="kpi-label">Invol Churn</div></div>
                 </div>
-
                 <h2>24-Month Trends</h2>
                 <div class="charts-row">
-                    <div class="card">
-                        <h3>Monthly Revenue ($K)</h3>
-                        <div class="chart-container">
-                            <canvas id="boapRevenueChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Active Members</h3>
-                        <div class="chart-container">
-                            <canvas id="boapMembersChart"></canvas>
-                        </div>
-                    </div>
+                    <div class="card"><h3>Monthly Revenue ($K)</h3><div class="chart-container"><canvas id="boapRevenueChart"></canvas></div></div>
+                    <div class="card"><h3>Active Members</h3><div class="chart-container"><canvas id="boapMembersChart"></canvas></div></div>
                 </div>
             </div>
 
-            <!-- Advisory Deep Dive -->
+            <!-- ==================== ADVISORY DEEP DIVE ==================== -->
             <div id="deepdive" class="page">
-                <h1>Advisory Deep Dive</h1>
-                <p class="page-subtitle">Detailed analytics by category</p>
+                <h1>Advisory Deep Dive</h1><p class="page-subtitle">Detailed analytics by category</p>
 
-                <div class="form-row">
-                    <button class="btn btn-primary" id="dd-general">General KPIs</button>
-                    <button class="btn btn-secondary" id="dd-membership">Membership</button>
-                    <button class="btn btn-secondary" id="dd-retail">Retail</button>
-                    <button class="btn btn-secondary" id="dd-marketing">Marketing</button>
-                    <button class="btn btn-secondary" id="dd-operations">Operations</button>
+                <div class="dd-tabs">
+                    <button class="dd-tab active" data-ddtab="dd-general">General KPIs</button>
+                    <button class="dd-tab" data-ddtab="dd-membership">Membership</button>
+                    <button class="dd-tab" data-ddtab="dd-retail">Retail</button>
+                    <button class="dd-tab" data-ddtab="dd-marketing">Marketing</button>
+                    <button class="dd-tab" data-ddtab="dd-operations">Operations</button>
                 </div>
 
-                <div class="card-grid card-grid-4" style="margin-top: 1.5rem;">
-                    <div class="card kpi-card">
-                        <div class="kpi-value">$1.87M</div>
-                        <div class="kpi-label">Total Revenue</div>
+                <!-- ===== GENERAL KPIs TAB ===== -->
+                <div id="dd-general" class="dd-panel active">
+                    <div class="insight-box">
+                        <div class="insight-title">Wash Performance</div>
+                        <p>The bottom line is revenue and total cars washed. Total to account is the amount of revenue gained from your wash. Total car count is the number of cars washed including retail traffic, membership redemptions, rewashes, and prepaid redemptions.</p>
                     </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value">101K</div>
-                        <div class="kpi-label">Total Cars</div>
+                    <div class="card-grid card-grid-4">
+                        <div class="card kpi-card"><div class="kpi-value">$1.87M</div><div class="kpi-label">Total Revenue</div><div class="kpi-sublabel">Last 12 months</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">101K</div><div class="kpi-label">Total Cars</div><div class="kpi-sublabel">Last 12 months</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">$28.50</div><div class="kpi-label">Avg Ticket</div><div class="kpi-sublabel">All wash types</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">58%</div><div class="kpi-label">Member %</div><div class="kpi-sublabel">of total traffic</div></div>
                     </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value">$28.50</div>
-                        <div class="kpi-label">Avg Ticket</div>
+                    <div class="charts-row">
+                        <div class="card"><h3>Monthly Revenue ($K) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRevenueChart"></canvas></div></div>
+                        <div class="card"><h3>Cars Washed &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddCarsChart"></canvas></div></div>
                     </div>
-                    <div class="card kpi-card">
-                        <div class="kpi-value">58%</div>
-                        <div class="kpi-label">Member %</div>
+                    <div class="charts-row">
+                        <div class="card"><h3>Traffic Breakdown (Member vs Retail vs Prepaid)</h3><div class="chart-container"><canvas id="ddTrafficBreakdownChart"></canvas></div></div>
+                        <div class="card"><h3>Average Ticket &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddAvgTicketChart"></canvas></div></div>
                     </div>
                 </div>
 
-                <div class="charts-row">
-                    <div class="card">
-                        <h3>Monthly Revenue ($K)</h3>
-                        <div class="chart-container">
-                            <canvas id="ddRevenueChart"></canvas>
-                        </div>
+                <!-- ===== MEMBERSHIP TAB ===== -->
+                <div id="dd-membership" class="dd-panel">
+                    <div class="insight-box">
+                        <div class="insight-title">Membership Overview</div>
+                        <p>Membership customers (unlimited/ARM members) represent brand loyalty. These customers pay monthly for the ability to wash as many times as they need. Members join, recharge, or churn out each month. Tracking the movement of customers and how much they are paying gives insight for maintaining and continuing to grow membership.</p>
+                    </div>
+
+                    <div class="card-grid card-grid-5">
+                        <div class="card kpi-card"><div class="kpi-value green">2,847</div><div class="kpi-label">Active Members</div><div class="kpi-sublabel">Current month</div></div>
+                        <div class="card kpi-card"><div class="kpi-value blue">312</div><div class="kpi-label">New Joins</div><div class="kpi-sublabel">This month</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">2,418</div><div class="kpi-label">Recharges</div><div class="kpi-sublabel">This month</div></div>
+                        <div class="card kpi-card"><div class="kpi-value red">187</div><div class="kpi-label">Total Churned</div><div class="kpi-sublabel">This month</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">$89.2K</div><div class="kpi-label">Member Revenue</div><div class="kpi-sublabel">This month</div></div>
+                    </div>
+
+                    <!-- Capture vs Churn Section -->
+                    <div class="section-header"><div class="section-icon orange">&#8693;</div><h2>Capture vs. Churn</h2></div>
+                    <div class="insight-box">
+                        <div class="insight-title">What choices are your members making?</div>
+                        <p>Capture rate is the percent of retail traffic that converted to membership. Voluntary churn occurs when a membership is actively ended by the customer. Involuntary churn occurs when a membership ends due to credit card decline or expiration. Comparing capture and churn rates provides insight into changes in overall member numbers.</p>
+                    </div>
+                    <div class="card-grid card-grid-4">
+                        <div class="card kpi-card"><div class="kpi-value green">38.2%</div><div class="kpi-label">Capture Rate</div><div class="kpi-sublabel">Industry avg: 39%</div></div>
+                        <div class="card kpi-card"><div class="kpi-value red">5.8%</div><div class="kpi-label">Voluntary Churn</div><div class="kpi-sublabel">Industry avg: 5.5%</div></div>
+                        <div class="card kpi-card"><div class="kpi-value yellow">3.2%</div><div class="kpi-label">Involuntary Churn</div><div class="kpi-sublabel">Industry avg: 2.5%</div></div>
+                        <div class="card kpi-card"><div class="kpi-value blue">+125</div><div class="kpi-label">Net Member Change</div><div class="kpi-sublabel">Joins minus churn</div></div>
+                    </div>
+                    <div class="charts-row">
+                        <div class="card"><h3>Capture Rate vs. Churn Rate &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddCaptureChurnChart"></canvas></div></div>
+                        <div class="card"><h3>Active Members &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddActiveMembersChart"></canvas></div></div>
+                    </div>
+                    <div class="charts-row">
+                        <div class="card"><h3>New Joins vs. Total Churned &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddJoinsChurnChart"></canvas></div></div>
+                        <div class="card"><h3>Member Revenue ($K) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddMemberRevenueChart"></canvas></div></div>
+                    </div>
+
+                    <!-- Cohort Analysis Section -->
+                    <div class="section-header"><div class="section-icon blue">&#9638;</div><h2>Cohort Analysis</h2></div>
+                    <div class="insight-box">
+                        <div class="insight-title">Follow the journey of each group of customers</div>
+                        <p>A cohort analysis looks at groups of members that joined in each month and tracks their retention each following month. This gives insights into seasonal retention patterns and promotion effectiveness.</p>
                     </div>
                     <div class="card">
-                        <h3>Cars Washed</h3>
-                        <div class="chart-container">
-                            <canvas id="ddCarsChart"></canvas>
+                        <h3>Monthly Cohort Retention (%)</h3>
+                        <div class="table-container">
+                            <table class="cohort-table" id="cohort-table">
+                                <thead><tr class="cohort-header"><th>Join Month</th><th>Joined</th><th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th><th>M7</th><th>M8</th><th>M9</th><th>M10</th><th>M11</th><th>M12</th></tr></thead>
+                                <tbody id="cohort-body"></tbody>
+                            </table>
                         </div>
+                    </div>
+
+                    <!-- Tenure & Lifetime Value Section -->
+                    <div class="section-header" style="margin-top:2rem"><div class="section-icon green">&#9733;</div><h2>Tenure &amp; Lifetime Value</h2></div>
+                    <div class="insight-box">
+                        <div class="insight-title">What is the value of an individual membership?</div>
+                        <p>Average tenure is a direct indicator of brand loyalty. Lifetime value is the total amount paid by a member during their tenure. Average monthly redemptions gives usage numbers for each group &mdash; usage lower than 2 redemptions/month is an indicator of future churn.</p>
+                    </div>
+                    <div class="card-grid card-grid-4">
+                        <div class="card kpi-card"><div class="kpi-value">8.4</div><div class="kpi-label">Avg Tenure (Months)</div><div class="kpi-sublabel">All active members</div></div>
+                        <div class="card kpi-card"><div class="kpi-value green">$265</div><div class="kpi-label">Avg Lifetime Value</div><div class="kpi-sublabel">Per member</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">3.6</div><div class="kpi-label">Avg Redemptions/Mo</div><div class="kpi-sublabel">Healthy > 2.0</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">$31.50</div><div class="kpi-label">Avg Member Price</div><div class="kpi-sublabel">Monthly charge</div></div>
+                    </div>
+                    <div class="charts-row">
+                        <div class="card"><h3>Avg Tenure by Plan (Months)</h3><div class="chart-container"><canvas id="ddTenureChart"></canvas></div></div>
+                        <div class="card"><h3>Avg Lifetime Value by Plan ($)</h3><div class="chart-container"><canvas id="ddLtvChart"></canvas></div></div>
+                    </div>
+                </div>
+
+                <!-- ===== RETAIL TAB ===== -->
+                <div id="dd-retail" class="dd-panel">
+                    <div class="insight-box">
+                        <div class="insight-title">Retail Overview</div>
+                        <p>Retail customers pay the most per wash, but as a group are volatile. They are most likely to be affected by seasonal patterns and bad weather, and are most sensitive to new competition or price changes. Retail customers are also the base from which new memberships can be sold as they become loyal to your brand.</p>
+                    </div>
+
+                    <div class="card-grid card-grid-5">
+                        <div class="card kpi-card"><div class="kpi-value">42.4K</div><div class="kpi-label">Retail Cars</div><div class="kpi-sublabel">Last 12 months</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">$768K</div><div class="kpi-label">Retail Revenue</div><div class="kpi-sublabel">Last 12 months</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">$18.12</div><div class="kpi-label">Avg Retail Ticket</div><div class="kpi-sublabel">Per wash</div></div>
+                        <div class="card kpi-card"><div class="kpi-value red">-6.2%</div><div class="kpi-label">Retail Traffic YoY</div><div class="kpi-sublabel">vs prior year</div></div>
+                        <div class="card kpi-card"><div class="kpi-value yellow">-3.8%</div><div class="kpi-label">Retail Revenue YoY</div><div class="kpi-sublabel">vs prior year</div></div>
+                    </div>
+
+                    <!-- Package Distribution -->
+                    <div class="section-header"><div class="section-icon orange">&#9632;</div><h2>Package Distribution</h2></div>
+                    <div class="card-grid card-grid-4">
+                        <div class="card kpi-card"><div class="kpi-value">18%</div><div class="kpi-label">Basic Wash</div><div class="kpi-sublabel">$8 avg ticket</div></div>
+                        <div class="card kpi-card"><div class="kpi-value blue">35%</div><div class="kpi-label">Standard Wash</div><div class="kpi-sublabel">$14 avg ticket</div></div>
+                        <div class="card kpi-card"><div class="kpi-value green">31%</div><div class="kpi-label">Premium Wash</div><div class="kpi-sublabel">$22 avg ticket</div></div>
+                        <div class="card kpi-card"><div class="kpi-value purple">16%</div><div class="kpi-label">Ultimate Wash</div><div class="kpi-sublabel">$30 avg ticket</div></div>
+                    </div>
+
+                    <div class="charts-row">
+                        <div class="card"><h3>Retail Car Count &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailCarsChart"></canvas></div></div>
+                        <div class="card"><h3>Retail Revenue ($K) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailRevenueChart"></canvas></div></div>
+                    </div>
+                    <div class="charts-row">
+                        <div class="card"><h3>Avg Retail Ticket &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailTicketChart"></canvas></div></div>
+                        <div class="card"><h3>Package Mix (%) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailMixChart"></canvas></div></div>
+                    </div>
+
+                    <!-- Pricing Health Check -->
+                    <div class="section-header" style="margin-top:1.5rem"><div class="section-icon red">&#36;</div><h2>Pricing Health Check</h2></div>
+                    <div class="insight-box">
+                        <div class="insight-title">Is there opportunity for price optimization?</div>
+                        <p>A pricing health check examines your posted prices alongside purchase distribution data to identify whether there is opportunity for pricing optimization. This is a chance to determine if Precision Pricing would be beneficial to your organization.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Current Menu Pricing vs. Industry Benchmarks</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Package</th><th>Your Price</th><th>Industry Avg</th><th>Top Quartile</th><th>Variance</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Basic Wash</td><td>$8.00</td><td>$9.50</td><td>$11.00</td><td style="color:#DC2626">-$1.50</td><td><span class="badge warning">Below Avg</span></td></tr>
+                                    <tr><td>Standard Wash</td><td>$14.00</td><td>$14.50</td><td>$16.00</td><td style="color:#D97706">-$0.50</td><td><span class="badge info">On Track</span></td></tr>
+                                    <tr><td>Premium Wash</td><td>$22.00</td><td>$21.00</td><td>$24.00</td><td style="color:#059669">+$1.00</td><td><span class="badge healthy">Above Avg</span></td></tr>
+                                    <tr><td>Ultimate Wash</td><td>$30.00</td><td>$28.00</td><td>$32.00</td><td style="color:#059669">+$2.00</td><td><span class="badge healthy">Above Avg</span></td></tr>
+                                    <tr><td>Basic Member</td><td>$19.99</td><td>$24.99</td><td>$29.99</td><td style="color:#DC2626">-$5.00</td><td><span class="badge critical">Well Below</span></td></tr>
+                                    <tr><td>Premium Member</td><td>$34.99</td><td>$34.99</td><td>$39.99</td><td style="color:#64748B">$0.00</td><td><span class="badge info">At Avg</span></td></tr>
+                                    <tr><td>Ultimate Member</td><td>$44.99</td><td>$44.99</td><td>$49.99</td><td style="color:#64748B">$0.00</td><td><span class="badge info">At Avg</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== MARKETING TAB ===== -->
+                <div id="dd-marketing" class="dd-panel">
+                    <div class="insight-box">
+                        <div class="insight-title">Traffic Patterns &amp; Seasonality</div>
+                        <p>Looking at when your customers are visiting your wash can help you plan for high or low volume periods. This also allows you to target certain time periods for focused promotions. Seasonality shows how carwash traffic is spread out over the year and which months have the most or least traffic.</p>
+                    </div>
+
+                    <div class="card-grid card-grid-4">
+                        <div class="card kpi-card"><div class="kpi-value green">Jul</div><div class="kpi-label">Peak Traffic Month</div><div class="kpi-sublabel">12,340 cars</div></div>
+                        <div class="card kpi-card"><div class="kpi-value red">Jan</div><div class="kpi-label">Lowest Traffic Month</div><div class="kpi-sublabel">5,820 cars</div></div>
+                        <div class="card kpi-card"><div class="kpi-value blue">Sat</div><div class="kpi-label">Busiest Day</div><div class="kpi-sublabel">18.2% of weekly</div></div>
+                        <div class="card kpi-card"><div class="kpi-value">10a-2p</div><div class="kpi-label">Peak Hours</div><div class="kpi-sublabel">42% of daily traffic</div></div>
+                    </div>
+
+                    <!-- Traffic Patterns -->
+                    <div class="section-header"><div class="section-icon blue">&#9650;</div><h2>Traffic Patterns &mdash; Last 24 Months</h2></div>
+                    <div class="charts-row">
+                        <div class="card"><h3>Monthly Traffic Volume</h3><div class="chart-container"><canvas id="ddMktTrafficChart"></canvas></div></div>
+                        <div class="card"><h3>Traffic by Day of Week (Avg)</h3><div class="chart-container"><canvas id="ddMktDayChart"></canvas></div></div>
+                    </div>
+
+                    <!-- Seasonality -->
+                    <div class="section-header"><div class="section-icon green">&#9788;</div><h2>Seasonality Insights</h2></div>
+                    <div class="insight-box">
+                        <div class="insight-title">Climate Zone Impact</div>
+                        <p>Seasonality is a look at how carwash traffic is spread out over the year. This can be helpful when planning promotions for the biggest impact. Climate zones affect seasonal patterns &mdash; pollen, dust, salt, and weather all drive traffic variability.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Seasonal Traffic Index (100 = Monthly Average)</h3>
+                        <div class="chart-container tall"><canvas id="ddSeasonalChart"></canvas></div>
+                    </div>
+
+                    <!-- Promo / Campaign -->
+                    <div class="section-header" style="margin-top:2rem"><div class="section-icon purple">&#9733;</div><h2>Campaign Performance</h2></div>
+                    <div class="card">
+                        <h3>Recent Campaigns &amp; Promotions</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Campaign</th><th>Type</th><th>Period</th><th>New Joins</th><th>Revenue Impact</th><th>Capture Lift</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Spring Membership Blitz</td><td>Membership</td><td>Mar-Apr</td><td>284</td><td>+$18.4K</td><td>+4.2 pts</td><td><span class="badge healthy">Successful</span></td></tr>
+                                    <tr><td>Summer Unlimited Promo</td><td>Membership</td><td>Jun-Jul</td><td>198</td><td>+$12.1K</td><td>+2.8 pts</td><td><span class="badge healthy">Successful</span></td></tr>
+                                    <tr><td>Back to School Special</td><td>Retail</td><td>Aug</td><td>-</td><td>+$6.2K</td><td>-</td><td><span class="badge info">Moderate</span></td></tr>
+                                    <tr><td>Holiday Gift Card Push</td><td>Prepaid</td><td>Nov-Dec</td><td>45</td><td>+$22.8K</td><td>+1.1 pts</td><td><span class="badge healthy">Successful</span></td></tr>
+                                    <tr><td>New Year Trial Offer</td><td>Membership</td><td>Jan</td><td>92</td><td>+$4.8K</td><td>+1.5 pts</td><td><span class="badge warning">Below Target</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="charts-row" style="margin-top:1.5rem">
+                        <div class="card"><h3>Membership Joins by Source &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddMktJoinSourceChart"></canvas></div></div>
+                        <div class="card"><h3>Promotion Revenue Impact ($K)</h3><div class="chart-container"><canvas id="ddMktPromoChart"></canvas></div></div>
+                    </div>
+                </div>
+
+                <!-- ===== OPERATIONS TAB ===== -->
+                <div id="dd-operations" class="dd-panel">
+                    <div class="insight-box">
+                        <div class="insight-title">Site by Site Analysis</div>
+                        <p>Individual site data is summarized to show monthly averages over the past year. Sites were evaluated to identify top performing and bottom performing sites. Differences in performance across sites could be due to demographic differences or operational differences at each site.</p>
+                    </div>
+
+                    <div class="card-grid card-grid-4">
+                        <div class="card kpi-card"><div class="kpi-value">12</div><div class="kpi-label">Total Sites</div></div>
+                        <div class="card kpi-card"><div class="kpi-value green">4</div><div class="kpi-label">Top Performers</div><div class="kpi-sublabel">> 110% of avg</div></div>
+                        <div class="card kpi-card"><div class="kpi-value yellow">5</div><div class="kpi-label">Average</div><div class="kpi-sublabel">90-110% of avg</div></div>
+                        <div class="card kpi-card"><div class="kpi-value red">3</div><div class="kpi-label">Below Average</div><div class="kpi-sublabel">&lt; 90% of avg</div></div>
+                    </div>
+
+                    <!-- Site Comparison -->
+                    <div class="section-header"><div class="section-icon blue">&#9632;</div><h2>Site Performance Comparison</h2></div>
+                    <div class="card">
+                        <h3>Key Metrics by Site (Monthly Averages)</h3>
+                        <div class="table-container">
+                            <table id="site-comparison-table">
+                                <thead><tr><th>Site</th><th>Avg Cars/Mo</th><th>Revenue/Mo</th><th>Avg Ticket</th><th>Capture %</th><th>Vol Churn</th><th>Member %</th><th>Rank</th><th>Status</th></tr></thead>
+                                <tbody id="site-comparison-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="charts-row" style="margin-top:1.5rem">
+                        <div class="card"><h3>Revenue by Site ($K/Mo)</h3><div class="chart-container"><canvas id="ddOpsSiteRevenueChart"></canvas></div></div>
+                        <div class="card"><h3>Capture Rate by Site (%)</h3><div class="chart-container"><canvas id="ddOpsSiteCaptureChart"></canvas></div></div>
+                    </div>
+
+                    <!-- Site Cards -->
+                    <div class="section-header" style="margin-top:2rem"><div class="section-icon orange">&#9776;</div><h2>Site Cards &mdash; Top &amp; Bottom Performers</h2></div>
+                    <div class="card-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                        <div class="card" style="border-left: 4px solid var(--drb-green);">
+                            <h3 style="color:var(--drb-green)">&#9650; Site 3 &mdash; Top Performer</h3>
+                            <div class="card-grid card-grid-3" style="margin-top:0.75rem; margin-bottom:0.5rem;">
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value green" style="font-size:1.5rem">10,240</div><div class="kpi-label">Avg Cars/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value green" style="font-size:1.5rem">$198K</div><div class="kpi-label">Revenue/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value green" style="font-size:1.5rem">46%</div><div class="kpi-label">Capture Rate</div></div>
+                            </div>
+                            <p style="font-size:0.85rem;color:var(--gray-500)">Highest capture rate and revenue per car. Strong membership sales team and high-traffic location near major shopping center.</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--drb-green);">
+                            <h3 style="color:var(--drb-green)">&#9650; Site 7 &mdash; Top Performer</h3>
+                            <div class="card-grid card-grid-3" style="margin-top:0.75rem; margin-bottom:0.5rem;">
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value green" style="font-size:1.5rem">9,850</div><div class="kpi-label">Avg Cars/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value green" style="font-size:1.5rem">$185K</div><div class="kpi-label">Revenue/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value green" style="font-size:1.5rem">44%</div><div class="kpi-label">Capture Rate</div></div>
+                            </div>
+                            <p style="font-size:0.85rem;color:var(--gray-500)">Consistently high performer. Lowest churn rate in portfolio (3.8%). Strong community presence and repeat customer base.</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--drb-red);">
+                            <h3 style="color:var(--drb-red)">&#9660; Site 9 &mdash; Needs Attention</h3>
+                            <div class="card-grid card-grid-3" style="margin-top:0.75rem; margin-bottom:0.5rem;">
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value red" style="font-size:1.5rem">5,120</div><div class="kpi-label">Avg Cars/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value red" style="font-size:1.5rem">$78K</div><div class="kpi-label">Revenue/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value red" style="font-size:1.5rem">26%</div><div class="kpi-label">Capture Rate</div></div>
+                            </div>
+                            <p style="font-size:0.85rem;color:var(--gray-500)">Lowest capture rate. New competitor opened within 1 mile in Q2. Recommend targeted membership promotions and signage updates.</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--drb-red);">
+                            <h3 style="color:var(--drb-red)">&#9660; Site 11 &mdash; Needs Attention</h3>
+                            <div class="card-grid card-grid-3" style="margin-top:0.75rem; margin-bottom:0.5rem;">
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value red" style="font-size:1.5rem">4,890</div><div class="kpi-label">Avg Cars/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value red" style="font-size:1.5rem">$72K</div><div class="kpi-label">Revenue/Mo</div></div>
+                                <div class="kpi-card" style="padding:0.5rem"><div class="kpi-value red" style="font-size:1.5rem">28%</div><div class="kpi-label">Capture Rate</div></div>
+                            </div>
+                            <p style="font-size:0.85rem;color:var(--gray-500)">High churn at 8.1%. Traffic declining 15% YoY. Equipment downtime issues reported &mdash; recommend operational audit and marketing push.</p>
+                        </div>
+                    </div>
+
+                    <!-- Operational Metrics -->
+                    <div class="section-header" style="margin-top:2rem"><div class="section-icon green">&#9881;</div><h2>Operational Metrics</h2></div>
+                    <div class="charts-row">
+                        <div class="card"><h3>Avg Cars per Day by Site</h3><div class="chart-container"><canvas id="ddOpsCarsPerDayChart"></canvas></div></div>
+                        <div class="card"><h3>Churn Rate by Site (%)</h3><div class="chart-container"><canvas id="ddOpsChurnBySiteChart"></canvas></div></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Industry Benchmarks -->
+            <!-- ==================== BENCHMARKS ==================== -->
             <div id="benchmarks" class="page">
-                <h1>Industry Benchmarks</h1>
-                <p class="page-subtitle">Based on 2,400+ car wash locations</p>
-
-                <div class="card-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div class="benchmark-card">
-                        <h3>Membership</h3>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Capture Rate</span>
-                            <span class="benchmark-value">39%</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Top Quartile</span>
-                            <span class="benchmark-value green">48%+</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Bottom Quartile</span>
-                            <span class="benchmark-value red">&lt;28%</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Avg Ticket</span>
-                            <span class="benchmark-value">$32.00</span>
-                        </div>
+                <h1>Industry Benchmarks</h1><p class="page-subtitle">Based on 2,400+ car wash locations</p>
+                <div class="card-grid" style="grid-template-columns:repeat(3,1fr)">
+                    <div class="benchmark-card"><h3>Membership</h3>
+                        <div class="benchmark-row"><span class="benchmark-label">Capture Rate</span><span class="benchmark-value">39%</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Top Quartile</span><span class="benchmark-value green">48%+</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Bottom Quartile</span><span class="benchmark-value red">&lt;28%</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Avg Ticket</span><span class="benchmark-value">$32.00</span></div>
                     </div>
-                    <div class="benchmark-card">
-                        <h3>Churn</h3>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Voluntary</span>
-                            <span class="benchmark-value">5.5%</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Top Quartile</span>
-                            <span class="benchmark-value green">&lt;4.0%</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Bottom Quartile</span>
-                            <span class="benchmark-value red">7.5%+</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Involuntary</span>
-                            <span class="benchmark-value">2.5%</span>
-                        </div>
+                    <div class="benchmark-card"><h3>Churn</h3>
+                        <div class="benchmark-row"><span class="benchmark-label">Voluntary</span><span class="benchmark-value">5.5%</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Top Quartile</span><span class="benchmark-value green">&lt;4.0%</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Bottom Quartile</span><span class="benchmark-value red">7.5%+</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Involuntary</span><span class="benchmark-value">2.5%</span></div>
                     </div>
-                    <div class="benchmark-card">
-                        <h3>Traffic</h3>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Growth YoY</span>
-                            <span class="benchmark-value">+5%</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Top Quartile</span>
-                            <span class="benchmark-value green">+12%+</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Bottom Quartile</span>
-                            <span class="benchmark-value red">&lt;-2%</span>
-                        </div>
-                        <div class="benchmark-row">
-                            <span class="benchmark-label">Member %</span>
-                            <span class="benchmark-value">62%</span>
-                        </div>
+                    <div class="benchmark-card"><h3>Traffic</h3>
+                        <div class="benchmark-row"><span class="benchmark-label">Growth YoY</span><span class="benchmark-value">+5%</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Top Quartile</span><span class="benchmark-value green">+12%+</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Bottom Quartile</span><span class="benchmark-value red">&lt;-2%</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Member %</span><span class="benchmark-value">62%</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Alert Configuration -->
+            <!-- ==================== SETTINGS ==================== -->
             <div id="settings" class="page">
-                <h1>Alert Configuration</h1>
-                <p class="page-subtitle">Set custom thresholds to trigger alerts</p>
-
-                <div class="card-grid" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="card">
-                        <h3>Capture Rate</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Warning (Below)</label>
-                                <input type="number" value="35" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label>Critical (Below)</label>
-                                <input type="number" value="28" step="1">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Voluntary Churn</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Warning (Above)</label>
-                                <input type="number" value="6.0" step="0.5">
-                            </div>
-                            <div class="form-group">
-                                <label>Critical (Above)</label>
-                                <input type="number" value="7.5" step="0.5">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Traffic YoY</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Warning (Below)</label>
-                                <input type="number" value="-5" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label>Critical (Below)</label>
-                                <input type="number" value="-15" step="1">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Revenue YoY</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Warning (Below)</label>
-                                <input type="number" value="-5" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label>Critical (Below)</label>
-                                <input type="number" value="-12" step="1">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Health Score</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Warning (Below)</label>
-                                <input type="number" value="50" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label>Critical (Below)</label>
-                                <input type="number" value="35" step="1">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Average Ticket</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Warning (Below)</label>
-                                <input type="number" value="28" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label>Critical (Below)</label>
-                                <input type="number" value="24" step="1">
-                            </div>
-                        </div>
-                    </div>
+                <h1>Alert Configuration</h1><p class="page-subtitle">Set custom thresholds to trigger alerts</p>
+                <div class="card-grid" style="grid-template-columns:repeat(2,1fr)">
+                    <div class="card"><h3>Capture Rate</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="35"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="28"></div></div></div>
+                    <div class="card"><h3>Voluntary Churn</h3><div class="form-row"><div class="form-group"><label>Warning (Above)</label><input type="number" value="6.0"></div><div class="form-group"><label>Critical (Above)</label><input type="number" value="7.5"></div></div></div>
+                    <div class="card"><h3>Traffic YoY</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="-5"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="-15"></div></div></div>
+                    <div class="card"><h3>Revenue YoY</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="-5"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="-12"></div></div></div>
+                    <div class="card"><h3>Health Score</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="50"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="35"></div></div></div>
+                    <div class="card"><h3>Average Ticket</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="28"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="24"></div></div></div>
                 </div>
-
-                <div style="margin-top: 1.5rem;">
-                    <button class="btn btn-primary">Save Configuration</button>
-                    <button class="btn btn-secondary" style="margin-left: 0.5rem;">Reset to Defaults</button>
-                </div>
+                <div style="margin-top:1.5rem"><button class="btn btn-primary">Save Configuration</button><button class="btn btn-secondary" style="margin-left:0.5rem">Reset to Defaults</button></div>
             </div>
 
-            <div class="footer">
-                Data as of: <span id="current-date"></span> · DRB Advisory Analytics
-            </div>
+            <div class="footer">Data as of: <span id="current-date"></span> &middot; DRB Advisory Analytics</div>
         </main>
     </div>
 
     <script>
-        // Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                
-                this.classList.add('active');
-                document.getElementById(this.dataset.page).classList.add('active');
-                
-                // Initialize charts when page becomes visible
-                if (this.dataset.page === 'operational') {
-                    initOperationalCharts();
-                } else if (this.dataset.page === 'boap') {
-                    initBoapCharts();
-                } else if (this.dataset.page === 'deepdive') {
-                    initDeepDiveCharts();
-                }
-            });
+    /* ============================================================
+       VANILLA CANVAS CHART ENGINE - Zero external dependencies
+       ============================================================ */
+    var SC = {
+        c: { blue:'#3B82F6', orange:'#F26522', green:'#10B981', red:'#EF4444', purple:'#8B5CF6', teal:'#14B8A6',
+             bf:'rgba(59,130,246,0.1)', of:'rgba(242,101,34,0.1)',
+             gf:'rgba(16,185,129,0.1)', rf:'rgba(239,68,68,0.1)',
+             pf:'rgba(139,92,246,0.1)', tf:'rgba(20,184,166,0.1)',
+             grid:'#F1F5F9', lbl:'#64748B' },
+
+        ctx: function(id) {
+            var cv = document.getElementById(id);
+            if (!cv) return null;
+            var p = cv.parentElement;
+            var dpr = window.devicePixelRatio || 1;
+            cv.width = p.offsetWidth * dpr;
+            cv.height = p.offsetHeight * dpr;
+            cv.style.width = p.offsetWidth + 'px';
+            cv.style.height = p.offsetHeight + 'px';
+            var c = cv.getContext('2d');
+            c.scale(dpr, dpr);
+            c._w = p.offsetWidth;
+            c._h = p.offsetHeight;
+            return c;
+        },
+
+        bar: function(id, labels, data, color, horiz) {
+            var c = this.ctx(id); if(!c) return;
+            var w=c._w, h=c._h, mx=Math.max.apply(null,data)*1.15;
+            var pad = horiz ? {t:15,r:20,b:30,l:85} : {t:15,r:15,b:50,l:50};
+            var cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+            c.clearRect(0,0,w,h);
+            c.font='11px -apple-system,sans-serif';
+            c.textBaseline='middle';
+
+            if(horiz) {
+                var bh=(ch/data.length)*0.65, gap=(ch/data.length)*0.35;
+                for(var g=0;g<=4;g++){var gx=pad.l+(cw*g/4);c.strokeStyle=this.c.grid;c.lineWidth=1;c.beginPath();c.moveTo(gx,pad.t);c.lineTo(gx,h-pad.b);c.stroke();c.fillStyle=this.c.lbl;c.textAlign='center';c.fillText(Math.round(mx*g/4),gx,h-pad.b+12);}
+                for(var i=0;i<data.length;i++){var by=pad.t+(i*(bh+gap))+gap/2,bw=(data[i]/mx)*cw,r=Math.min(4,bh/2);c.fillStyle=color;c.beginPath();c.moveTo(pad.l,by);c.lineTo(pad.l+bw-r,by);c.arcTo(pad.l+bw,by,pad.l+bw,by+r,r);c.lineTo(pad.l+bw,by+bh-r);c.arcTo(pad.l+bw,by+bh,pad.l+bw-r,by+bh,r);c.lineTo(pad.l,by+bh);c.closePath();c.fill();c.fillStyle=this.c.lbl;c.textAlign='right';c.fillText(labels[i],pad.l-8,by+bh/2);}
+            } else {
+                var bW=(cw/data.length)*0.6, bG=(cw/data.length)*0.4;
+                for(var g2=0;g2<=4;g2++){var gy=h-pad.b-(ch*g2/4);c.strokeStyle=this.c.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();c.fillStyle=this.c.lbl;c.textAlign='right';c.fillText(Math.round(mx*g2/4),pad.l-8,gy);}
+                var step=data.length>15?3:data.length>8?2:1;
+                for(var j=0;j<data.length;j++){var bx=pad.l+(j*(bW+bG))+bG/2,bHt=(data[j]/mx)*ch,baseY=h-pad.b,r2=Math.min(4,bW/2);c.fillStyle=color;c.beginPath();c.moveTo(bx,baseY);c.lineTo(bx,baseY-bHt+r2);c.arcTo(bx,baseY-bHt,bx+r2,baseY-bHt,r2);c.lineTo(bx+bW-r2,baseY-bHt);c.arcTo(bx+bW,baseY-bHt,bx+bW,baseY-bHt+r2,r2);c.lineTo(bx+bW,baseY);c.closePath();c.fill();if(j%step===0){c.fillStyle=this.c.lbl;c.textAlign='center';c.save();c.translate(bx+bW/2,baseY+10);c.rotate(-0.4);c.fillText(labels[j],0,0);c.restore();}}
+            }
+        },
+
+        line: function(id, labels, data, lc, fc) {
+            var c = this.ctx(id); if(!c) return;
+            var w=c._w, h=c._h;
+            var mx=Math.max.apply(null,data)*1.15, mn=Math.min(0,Math.min.apply(null,data)), rng=mx-mn;
+            var pad={t:15,r:15,b:50,l:55}, cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+            c.clearRect(0,0,w,h);
+            c.font='11px -apple-system,sans-serif';
+
+            for(var g=0;g<=4;g++){var gy=h-pad.b-(ch*g/4),v=mn+(rng*g/4);c.strokeStyle=this.c.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();c.fillStyle=this.c.lbl;c.textAlign='right';c.textBaseline='middle';c.fillText(Math.round(v),pad.l-8,gy);}
+
+            var pts=[];
+            for(var i=0;i<data.length;i++){pts.push({x:pad.l+(i/(data.length-1))*cw,y:h-pad.b-((data[i]-mn)/rng)*ch});}
+
+            c.beginPath();c.moveTo(pts[0].x,h-pad.b);
+            for(var j=0;j<pts.length;j++){if(j===0)c.lineTo(pts[j].x,pts[j].y);else{var xc=(pts[j-1].x+pts[j].x)/2;c.bezierCurveTo(xc,pts[j-1].y,xc,pts[j].y,pts[j].x,pts[j].y);}}
+            c.lineTo(pts[pts.length-1].x,h-pad.b);c.closePath();c.fillStyle=fc;c.fill();
+
+            c.beginPath();
+            for(var k=0;k<pts.length;k++){if(k===0)c.moveTo(pts[k].x,pts[k].y);else{var xc2=(pts[k-1].x+pts[k].x)/2;c.bezierCurveTo(xc2,pts[k-1].y,xc2,pts[k].y,pts[k].x,pts[k].y);}}
+            c.strokeStyle=lc;c.lineWidth=2.5;c.stroke();
+
+            for(var m=0;m<pts.length;m++){c.beginPath();c.arc(pts[m].x,pts[m].y,3,0,Math.PI*2);c.fillStyle=lc;c.fill();c.strokeStyle='white';c.lineWidth=1.5;c.stroke();}
+
+            var step=data.length>15?3:data.length>8?2:1;
+            for(var n=0;n<labels.length;n++){if(n%step===0){c.fillStyle=this.c.lbl;c.textAlign='center';c.textBaseline='top';c.save();c.translate(pts[n].x,h-pad.b+8);c.rotate(-0.4);c.fillText(labels[n],0,0);c.restore();}}
+        },
+
+        /* Multi-line chart for overlaying 2 datasets */
+        multiLine: function(id, labels, datasets) {
+            var c = this.ctx(id); if(!c) return;
+            var w=c._w, h=c._h;
+            var allData = [];
+            for(var d=0;d<datasets.length;d++) allData = allData.concat(datasets[d].data);
+            var mx=Math.max.apply(null,allData)*1.15, mn=Math.min(0,Math.min.apply(null,allData)), rng=mx-mn;
+            var pad={t:25,r:15,b:50,l:55}, cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+            c.clearRect(0,0,w,h);
+            c.font='11px -apple-system,sans-serif';
+
+            for(var g=0;g<=4;g++){var gy=h-pad.b-(ch*g/4),v=mn+(rng*g/4);c.strokeStyle=this.c.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();c.fillStyle=this.c.lbl;c.textAlign='right';c.textBaseline='middle';c.fillText(Math.round(v*10)/10,pad.l-8,gy);}
+
+            for(var ds=0;ds<datasets.length;ds++){
+                var data=datasets[ds].data, lc=datasets[ds].color, fc=datasets[ds].fill;
+                var pts=[];
+                for(var i=0;i<data.length;i++){pts.push({x:pad.l+(i/(data.length-1))*cw,y:h-pad.b-((data[i]-mn)/rng)*ch});}
+                c.beginPath();c.moveTo(pts[0].x,h-pad.b);
+                for(var j=0;j<pts.length;j++){if(j===0)c.lineTo(pts[j].x,pts[j].y);else{var xc=(pts[j-1].x+pts[j].x)/2;c.bezierCurveTo(xc,pts[j-1].y,xc,pts[j].y,pts[j].x,pts[j].y);}}
+                c.lineTo(pts[pts.length-1].x,h-pad.b);c.closePath();c.fillStyle=fc;c.fill();
+                c.beginPath();
+                for(var k=0;k<pts.length;k++){if(k===0)c.moveTo(pts[k].x,pts[k].y);else{var xc2=(pts[k-1].x+pts[k].x)/2;c.bezierCurveTo(xc2,pts[k-1].y,xc2,pts[k].y,pts[k].x,pts[k].y);}}
+                c.strokeStyle=lc;c.lineWidth=2;c.stroke();
+                for(var m=0;m<pts.length;m++){c.beginPath();c.arc(pts[m].x,pts[m].y,2.5,0,Math.PI*2);c.fillStyle=lc;c.fill();}
+            }
+
+            /* legend */
+            var lx=pad.l+10;
+            for(var lg=0;lg<datasets.length;lg++){
+                c.fillStyle=datasets[lg].color;c.fillRect(lx,5,12,10);
+                c.fillStyle=this.c.lbl;c.textAlign='left';c.textBaseline='top';c.fillText(datasets[lg].label,lx+16,4);
+                lx+=c.measureText(datasets[lg].label).width+34;
+            }
+
+            var step=labels.length>15?3:labels.length>8?2:1;
+            var pts0=[];for(var q=0;q<labels.length;q++){pts0.push({x:pad.l+(q/(labels.length-1))*cw});}
+            for(var n=0;n<labels.length;n++){if(n%step===0){c.fillStyle=this.c.lbl;c.textAlign='center';c.textBaseline='top';c.save();c.translate(pts0[n].x,h-pad.b+8);c.rotate(-0.4);c.fillText(labels[n],0,0);c.restore();}}
+        },
+
+        /* Stacked area for traffic breakdown */
+        stackedArea: function(id, labels, datasets) {
+            var c = this.ctx(id); if(!c) return;
+            var w=c._w, h=c._h;
+            var pad={t:25,r:15,b:50,l:55}, cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+            /* compute stacked totals */
+            var n = datasets[0].data.length;
+            var stacked = [];
+            for(var i=0;i<n;i++){var sum=0;for(var d=0;d<datasets.length;d++) sum+=datasets[d].data[i]; stacked.push(sum);}
+            var mx = Math.max.apply(null,stacked)*1.15;
+            c.clearRect(0,0,w,h);
+            c.font='11px -apple-system,sans-serif';
+
+            for(var g=0;g<=4;g++){var gy=h-pad.b-(ch*g/4);c.strokeStyle=this.c.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();c.fillStyle=this.c.lbl;c.textAlign='right';c.textBaseline='middle';c.fillText(Math.round(mx*g/4),pad.l-8,gy);}
+
+            /* draw from top to bottom */
+            for(var d2=datasets.length-1;d2>=0;d2--){
+                var cumData=[];
+                for(var i2=0;i2<n;i2++){var s=0;for(var dd=0;dd<=d2;dd++) s+=datasets[dd].data[i2]; cumData.push(s);}
+                var pts=[];
+                for(var j=0;j<n;j++){pts.push({x:pad.l+(j/(n-1))*cw,y:h-pad.b-(cumData[j]/mx)*ch});}
+                c.beginPath();c.moveTo(pts[0].x,h-pad.b);
+                for(var k=0;k<pts.length;k++){if(k===0)c.lineTo(pts[k].x,pts[k].y);else{var xc=(pts[k-1].x+pts[k].x)/2;c.bezierCurveTo(xc,pts[k-1].y,xc,pts[k].y,pts[k].x,pts[k].y);}}
+                c.lineTo(pts[pts.length-1].x,h-pad.b);c.closePath();
+                c.fillStyle=datasets[d2].color;c.globalAlpha=0.6;c.fill();c.globalAlpha=1;
+            }
+            /* legend */
+            var lx=pad.l+10;
+            for(var lg=0;lg<datasets.length;lg++){
+                c.fillStyle=datasets[lg].color;c.globalAlpha=0.8;c.fillRect(lx,5,12,10);c.globalAlpha=1;
+                c.fillStyle=this.c.lbl;c.textAlign='left';c.textBaseline='top';c.fillText(datasets[lg].label,lx+16,4);
+                lx+=c.measureText(datasets[lg].label).width+34;
+            }
+            var step=labels.length>15?3:labels.length>8?2:1;
+            for(var sn=0;sn<labels.length;sn++){if(sn%step===0){var sx=pad.l+(sn/(n-1))*cw;c.fillStyle=this.c.lbl;c.textAlign='center';c.textBaseline='top';c.save();c.translate(sx,h-pad.b+8);c.rotate(-0.4);c.fillText(labels[sn],0,0);c.restore();}}
+        }
+    };
+
+    /* RESOLVE ALERTS */
+    function resolveAlert(btn) {
+        var card = btn.closest('.alert-card');
+        card.classList.add('resolving');
+        setTimeout(function() {
+            card.remove();
+            updateAlertCounts();
+            var container = document.getElementById('alerts-container');
+            if (container && container.querySelectorAll('.alert-card').length === 0) {
+                container.innerHTML = '<div class="no-alerts">&#10003; All alerts resolved!</div>';
+            }
+        }, 350);
+    }
+
+    function updateAlertCounts() {
+        var container = document.getElementById('alerts-container');
+        if (!container) return;
+        var critCount = container.querySelectorAll('.alert-card.critical').length;
+        var warnCount = container.querySelectorAll('.alert-card.warning').length;
+        var cards = document.querySelectorAll('#alerts .metric-card');
+        if (cards[0]) cards[0].querySelector('.metric-value').textContent = critCount;
+        if (cards[1]) cards[1].querySelector('.metric-value').textContent = warnCount;
+        if (cards[3]) {
+            var cur = parseInt(cards[3].querySelector('.metric-value').textContent) || 0;
+            cards[3].querySelector('.metric-value').textContent = cur + 1;
+        }
+    }
+
+    /* MAIN NAV */
+    document.querySelectorAll('.nav-item').forEach(function(item){
+        item.addEventListener('click',function(){
+            document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+            document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+            this.classList.add('active');
+            document.getElementById(this.dataset.page).classList.add('active');
+            var pg=this.dataset.page;
+            setTimeout(function(){
+                if(pg==='operational')initOp();
+                else if(pg==='boap')initBoap();
+                else if(pg==='deepdive')initDD('dd-general');
+            },50);
         });
+    });
 
-        // Set current date
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { 
-            year: 'numeric', month: 'long', day: 'numeric' 
+    /* DEEP DIVE TAB NAV */
+    document.querySelectorAll('.dd-tab').forEach(function(tab){
+        tab.addEventListener('click',function(){
+            document.querySelectorAll('.dd-tab').forEach(function(t){t.classList.remove('active');});
+            document.querySelectorAll('.dd-panel').forEach(function(p){p.classList.remove('active');});
+            this.classList.add('active');
+            var targetId = this.dataset.ddtab;
+            document.getElementById(targetId).classList.add('active');
+            setTimeout(function(){ initDD(targetId); },50);
         });
+    });
 
-        // Sample data
-        const customerData = {
-            bmw: {
-                name: 'BMW Kar Wash LLC',
-                sites: 61,
-                region: 'MI',
-                csm: 'Morgan Malone',
-                health: 'Green',
-                score: 2.80,
-                uptime: '99.92%',
-                totalCases: 572,
-                openCases: 4,
-                avgTtr: 2.24,
-                hwSwaps: 3,
-                escalations: 1
-            },
-            sparkle: {
-                name: 'Sparkle Clean Auto Spa',
-                sites: 12,
-                region: 'AZ',
-                csm: 'Mike Johnson',
-                health: 'Red',
-                score: 1.20,
-                uptime: '97.45%',
-                totalCases: 89,
-                openCases: 8,
-                avgTtr: 4.5,
-                hwSwaps: 5,
-                escalations: 3
-            },
-            quick: {
-                name: 'Quick Clean Express',
-                sites: 156,
-                region: 'TX',
-                csm: 'Tom Wilson',
-                health: 'Green',
-                score: 3.50,
-                uptime: '99.78%',
-                totalCases: 1240,
-                openCases: 12,
-                avgTtr: 1.8,
-                hwSwaps: 8,
-                escalations: 2
-            },
-            premier: {
-                name: 'Premier Auto Spa',
-                sites: 234,
-                region: 'CA',
-                csm: 'Sarah Chen',
-                health: 'Green',
-                score: 4.20,
-                uptime: '99.95%',
-                totalCases: 1890,
-                openCases: 6,
-                avgTtr: 1.2,
-                hwSwaps: 4,
-                escalations: 0
-            }
-        };
+    document.getElementById('current-date').textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 
-        // Generate sites data
-        function generateSitesData(numSites) {
-            const cities = ['Detroit', 'Chicago', 'Milwaukee', 'Cleveland', 'Indianapolis'];
-            const platforms = ['SW & PATH', 'SW Only', 'PATH Only', 'XPT & SW'];
-            const sites = [];
-            
-            for (let i = 1; i <= Math.min(numSites, 20); i++) {
-                const health = Math.random() > 0.8 ? 'warning' : Math.random() > 0.95 ? 'critical' : 'healthy';
-                sites.push({
-                    name: `Location ${i}`,
-                    city: cities[Math.floor(Math.random() * cities.length)],
-                    health: health,
-                    uptime: (95 + Math.random() * 5).toFixed(2),
-                    cases: Math.floor(Math.random() * 25),
-                    open: Math.floor(Math.random() * 5),
-                    swaps: Math.floor(Math.random() * 3),
-                    escalations: Math.floor(Math.random() * 2),
-                    csat: (85 + Math.random() * 15).toFixed(1),
-                    platform: platforms[Math.floor(Math.random() * platforms.length)]
-                });
+    /* DATA */
+    var cust={bmw:{name:'BMW Kar Wash LLC',sites:61,region:'MI',csm:'Morgan Malone',health:'Green',score:2.80,uptime:'99.92%',totalCases:572,openCases:4,avgTtr:2.24,hwSwaps:3,escalations:1},sparkle:{name:'Sparkle Clean Auto Spa',sites:12,region:'AZ',csm:'Mike Johnson',health:'Red',score:1.20,uptime:'97.45%',totalCases:89,openCases:8,avgTtr:4.5,hwSwaps:5,escalations:3},quick:{name:'Quick Clean Express',sites:156,region:'TX',csm:'Tom Wilson',health:'Green',score:3.50,uptime:'99.78%',totalCases:1240,openCases:12,avgTtr:1.8,hwSwaps:8,escalations:2},premier:{name:'Premier Auto Spa',sites:234,region:'CA',csm:'Sarah Chen',health:'Green',score:4.20,uptime:'99.95%',totalCases:1890,openCases:6,avgTtr:1.2,hwSwaps:4,escalations:0}};
+
+    function genSites(n){var cities=['Detroit','Chicago','Milwaukee','Cleveland','Indianapolis'],plat=['SW & PATH','SW Only','PATH Only','XPT & SW'],s=[];for(var i=1;i<=Math.min(n,20);i++){var h=Math.random()>0.8?'warning':Math.random()>0.95?'critical':'healthy';s.push({name:'Location '+i,city:cities[Math.floor(Math.random()*cities.length)],health:h,uptime:(95+Math.random()*5).toFixed(2),cases:Math.floor(Math.random()*25),open:Math.floor(Math.random()*5),swaps:Math.floor(Math.random()*3),esc:Math.floor(Math.random()*2),csat:(85+Math.random()*15).toFixed(1),plat:plat[Math.floor(Math.random()*plat.length)]});}return s;}
+
+    function updateOperationalData(){var s=document.getElementById('customer-select'),d=cust[s.value];document.getElementById('op-customer-name').textContent=d.name;document.getElementById('op-customer-meta').textContent=d.sites+' Sites \u00B7 '+d.region+' \u00B7 CSM: '+d.csm;document.getElementById('op-health-index').textContent=d.health;document.getElementById('op-health-index').className='customer-stat-value '+d.health.toLowerCase();document.getElementById('op-health-score').textContent=d.score.toFixed(2);document.getElementById('op-uptime').textContent=d.uptime;document.getElementById('op-total-cases').textContent=d.totalCases;document.getElementById('op-open-cases').textContent=d.openCases;document.getElementById('op-avg-ttr').textContent=d.avgTtr;document.getElementById('op-hw-swaps').textContent=d.hwSwaps;document.getElementById('op-escalations').textContent=d.escalations;var sites=genSites(d.sites),tb=document.getElementById('sites-table-body');tb.innerHTML=sites.map(function(x){return'<tr><td>'+x.name+'</td><td>'+x.city+'</td><td><span class="badge '+x.health+'">'+x.health+'</span></td><td>'+x.uptime+'%</td><td>'+x.cases+'</td><td>'+x.open+'</td><td>'+x.swaps+'</td><td>'+x.esc+'</td><td>'+x.csat+'%</td><td>'+x.plat+'</td></tr>';}).join('');}
+
+    function ml(n){var m=[],now=new Date();for(var i=n-1;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth()-i,1);m.push(d.toLocaleDateString('en-US',{month:'short',year:'2-digit'}));}return m;}
+
+    function initOp(){var m=ml(12);SC.bar('caseByProductChart',['XPT/Kiosk','Cashier','Gate','TunnelWatch','Server','XCC','OTT','ARM'],[572,157,119,111,110,57,51,44],SC.c.blue,true);SC.line('monthlyCaseChart',m,[85,92,78,95,110,88,76,102,98,115,89,95],SC.c.blue,SC.c.bf);SC.line('hardwareSwapsChart',m,[2,1,3,2,4,1,2,3,1,2,3,2],SC.c.orange,SC.c.of);SC.line('escalationsChart',m,[1,0.5,2,1,1,2,0.5,1,2,1,0.5,1],SC.c.red,SC.c.rf);updateOperationalData();}
+
+    function initBoap(){var m=ml(24),rv=[],mm=[];for(var i=0;i<24;i++){rv.push(180-i*3+Math.random()*20);mm.push(2400-i*50+Math.random()*100);}SC.bar('boapRevenueChart',m,rv,SC.c.orange,false);SC.line('boapMembersChart',m,mm,SC.c.green,SC.c.gf);}
+
+    /* ============================================================
+       DEEP DIVE INIT - All tabs
+       ============================================================ */
+    function initDD(tab){
+        var m=ml(24);
+
+        if(tab==='dd-general'){
+            var r=[],ca=[],memP=[],retP=[],ppP=[],avgT=[];
+            for(var i=0;i<24;i++){
+                r.push(150+Math.random()*50);
+                ca.push(8000+Math.random()*4000);
+                var mp=55+Math.random()*8; memP.push(mp*80);
+                retP.push((100-mp-3)*80);
+                ppP.push(3*80);
+                avgT.push(26+Math.random()*5);
             }
-            return sites;
+            SC.bar('ddRevenueChart',m,r,SC.c.orange,false);
+            SC.bar('ddCarsChart',m,ca,SC.c.blue,false);
+            SC.stackedArea('ddTrafficBreakdownChart',m,[
+                {label:'Member',data:memP,color:SC.c.blue},
+                {label:'Retail',data:retP,color:SC.c.orange},
+                {label:'Prepaid',data:ppP,color:SC.c.green}
+            ]);
+            SC.line('ddAvgTicketChart',m,avgT,SC.c.green,SC.c.gf);
         }
 
-        function updateOperationalData() {
-            const select = document.getElementById('customer-select');
-            const data = customerData[select.value];
-            
-            document.getElementById('op-customer-name').textContent = data.name;
-            document.getElementById('op-customer-meta').textContent = `${data.sites} Sites · ${data.region} · CSM: ${data.csm}`;
-            document.getElementById('op-health-index').textContent = data.health;
-            document.getElementById('op-health-index').className = `customer-stat-value ${data.health.toLowerCase()}`;
-            document.getElementById('op-health-score').textContent = data.score.toFixed(2);
-            document.getElementById('op-uptime').textContent = data.uptime;
-            document.getElementById('op-total-cases').textContent = data.totalCases;
-            document.getElementById('op-open-cases').textContent = data.openCases;
-            document.getElementById('op-avg-ttr').textContent = data.avgTtr;
-            document.getElementById('op-hw-swaps').textContent = data.hwSwaps;
-            document.getElementById('op-escalations').textContent = data.escalations;
-            
-            // Update sites table
-            const sites = generateSitesData(data.sites);
-            const tbody = document.getElementById('sites-table-body');
-            tbody.innerHTML = sites.map(site => `
-                <tr>
-                    <td>${site.name}</td>
-                    <td>${site.city}</td>
-                    <td><span class="badge ${site.health}">${site.health}</span></td>
-                    <td>${site.uptime}%</td>
-                    <td>${site.cases}</td>
-                    <td>${site.open}</td>
-                    <td>${site.swaps}</td>
-                    <td>${site.escalations}</td>
-                    <td>${site.csat}%</td>
-                    <td>${site.platform}</td>
-                </tr>
-            `).join('');
+        if(tab==='dd-membership'){
+            /* Capture vs Churn */
+            var cap=[],vol=[],inv=[];
+            for(var i2=0;i2<24;i2++){cap.push(35+Math.random()*8);vol.push(4.5+Math.random()*3);inv.push(2+Math.random()*2);}
+            SC.multiLine('ddCaptureChurnChart',m,[
+                {label:'Capture Rate %',data:cap,color:SC.c.green,fill:SC.c.gf},
+                {label:'Vol Churn %',data:vol,color:SC.c.red,fill:SC.c.rf}
+            ]);
+            /* Active Members */
+            var am=[];var base=2200;
+            for(var i3=0;i3<24;i3++){base+=Math.floor(Math.random()*80-20);am.push(base);}
+            SC.line('ddActiveMembersChart',m,am,SC.c.blue,SC.c.bf);
+            /* Joins vs Churn */
+            var joins=[],churns=[];
+            for(var i4=0;i4<24;i4++){joins.push(250+Math.random()*150);churns.push(120+Math.random()*100);}
+            SC.multiLine('ddJoinsChurnChart',m,[
+                {label:'New Joins',data:joins,color:SC.c.green,fill:SC.c.gf},
+                {label:'Total Churned',data:churns,color:SC.c.red,fill:SC.c.rf}
+            ]);
+            /* Member Revenue */
+            var mr=[];
+            for(var i5=0;i5<24;i5++){mr.push(70+Math.random()*30);}
+            SC.line('ddMemberRevenueChart',m,mr,SC.c.orange,SC.c.of);
+            /* Tenure by Plan */
+            SC.bar('ddTenureChart',['Basic','Standard','Premium','Ultimate'],[6.2,8.1,10.4,12.8],SC.c.blue,true);
+            /* LTV by Plan */
+            SC.bar('ddLtvChart',['Basic','Standard','Premium','Ultimate'],[124,210,342,518],SC.c.green,true);
+            /* Cohort Table */
+            buildCohortTable();
         }
 
-        // Chart instances
-        let caseByProductChart, monthlyCaseChart, hardwareSwapsChart, escalationsChart;
-        let boapRevenueChart, boapMembersChart;
-        let ddRevenueChart, ddCarsChart;
-
-        // Generate months
-        function getMonthLabels(count) {
-            const months = [];
-            const now = new Date();
-            for (let i = count - 1; i >= 0; i--) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                months.push(d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }));
+        if(tab==='dd-retail'){
+            var rc=[],rr=[],rt=[],basicP=[],stdP=[],premP=[],ultP=[];
+            for(var i6=0;i6<24;i6++){
+                rc.push(3000+Math.random()*1500);
+                rr.push(55+Math.random()*25);
+                rt.push(16+Math.random()*5);
+                basicP.push(15+Math.random()*8);
+                stdP.push(30+Math.random()*10);
+                premP.push(28+Math.random()*8);
+                ultP.push(12+Math.random()*8);
             }
-            return months;
+            SC.bar('ddRetailCarsChart',m,rc,SC.c.blue,false);
+            SC.line('ddRetailRevenueChart',m,rr,SC.c.orange,SC.c.of);
+            SC.line('ddRetailTicketChart',m,rt,SC.c.green,SC.c.gf);
+            SC.stackedArea('ddRetailMixChart',m,[
+                {label:'Basic',data:basicP,color:'#94A3B8'},
+                {label:'Standard',data:stdP,color:SC.c.blue},
+                {label:'Premium',data:premP,color:SC.c.green},
+                {label:'Ultimate',data:ultP,color:SC.c.purple}
+            ]);
         }
 
-        // Chart options
-        const chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                x: {
-                    grid: { display: false }
-                },
-                y: {
-                    grid: { color: '#F1F5F9', drawBorder: false }
+        if(tab==='dd-marketing'){
+            var mt=[];
+            for(var i7=0;i7<24;i7++){mt.push(7000+Math.random()*5000+Math.sin(i7/2)*2000);}
+            SC.line('ddMktTrafficChart',m,mt,SC.c.blue,SC.c.bf);
+            SC.bar('ddMktDayChart',['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[1180,1250,1320,1280,1450,1680,1140],SC.c.blue,false);
+            /* Seasonal Index */
+            SC.bar('ddSeasonalChart',['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],[72,78,95,105,112,118,132,125,110,120,88,75],SC.c.orange,false);
+            /* Joins by Source */
+            var organic=[],promo=[];
+            for(var i8=0;i8<24;i8++){organic.push(150+Math.random()*80);promo.push(50+Math.random()*100);}
+            SC.multiLine('ddMktJoinSourceChart',m,[
+                {label:'Organic',data:organic,color:SC.c.blue,fill:SC.c.bf},
+                {label:'Promotion',data:promo,color:SC.c.orange,fill:SC.c.of}
+            ]);
+            SC.bar('ddMktPromoChart',['Spring Blitz','Summer Promo','Back to School','Holiday Gift','New Year'],[18.4,12.1,6.2,22.8,4.8],SC.c.green,true);
+        }
+
+        if(tab==='dd-operations'){
+            buildSiteComparison();
+            SC.bar('ddOpsSiteRevenueChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[142,128,198,115,135,108,185,122,78,96,72,110],SC.c.orange,false);
+            SC.bar('ddOpsSiteCaptureChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[40,36,46,34,42,38,44,35,26,32,28,37],SC.c.blue,false);
+            SC.bar('ddOpsCarsPerDayChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[285,248,341,220,268,205,328,234,171,195,163,218],SC.c.green,false);
+            SC.bar('ddOpsChurnBySiteChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[5.2,5.8,4.1,6.2,4.8,5.5,3.8,6.0,7.4,6.8,8.1,5.6],SC.c.red,false);
+        }
+    }
+
+    function buildCohortTable(){
+        var tbody=document.getElementById('cohort-body');
+        if(!tbody) return;
+        var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var now=new Date();
+        var rows='';
+        for(var r=0;r<8;r++){
+            var md=new Date(now.getFullYear(),now.getMonth()-11+r,1);
+            var label=months[md.getMonth()]+' '+String(md.getFullYear()).slice(2);
+            var joined=Math.floor(200+Math.random()*200);
+            rows+='<tr><td style="font-weight:600;text-align:left">'+label+'</td><td style="font-weight:600">'+joined+'</td>';
+            var maxCols=12-r;
+            for(var c=0;c<12;c++){
+                if(c<maxCols){
+                    var ret=Math.max(15,Math.round(100-c*8-Math.random()*5));
+                    var bg,fg;
+                    if(ret>=80){bg='#D1FAE5';fg='#065F46';}
+                    else if(ret>=60){bg='#DBEAFE';fg='#1E40AF';}
+                    else if(ret>=40){bg='#FEF3C7';fg='#92400E';}
+                    else{bg='#FEE2E2';fg='#991B1B';}
+                    rows+='<td class="cohort-cell" style="background:'+bg+';color:'+fg+';font-weight:600;font-size:0.8rem">'+ret+'%</td>';
+                } else {
+                    rows+='<td style="color:#CBD5E1">-</td>';
                 }
             }
-        };
-
-        function initOperationalCharts() {
-            const months = getMonthLabels(12);
-            
-            // Case by Product Chart
-            if (caseByProductChart) caseByProductChart.destroy();
-            caseByProductChart = new Chart(document.getElementById('caseByProductChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['XPT/Kiosk', 'Cashier', 'Gate', 'TunnelWatch', 'Server', 'XCC', 'OTT', 'ARM'],
-                    datasets: [{
-                        data: [572, 157, 119, 111, 110, 57, 51, 44],
-                        backgroundColor: '#3B82F6',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    ...chartOptions,
-                    indexAxis: 'y'
-                }
-            });
-
-            // Monthly Case Chart
-            if (monthlyCaseChart) monthlyCaseChart.destroy();
-            monthlyCaseChart = new Chart(document.getElementById('monthlyCaseChart'), {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        data: [85, 92, 78, 95, 110, 88, 76, 102, 98, 115, 89, 95],
-                        borderColor: '#3B82F6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: chartOptions
-            });
-
-            // Hardware Swaps Chart
-            if (hardwareSwapsChart) hardwareSwapsChart.destroy();
-            hardwareSwapsChart = new Chart(document.getElementById('hardwareSwapsChart'), {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        data: [2, 1, 3, 2, 4, 1, 2, 3, 1, 2, 3, 2],
-                        borderColor: '#F26522',
-                        backgroundColor: 'rgba(242, 101, 34, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: chartOptions
-            });
-
-            // Escalations Chart
-            if (escalationsChart) escalationsChart.destroy();
-            escalationsChart = new Chart(document.getElementById('escalationsChart'), {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        data: [1, 0, 2, 1, 1, 2, 0, 1, 2, 1, 0, 1],
-                        borderColor: '#EF4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: chartOptions
-            });
-
-            // Initialize sites table
-            updateOperationalData();
+            rows+='</tr>';
         }
+        tbody.innerHTML=rows;
+    }
 
-        function initBoapCharts() {
-            const months = getMonthLabels(24);
-            
-            if (boapRevenueChart) boapRevenueChart.destroy();
-            boapRevenueChart = new Chart(document.getElementById('boapRevenueChart'), {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        data: Array.from({length: 24}, (_, i) => 180 - i * 3 + Math.random() * 20),
-                        backgroundColor: '#F26522',
-                        borderRadius: 4
-                    }]
-                },
-                options: chartOptions
-            });
-
-            if (boapMembersChart) boapMembersChart.destroy();
-            boapMembersChart = new Chart(document.getElementById('boapMembersChart'), {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        data: Array.from({length: 24}, (_, i) => 2400 - i * 50 + Math.random() * 100),
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: chartOptions
-            });
-        }
-
-        function initDeepDiveCharts() {
-            const months = getMonthLabels(24);
-            
-            if (ddRevenueChart) ddRevenueChart.destroy();
-            ddRevenueChart = new Chart(document.getElementById('ddRevenueChart'), {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        data: Array.from({length: 24}, () => 150 + Math.random() * 50),
-                        backgroundColor: '#F26522',
-                        borderRadius: 4
-                    }]
-                },
-                options: chartOptions
-            });
-
-            if (ddCarsChart) ddCarsChart.destroy();
-            ddCarsChart = new Chart(document.getElementById('ddCarsChart'), {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        data: Array.from({length: 24}, () => 8000 + Math.random() * 4000),
-                        backgroundColor: '#3B82F6',
-                        borderRadius: 4
-                    }]
-                },
-                options: chartOptions
-            });
-        }
-
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Default page is portfolio, no charts needed
-        });
+    function buildSiteComparison(){
+        var tbody=document.getElementById('site-comparison-body');
+        if(!tbody) return;
+        var sites=[
+            {name:'Site 1',cars:8550,rev:'$142K',ticket:'$16.62',cap:'40%',churn:'5.2%',memPct:'62%',rank:3,status:'healthy'},
+            {name:'Site 2',cars:7440,rev:'$128K',ticket:'$17.20',cap:'36%',churn:'5.8%',memPct:'55%',rank:5,status:'info'},
+            {name:'Site 3',cars:10240,rev:'$198K',ticket:'$19.34',cap:'46%',churn:'4.1%',memPct:'68%',rank:1,status:'healthy'},
+            {name:'Site 4',cars:6600,rev:'$115K',ticket:'$17.42',cap:'34%',churn:'6.2%',memPct:'52%',rank:8,status:'warning'},
+            {name:'Site 5',cars:8040,rev:'$135K',ticket:'$16.79',cap:'42%',churn:'4.8%',memPct:'64%',rank:4,status:'healthy'},
+            {name:'Site 6',cars:6480,rev:'$108K',ticket:'$16.67',cap:'38%',churn:'5.5%',memPct:'58%',rank:7,status:'info'},
+            {name:'Site 7',cars:9850,rev:'$185K',ticket:'$18.78',cap:'44%',churn:'3.8%',memPct:'66%',rank:2,status:'healthy'},
+            {name:'Site 8',cars:7320,rev:'$122K',ticket:'$16.67',cap:'35%',churn:'6.0%',memPct:'54%',rank:6,status:'info'},
+            {name:'Site 9',cars:5120,rev:'$78K',ticket:'$15.23',cap:'26%',churn:'7.4%',memPct:'42%',rank:11,status:'critical'},
+            {name:'Site 10',cars:5850,rev:'$96K',ticket:'$16.41',cap:'32%',churn:'6.8%',memPct:'48%',rank:9,status:'warning'},
+            {name:'Site 11',cars:4890,rev:'$72K',ticket:'$14.72',cap:'28%',churn:'8.1%',memPct:'40%',rank:12,status:'critical'},
+            {name:'Site 12',cars:6540,rev:'$110K',ticket:'$16.82',cap:'37%',churn:'5.6%',memPct:'57%',rank:10,status:'info'}
+        ];
+        tbody.innerHTML=sites.map(function(s){
+            return '<tr><td style="font-weight:600">'+s.name+'</td><td>'+s.cars.toLocaleString()+'</td><td>'+s.rev+'</td><td>'+s.ticket+'</td><td>'+s.cap+'</td><td>'+s.churn+'</td><td>'+s.memPct+'</td><td>#'+s.rank+'</td><td><span class="badge '+s.status+'">'+(s.status==='critical'?'Below Avg':s.status==='warning'?'Watch':s.status==='healthy'?'Strong':'On Track')+'</span></td></tr>';
+        }).join('');
+    }
     </script>
 </body>
 </html>
