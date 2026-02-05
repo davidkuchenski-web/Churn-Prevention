@@ -151,6 +151,7 @@
                 <button class="nav-item" data-page="boap">Business on a Page</button>
                 <button class="nav-item" data-page="deepdive">Advisory Deep Dive</button>
                 <button class="nav-item" data-page="benchmarks">Industry Benchmarks</button>
+                <button class="nav-item" data-page="roi">ROI &amp; Solutions</button>
                 <button class="nav-item" data-page="settings">Alert Configuration</button>
             </nav>
             <div class="sidebar-divider"></div>
@@ -586,6 +587,207 @@
                 </div>
             </div>
 
+            <!-- ==================== ROI & SOLUTIONS ==================== -->
+            <div id="roi" class="page">
+                <h1>ROI &amp; Solutions Engine</h1>
+                <p class="page-subtitle">Connecting performance gaps to DRB solutions &amp; projected revenue impact</p>
+
+                <!-- ===== HERO: Patheon Benchmark Lifts ===== -->
+                <div style="background:linear-gradient(135deg,var(--drb-navy),#2A3F55);border-radius:1rem;padding:2rem 1.5rem;margin-bottom:2rem;color:white">
+                    <div style="text-align:center;margin-bottom:0.25rem"><span style="font-size:1.35rem;font-weight:700;color:var(--drb-orange)">Driving Customer Growth with Patheon</span></div>
+                    <div style="text-align:center;margin-bottom:1.5rem;opacity:0.7;font-size:0.8rem">Analysis of 18 organizations &middot; 156 sites &middot; SiteWatch to Patheon &middot; YoY comparison</div>
+                    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;text-align:center">
+                        <div style="background:rgba(255,255,255,0.08);border-radius:0.75rem;padding:1.25rem 0.5rem">
+                            <div style="font-size:2.25rem;font-weight:800;color:#34D399">+10%</div>
+                            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;margin-top:0.25rem">Membership<br>Growth</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.08);border-radius:0.75rem;padding:1.25rem 0.5rem">
+                            <div style="font-size:2.25rem;font-weight:800;color:#34D399">+21%</div>
+                            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;margin-top:0.25rem">Member<br>Revenue</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.08);border-radius:0.75rem;padding:1.25rem 0.5rem">
+                            <div style="font-size:2.25rem;font-weight:800;color:#60A5FA">-5%</div>
+                            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;margin-top:0.25rem">Reduced Vol.<br>Churn</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.08);border-radius:0.75rem;padding:1.25rem 0.5rem">
+                            <div style="font-size:2.25rem;font-weight:800;color:#60A5FA">-13%</div>
+                            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;margin-top:0.25rem">Reduced Invol.<br>Churn</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.08);border-radius:0.75rem;padding:1.25rem 0.5rem">
+                            <div style="font-size:2.25rem;font-weight:800;color:var(--drb-orange)">+14%</div>
+                            <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;margin-top:0.25rem">Total<br>Revenue</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== CUSTOMER SELECTOR ===== -->
+                <div class="form-row" style="margin-bottom:1.5rem">
+                    <div class="form-group"><label>Select Customer</label>
+                        <select id="roi-customer-select" onchange="updateROI()">
+                            <option value="sparkle">Sparkle Clean Auto Spa (12 sites)</option>
+                            <option value="metro">Metro Express Wash (8 sites)</option>
+                            <option value="quick">Quick Clean Express (156 sites)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ===== KPI GAP ANALYSIS ===== -->
+                <div class="section-header"><div class="section-icon red">&#9888;</div><h2>KPI Gap Analysis &amp; Solution Mapping</h2></div>
+                <div class="insight-box">
+                    <div class="insight-title">How it works</div>
+                    <p>Each KPI below is compared against industry benchmarks. Where gaps exist, we map specific Patheon and DRB platform capabilities that address the root cause &mdash; along with the projected revenue impact based on actual conversion data from 156 sites.</p>
+                </div>
+
+                <div id="roi-gap-cards"></div>
+
+                <!-- ===== PROJECTED REVENUE IMPACT ===== -->
+                <div class="section-header" style="margin-top:2rem"><div class="section-icon green">&#36;</div><h2>Projected Revenue Impact &mdash; Post Conversion</h2></div>
+
+                <div class="card" style="margin-bottom:1.5rem">
+                    <h3>Membership Revenue Growth</h3>
+                    <div class="table-container">
+                        <table id="roi-membership-table">
+                            <thead><tr><th></th><th>Current (SiteWatch)</th><th>Projected (Patheon)</th><th style="color:var(--drb-green)">Improvement</th></tr></thead>
+                            <tbody id="roi-membership-body"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#ECFDF5;border-radius:0.5rem;font-size:0.85rem;color:#065F46">
+                        <strong>Impact Drivers:</strong> Multi-vehicle plans, drip campaigns via Catalyst, personalized pricing, offsite membership sales portal, and targeted promotions through Patheon&rsquo;s EWA.
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom:1.5rem">
+                    <h3>Retail Revenue Growth</h3>
+                    <div class="table-container">
+                        <table id="roi-retail-table">
+                            <thead><tr><th></th><th>Current (SiteWatch)</th><th>Projected (Patheon)</th><th style="color:var(--drb-green)">Improvement</th></tr></thead>
+                            <tbody id="roi-retail-body"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#ECFDF5;border-radius:0.5rem;font-size:0.85rem;color:#065F46">
+                        <strong>Impact Drivers:</strong> Pay-As-You-Go proxy member usage, targeted XPT promotions for upsell, Catalyst opt-in marketing campaigns, and pricing optimization with A/B testing.
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom:1.5rem">
+                    <h3>Churn Reduction &amp; Member Retention</h3>
+                    <div class="table-container">
+                        <table id="roi-churn-table">
+                            <thead><tr><th></th><th>Current</th><th>Projected (Patheon)</th><th style="color:var(--drb-green)">Improvement</th></tr></thead>
+                            <tbody id="roi-churn-body"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#ECFDF5;border-radius:0.5rem;font-size:0.85rem;color:#065F46">
+                        <strong>Impact Drivers:</strong> Automated payment recovery, flexible plan management tools, membership milestone recognition, text &amp; email re-engagement campaigns, and seasonal plan options.
+                    </div>
+                </div>
+
+                <!-- ===== TOTAL ROI SUMMARY ===== -->
+                <div style="background:linear-gradient(135deg,#FFF7ED,#FFFFFF);border:2px solid var(--drb-orange);border-radius:1rem;padding:1.5rem;margin-bottom:2rem">
+                    <div style="text-align:center;margin-bottom:1rem"><span style="font-size:1.1rem;font-weight:700;color:var(--drb-orange)">Total Projected Annual Revenue Lift</span></div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center">
+                        <div><div style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Membership Revenue</div><div id="roi-total-mem" style="font-size:1.75rem;font-weight:700;color:var(--drb-green)">+$0</div></div>
+                        <div><div style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Retail Revenue</div><div id="roi-total-ret" style="font-size:1.75rem;font-weight:700;color:var(--drb-green)">+$0</div></div>
+                        <div><div style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Retained Members Value</div><div id="roi-total-churn" style="font-size:1.75rem;font-weight:700;color:var(--drb-green)">+$0</div></div>
+                        <div style="background:var(--drb-orange);border-radius:0.75rem;padding:0.75rem"><div style="font-size:0.7rem;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.05em">Combined Annual Lift</div><div id="roi-total-combined" style="font-size:1.75rem;font-weight:700;color:white">+$0</div></div>
+                    </div>
+                </div>
+
+                <!-- ===== UNIFIED CUSTOMER ENGAGEMENT PLATFORM ===== -->
+                <div class="section-header" style="margin-top:2rem"><div class="section-icon orange">&#9654;</div><h2>Unified Customer Engagement Platform</h2></div>
+                <div class="insight-box">
+                    <div class="insight-title">Strategies &amp; Tools to Enable Growth</div>
+                    <p>The table below maps industry trends to actionable strategies and the specific Patheon &amp; DRB tools that enable each one. Items highlighted in <strong style="color:var(--drb-red)">red</strong> indicate areas where this customer is currently underperforming &mdash; making those tools the highest-priority recommendations.</p>
+                </div>
+
+                <div class="card" style="margin-bottom:1.5rem">
+                    <table style="font-size:0.85rem" id="roi-platform-table">
+                        <thead>
+                            <tr>
+                                <th style="width:18%;background:var(--drb-navy);color:white">Industry Trend</th>
+                                <th style="width:32%;background:var(--drb-navy);color:white">Strategies</th>
+                                <th style="width:4%;background:var(--drb-navy);color:white"></th>
+                                <th style="width:46%;background:var(--drb-navy);color:white">Patheon &amp; DRB Tools</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="roi-row-retail">
+                                <td style="font-weight:700;color:white;background:var(--drb-blue);border-radius:0.5rem 0 0 0.5rem;padding:1rem">Drive Retail<br>Revenue</td>
+                                <td style="padding:1rem;line-height:1.7"><span style="font-weight:600">Increase retail ticket average</span><br><span style="font-weight:600">Increase retail traffic</span><br><span style="font-weight:600">Speed and efficiency</span><br><span style="font-weight:600">Increase repeat visits &amp; loyalty</span></td>
+                                <td style="text-align:center;color:var(--drb-orange);font-size:1.5rem;font-weight:700">&rarr;</td>
+                                <td style="padding:1rem;line-height:1.7">Targeted &amp; personalized promotions<br>Frictionless transactions via EWA/XPT<br>Pricing optimization &amp; A/B testing<br>Earn &amp; redeem Loyalty Points</td>
+                            </tr>
+                            <tr id="roi-row-membership">
+                                <td style="font-weight:700;color:white;background:var(--drb-blue);border-radius:0.5rem 0 0 0.5rem;padding:1rem">Increase<br>Memberships</td>
+                                <td style="padding:1rem;line-height:1.7"><span style="font-weight:600">Pricing and value</span><br><span style="font-weight:600">Drive higher conversion rates</span><br><span style="font-weight:600">Increase share of wallet</span><br><span style="font-weight:600">Marketing &amp; promotional campaigns</span></td>
+                                <td style="text-align:center;color:var(--drb-orange);font-size:1.5rem;font-weight:700">&rarr;</td>
+                                <td style="padding:1rem;line-height:1.7">Multi-vehicle pricing and tools<br>Drip text, email &amp; app notifications via Catalyst<br>Targeted &amp; personalized promotions<br>Offsite membership sales portal</td>
+                            </tr>
+                            <tr id="roi-row-churn">
+                                <td style="font-weight:700;color:white;background:var(--drb-blue);border-radius:0.5rem 0 0 0.5rem;padding:1rem">Reduce<br>Churn</td>
+                                <td style="padding:1rem;line-height:1.7"><span style="font-weight:600">Promotional best practices</span><br><span style="font-weight:600">Flexible &amp; seasonal options</span><br><span style="font-weight:600">Member loyalty &amp; usage promotion</span><br><span style="font-weight:600">Failed payment recapture</span></td>
+                                <td style="text-align:center;color:var(--drb-orange);font-size:1.5rem;font-weight:700">&rarr;</td>
+                                <td style="padding:1rem;line-height:1.7">Simple plan management tools<br>Text &amp; email communications<br>Recognize membership milestones<br>Automated payment recovery</td>
+                            </tr>
+                            <tr id="roi-row-scale">
+                                <td style="font-weight:700;color:white;background:var(--drb-blue);border-radius:0.5rem 0 0 0.5rem;padding:1rem">Scale<br>Seamlessly</td>
+                                <td style="padding:1rem;line-height:1.7"><span style="font-weight:600">Cloud solutions for agility</span><br><span style="font-weight:600">Install base consistency</span><br><span style="font-weight:600">Database simplification</span><br><span style="font-weight:600">Faster data availability &amp; analytics</span></td>
+                                <td style="text-align:center;color:var(--drb-orange);font-size:1.5rem;font-weight:700">&rarr;</td>
+                                <td style="padding:1rem;line-height:1.7">Intelligent Data Syncing<br>Enterprise-grade configuration<br>Data cleanup &amp; mapping on conversion<br>KPI dashboards in easy-to-understand UX</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== CAPTURE RATE STRATEGIES ===== -->
+                <div class="section-header" style="margin-top:2rem"><div class="section-icon blue">&#9650;</div><h2>Capture Rate Growth Playbook</h2></div>
+                <div class="insight-box">
+                    <div class="insight-title">10%+ capture rate is considered healthy</div>
+                    <p>Patheon&rsquo;s tools enable multiple strategies to drive membership conversion from retail traffic. Below are the proven tactics mapped to specific platform capabilities.</p>
+                </div>
+
+                <div class="card-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:2rem">
+                    <div class="card" style="border-left:4px solid var(--drb-blue)">
+                        <h3 style="color:var(--drb-blue)">&#9737; Clear, Tiered Pricing</h3>
+                        <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">Highlight value gaps between single washes and memberships. Patheon&rsquo;s EWA and XPT support dynamic pricing displays and comparison charts on-screen.</p>
+                        <span class="badge info">Patheon EWA &middot; XPT Kiosk</span>
+                    </div>
+                    <div class="card" style="border-left:4px solid var(--drb-blue)">
+                        <h3 style="color:var(--drb-blue)">&#9733; Empowered Attendants</h3>
+                        <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">Equip team with quick-pitch scripts, tablets, and training on objection handling. Track &amp; reward sales performance with dashboards and incentives.</p>
+                        <span class="badge info">Sales Dashboards &middot; Incentive Tracking</span>
+                    </div>
+                    <div class="card" style="border-left:4px solid var(--drb-orange)">
+                        <h3 style="color:var(--drb-orange)">&#9200; Limited-Time Promotions</h3>
+                        <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">Create urgency with first-month discounts or free trials. Catalyst enables targeted campaign delivery via text, email, and app notifications.</p>
+                        <span class="badge warning">Catalyst &middot; Promotions Engine</span>
+                    </div>
+                    <div class="card" style="border-left:4px solid var(--drb-orange)">
+                        <h3 style="color:var(--drb-orange)">&#128663; License Plate Recognition</h3>
+                        <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">Personalize offers to returning customers or frequent visitors. LPR integration identifies repeat retail customers for targeted membership offers.</p>
+                        <span class="badge warning">LPR &middot; FastPass RFID</span>
+                    </div>
+                    <div class="card" style="border-left:4px solid var(--drb-green)">
+                        <h3 style="color:var(--drb-green)">&#9998; Digital Offers at Kiosk</h3>
+                        <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">Use attention-grabbing messaging and comparison charts on XPT screens. Show savings calculations in real-time during the purchase flow.</p>
+                        <span class="badge healthy">XPT &middot; On-Screen Promotions</span>
+                    </div>
+                    <div class="card" style="border-left:4px solid var(--drb-green)">
+                        <h3 style="color:var(--drb-green)">&#128200; Convenience &amp; Savings</h3>
+                        <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">Reinforce benefits like unlimited washes, time savings, and automatic billing. Offsite membership portal lets customers sign up anytime, anywhere.</p>
+                        <span class="badge healthy">Offsite Portal &middot; ARM Billing</span>
+                    </div>
+                </div>
+
+                <!-- ===== ROI TIMELINE CHART ===== -->
+                <div class="section-header" style="margin-top:2rem"><div class="section-icon orange">&#128200;</div><h2>Projected ROI Timeline</h2></div>
+                <div class="card" style="margin-bottom:2rem">
+                    <h3>Cumulative Revenue Lift vs. Investment &mdash; 12-Month Projection</h3>
+                    <div class="chart-container tall"><canvas id="roiTimelineChart"></canvas></div>
+                    <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--gray-500);text-align:center">* Based on average conversion data from 18 organizations (156 sites) migrating SiteWatch to Patheon. Assumes phased rollout.</div>
+                </div>
+            </div>
+
             <!-- ==================== SETTINGS ==================== -->
             <div id="settings" class="page">
                 <h1>Alert Configuration</h1><p class="page-subtitle">Set custom thresholds to trigger alerts</p>
@@ -796,6 +998,7 @@
                 if(pg==='operational')initOp();
                 else if(pg==='boap')initBoap();
                 else if(pg==='deepdive')initDD('dd-general');
+                else if(pg==='roi')initROI();
             },50);
         });
     });
@@ -931,6 +1134,284 @@
             SC.bar('ddOpsChurnBySiteChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[5.2,5.8,4.1,6.2,4.8,5.5,3.8,6.0,7.4,6.8,8.1,5.6],SC.c.red,false);
         }
     }
+
+    /* ============================================================
+       ROI & SOLUTIONS ENGINE
+       ============================================================ */
+    var roiCustomers = {
+        sparkle: {
+            name: 'Sparkle Clean Auto Spa', sites: 12,
+            memberRevMonthly: 89200, retailRevMonthly: 64500,
+            captureRate: 31, volChurn: 8.2, involChurn: 4.1,
+            memberCount: 2847, retailCars: 3534, avgMemberPrice: 31.50,
+            retailTicket: 18.12, trafficYoY: -18, revenueYoY: -18,
+            tenure: 8.4, ltv: 265, healthScore: 28
+        },
+        metro: {
+            name: 'Metro Express Wash', sites: 8,
+            memberRevMonthly: 72000, retailRevMonthly: 48000,
+            captureRate: 35, volChurn: 6.5, involChurn: 3.8,
+            memberCount: 1920, retailCars: 2800, avgMemberPrice: 29.99,
+            retailTicket: 17.14, trafficYoY: -8, revenueYoY: -10,
+            tenure: 9.1, ltv: 290, healthScore: 45
+        },
+        quick: {
+            name: 'Quick Clean Express', sites: 156,
+            memberRevMonthly: 1240000, retailRevMonthly: 890000,
+            captureRate: 33, volChurn: 7.1, involChurn: 3.5,
+            memberCount: 38400, retailCars: 52000, avgMemberPrice: 32.29,
+            retailTicket: 17.12, trafficYoY: -12, revenueYoY: -14,
+            tenure: 7.8, ltv: 242, healthScore: 38
+        }
+    };
+
+    var benchmarks = { captureRate: 39, volChurn: 5.5, involChurn: 2.5, retailTicket: 18.00, tenure: 10, ltv: 325 };
+    /* Patheon lift factors based on 156-site conversion data */
+    var patheonLifts = { memberRevPct: 0.21, retailRevPct: 0.035, volChurnReduction: 0.05, involChurnReduction: 0.13 };
+
+    function fmt$(v){ return v>=1000000?'$'+( v/1000000).toFixed(2)+'M':v>=1000?'$'+(v/1000).toFixed(1)+'K':'$'+v.toFixed(0); }
+    function fmtP(v){ return (v>=0?'+':'')+v.toFixed(1)+'%'; }
+
+    function updateROI(){
+        var sel = document.getElementById('roi-customer-select');
+        var c = roiCustomers[sel.value];
+        buildGapCards(c);
+        buildRevenueTables(c);
+        buildROIChart(c);
+        highlightPlatformTable(c);
+    }
+
+    function buildGapCards(c){
+        var container = document.getElementById('roi-gap-cards');
+        var gaps = [];
+
+        if(c.captureRate < benchmarks.captureRate){
+            var capGap = benchmarks.captureRate - c.captureRate;
+            var potentialNewMembers = Math.round(c.retailCars * (capGap/100));
+            var potentialRev = potentialNewMembers * c.avgMemberPrice * 12;
+            gaps.push({
+                title: 'Low Capture Rate',
+                severity: c.captureRate < 30 ? 'critical' : 'warning',
+                kpi: c.captureRate+'%', bench: benchmarks.captureRate+'%', gap: capGap.toFixed(1)+' pts below benchmark',
+                revenue: fmt$(potentialRev)+'/yr if gap closed',
+                solutions: [
+                    {tool:'Patheon EWA', desc:'Dynamic pricing displays highlight membership value at point of sale'},
+                    {tool:'XPT Kiosk', desc:'On-screen comparison charts and limited-time offers drive impulse sign-ups'},
+                    {tool:'Catalyst', desc:'Drip campaigns nurture retail visitors into members via text, email & app'},
+                    {tool:'LPR / FastPass', desc:'Identify frequent retail visitors and serve personalized membership offers'}
+                ],
+                icon:'&#9888;'
+            });
+        }
+
+        if(c.volChurn > benchmarks.volChurn){
+            var churnGap = c.volChurn - benchmarks.volChurn;
+            var savedMembers = Math.round(c.memberCount * (churnGap/100));
+            var savedRev = savedMembers * c.avgMemberPrice * 12;
+            gaps.push({
+                title: 'High Voluntary Churn',
+                severity: c.volChurn > 7 ? 'critical' : 'warning',
+                kpi: c.volChurn+'%', bench: benchmarks.volChurn+'%', gap: churnGap.toFixed(1)+' pts above benchmark',
+                revenue: fmt$(savedRev)+'/yr in retained revenue',
+                solutions: [
+                    {tool:'Plan Management', desc:'Flexible pause, downgrade & seasonal options reduce cancellations'},
+                    {tool:'Milestone Recognition', desc:'Celebrate membership anniversaries & wash counts to build loyalty'},
+                    {tool:'Catalyst Communications', desc:'Re-engagement campaigns target at-risk members before they cancel'},
+                    {tool:'Multi-Vehicle Plans', desc:'Increase household share of wallet and raise switching costs'}
+                ],
+                icon:'&#9660;'
+            });
+        }
+
+        if(c.involChurn > benchmarks.involChurn){
+            var invGap = c.involChurn - benchmarks.involChurn;
+            var invSaved = Math.round(c.memberCount * (invGap/100));
+            var invSavedRev = invSaved * c.avgMemberPrice * 12;
+            gaps.push({
+                title: 'High Involuntary Churn',
+                severity: c.involChurn > 3.5 ? 'critical' : 'warning',
+                kpi: c.involChurn+'%', bench: benchmarks.involChurn+'%', gap: invGap.toFixed(1)+' pts above benchmark',
+                revenue: fmt$(invSavedRev)+'/yr recoverable',
+                solutions: [
+                    {tool:'Automated Payment Recovery', desc:'Smart retry logic & card updater services recapture failed payments'},
+                    {tool:'Text & Email Alerts', desc:'Notify members of expiring cards and payment issues before they churn'},
+                    {tool:'Patheon ARM Billing', desc:'Advanced recurring billing engine with higher success rates than SiteWatch'}
+                ],
+                icon:'&#9888;'
+            });
+        }
+
+        if(c.trafficYoY < -5){
+            gaps.push({
+                title: 'Declining Traffic',
+                severity: c.trafficYoY < -12 ? 'critical' : 'warning',
+                kpi: c.trafficYoY+'% YoY', bench: '+5% YoY', gap: Math.abs(c.trafficYoY - 5)+' pts below benchmark',
+                revenue: 'Compounds all other revenue gaps',
+                solutions: [
+                    {tool:'Catalyst Marketing', desc:'Targeted promotions, seasonal campaigns & referral programs drive traffic'},
+                    {tool:'Loyalty Points', desc:'Earn & redeem points system creates repeat visit incentives'},
+                    {tool:'Pay As You Go', desc:'Proxy membership usage drives incremental retail visits via Patheon EWA'},
+                    {tool:'Digital Marketing Integration', desc:'Opt-in collection for SMS/email campaigns to dormant customers'}
+                ],
+                icon:'&#9660;'
+            });
+        }
+
+        var html = '';
+        for(var i=0;i<gaps.length;i++){
+            var g = gaps[i];
+            html += '<div class="card" style="border-left:4px solid '+(g.severity==='critical'?'var(--drb-red)':'var(--drb-orange)')+';margin-bottom:1rem;padding:1.25rem">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">';
+            html += '<div style="flex:1;min-width:280px">';
+            html += '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem"><span style="font-size:1.1rem">'+g.icon+'</span><span style="font-weight:700;font-size:1rem;color:var(--gray-800)">'+g.title+'</span><span class="badge '+g.severity+'">'+(g.severity==='critical'?'CRITICAL':'WARNING')+'</span></div>';
+            html += '<div style="display:flex;gap:2rem;margin-bottom:0.75rem;flex-wrap:wrap">';
+            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Current</span><div style="font-size:1.5rem;font-weight:700;color:'+(g.severity==='critical'?'var(--drb-red)':'var(--drb-orange)')+'">'+g.kpi+'</div></div>';
+            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Benchmark</span><div style="font-size:1.5rem;font-weight:700;color:var(--drb-green)">'+g.bench+'</div></div>';
+            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Gap</span><div style="font-size:1rem;font-weight:600;color:var(--gray-700);margin-top:0.35rem">'+g.gap+'</div></div>';
+            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Revenue Impact</span><div style="font-size:1rem;font-weight:600;color:var(--drb-green);margin-top:0.35rem">'+g.revenue+'</div></div>';
+            html += '</div></div>';
+            html += '<div style="flex:1;min-width:320px;background:var(--gray-50);border-radius:0.75rem;padding:1rem">';
+            html += '<div style="font-size:0.7rem;font-weight:600;color:var(--drb-orange);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem">Recommended Patheon &amp; DRB Solutions</div>';
+            for(var j=0;j<g.solutions.length;j++){
+                var s = g.solutions[j];
+                html += '<div style="margin-bottom:0.4rem;font-size:0.85rem"><strong style="color:var(--drb-navy)">'+s.tool+':</strong> <span style="color:var(--gray-600)">'+s.desc+'</span></div>';
+            }
+            html += '</div></div></div>';
+        }
+
+        if(gaps.length===0){
+            html = '<div class="card" style="border-left:4px solid var(--drb-green);padding:1.5rem;text-align:center"><span style="font-size:1.5rem;color:var(--drb-green)">&#10003;</span><br><strong>This customer is performing at or above benchmarks across all key metrics.</strong><br><span style="color:var(--gray-500)">Focus on scaling and optimization with Patheon&rsquo;s advanced tools.</span></div>';
+        }
+
+        container.innerHTML = html;
+    }
+
+    function buildRevenueTables(c){
+        var memLift = c.memberRevMonthly * patheonLifts.memberRevPct;
+        var memNew = c.memberRevMonthly + memLift;
+        var retLift = c.retailRevMonthly * patheonLifts.retailRevPct;
+        var retNew = c.retailRevMonthly + retLift;
+        var volChurnNew = c.volChurn * (1 - patheonLifts.volChurnReduction);
+        var involChurnNew = c.involChurn * (1 - patheonLifts.involChurnReduction);
+        var savedVol = Math.round(c.memberCount * ((c.volChurn - volChurnNew)/100));
+        var savedInvol = Math.round(c.memberCount * ((c.involChurn - involChurnNew)/100));
+        var churnSavedRev = (savedVol + savedInvol) * c.avgMemberPrice * 12;
+
+        document.getElementById('roi-membership-body').innerHTML =
+            '<tr><td style="font-weight:600">Monthly Membership Revenue</td><td>'+fmt$(c.memberRevMonthly)+'</td><td style="font-weight:600">'+fmt$(memNew)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(memLift)+'</td></tr>'+
+            '<tr><td style="font-weight:600">Annual Membership Revenue</td><td>'+fmt$(c.memberRevMonthly*12)+'</td><td style="font-weight:600">'+fmt$(memNew*12)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(memLift*12)+'</td></tr>';
+
+        document.getElementById('roi-retail-body').innerHTML =
+            '<tr><td style="font-weight:600">Monthly Retail Revenue</td><td>'+fmt$(c.retailRevMonthly)+'</td><td style="font-weight:600">'+fmt$(retNew)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(retLift)+'</td></tr>'+
+            '<tr><td style="font-weight:600">Annual Retail Revenue</td><td>'+fmt$(c.retailRevMonthly*12)+'</td><td style="font-weight:600">'+fmt$(retNew*12)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(retLift*12)+'</td></tr>';
+
+        document.getElementById('roi-churn-body').innerHTML =
+            '<tr><td style="font-weight:600">Voluntary Churn Rate</td><td>'+c.volChurn+'%</td><td style="font-weight:600">'+volChurnNew.toFixed(1)+'%</td><td style="color:var(--drb-green);font-weight:700">-'+((c.volChurn-volChurnNew).toFixed(1))+' pts</td></tr>'+
+            '<tr><td style="font-weight:600">Involuntary Churn Rate</td><td>'+c.involChurn+'%</td><td style="font-weight:600">'+involChurnNew.toFixed(1)+'%</td><td style="color:var(--drb-green);font-weight:700">-'+((c.involChurn-involChurnNew).toFixed(1))+' pts</td></tr>'+
+            '<tr><td style="font-weight:600">Members Saved / Month</td><td>&mdash;</td><td style="font-weight:600">'+(savedVol+savedInvol)+' members</td><td style="color:var(--drb-green);font-weight:700">'+fmt$(churnSavedRev)+'/yr value</td></tr>';
+
+        document.getElementById('roi-total-mem').textContent = '+'+fmt$(memLift*12);
+        document.getElementById('roi-total-ret').textContent = '+'+fmt$(retLift*12);
+        document.getElementById('roi-total-churn').textContent = '+'+fmt$(churnSavedRev);
+        var combined = memLift*12 + retLift*12 + churnSavedRev;
+        document.getElementById('roi-total-combined').textContent = '+'+fmt$(combined);
+    }
+
+    function highlightPlatformTable(c){
+        var rows = {retail:'roi-row-retail', membership:'roi-row-membership', churn:'roi-row-churn'};
+        /* reset */
+        for(var k in rows){var el=document.getElementById(rows[k]);if(el)el.style.background='';}
+        if(c.captureRate<benchmarks.captureRate || c.trafficYoY<-5)document.getElementById('roi-row-retail').style.background='#FEF2F2';
+        if(c.captureRate<benchmarks.captureRate)document.getElementById('roi-row-membership').style.background='#FEF2F2';
+        if(c.volChurn>benchmarks.volChurn||c.involChurn>benchmarks.involChurn)document.getElementById('roi-row-churn').style.background='#FEF2F2';
+    }
+
+    function buildROIChart(c){
+        var memLiftMo = c.memberRevMonthly * patheonLifts.memberRevPct;
+        var retLiftMo = c.retailRevMonthly * patheonLifts.retailRevPct;
+        var volChurnNew = c.volChurn * (1 - patheonLifts.volChurnReduction);
+        var involChurnNew = c.involChurn * (1 - patheonLifts.involChurnReduction);
+        var savedMo = (Math.round(c.memberCount*((c.volChurn-volChurnNew)/100)) + Math.round(c.memberCount*((c.involChurn-involChurnNew)/100))) * c.avgMemberPrice;
+        var totalLiftMo = memLiftMo + retLiftMo + savedMo;
+        var investPerSite = 25000;
+        var monthlyPerSite = 756;
+        var totalInvest = c.sites * investPerSite;
+        var sitesPerMonth = Math.max(2, Math.ceil(c.sites / 6));
+
+        var labels=[], cumRev=[], cumCost=[], cumNet=[];
+        var rSum=0, cSum=totalInvest*0.3; /* 30% upfront */
+        for(var mo=1;mo<=12;mo++){
+            labels.push('M'+mo);
+            var liveSites = Math.min(c.sites, sitesPerMonth * mo);
+            var pct = liveSites / c.sites;
+            rSum += totalLiftMo * pct;
+            cSum += (mo<=1 ? totalInvest*0.7/3 : mo<=3 ? totalInvest*0.7/3 : 0) + liveSites * monthlyPerSite;
+            cumRev.push(rSum);
+            cumCost.push(cSum);
+            cumNet.push(rSum - cSum);
+        }
+
+        var cv = SC.ctx('roiTimelineChart'); if(!cv) return;
+        var w=cv._w, h=cv._h;
+        var allVals = cumRev.concat(cumCost).concat(cumNet);
+        var mx=Math.max.apply(null,allVals)*1.15;
+        var mn=Math.min.apply(null,allVals)*1.15;
+        if(mn>0)mn=0;
+        var rng=mx-mn;
+        var pad={t:30,r:20,b:50,l:70},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+        cv.clearRect(0,0,w,h);
+        cv.font='11px -apple-system,sans-serif';
+
+        for(var g=0;g<=4;g++){
+            var gy=h-pad.b-(ch*g/4);
+            var val=mn+(rng*g/4);
+            cv.strokeStyle=SC.c.grid;cv.lineWidth=1;cv.beginPath();cv.moveTo(pad.l,gy);cv.lineTo(w-pad.r,gy);cv.stroke();
+            cv.fillStyle=SC.c.lbl;cv.textAlign='right';cv.textBaseline='middle';
+            cv.fillText(val>=1000000?(val/1000000).toFixed(1)+'M':val>=1000?(val/1000).toFixed(0)+'K':Math.round(val),pad.l-8,gy);
+        }
+
+        function drawL(data,color,dashed){
+            var pts=[];
+            for(var i=0;i<data.length;i++){pts.push({x:pad.l+(i/(data.length-1))*cw,y:h-pad.b-((data[i]-mn)/rng)*ch});}
+            cv.beginPath();
+            if(dashed)cv.setLineDash([6,4]);else cv.setLineDash([]);
+            for(var k=0;k<pts.length;k++){if(k===0)cv.moveTo(pts[k].x,pts[k].y);else cv.lineTo(pts[k].x,pts[k].y);}
+            cv.strokeStyle=color;cv.lineWidth=2.5;cv.stroke();cv.setLineDash([]);
+            for(var m=0;m<pts.length;m++){cv.beginPath();cv.arc(pts[m].x,pts[m].y,3,0,Math.PI*2);cv.fillStyle=color;cv.fill();cv.strokeStyle='white';cv.lineWidth=1.5;cv.stroke();}
+        }
+
+        /* fill net area */
+        var netPts=[];
+        for(var i=0;i<cumNet.length;i++){netPts.push({x:pad.l+(i/(cumNet.length-1))*cw,y:h-pad.b-((cumNet[i]-mn)/rng)*ch});}
+        var zeroY=h-pad.b-((0-mn)/rng)*ch;
+        cv.beginPath();cv.moveTo(netPts[0].x,zeroY);
+        for(var j=0;j<netPts.length;j++)cv.lineTo(netPts[j].x,netPts[j].y);
+        cv.lineTo(netPts[netPts.length-1].x,zeroY);cv.closePath();
+        cv.fillStyle='rgba(16,185,129,0.12)';cv.fill();
+
+        /* zero line */
+        cv.beginPath();cv.moveTo(pad.l,zeroY);cv.lineTo(w-pad.r,zeroY);cv.strokeStyle='#94A3B8';cv.lineWidth=1;cv.setLineDash([4,4]);cv.stroke();cv.setLineDash([]);
+
+        drawL(cumRev, SC.c.green, false);
+        drawL(cumCost, SC.c.red, true);
+        drawL(cumNet, SC.c.blue, false);
+
+        /* labels */
+        for(var n=0;n<labels.length;n++){
+            var lx=pad.l+(n/(labels.length-1))*cw;
+            cv.fillStyle=SC.c.lbl;cv.textAlign='center';cv.textBaseline='top';cv.fillText(labels[n],lx,h-pad.b+8);
+        }
+        /* legend */
+        var lx2=pad.l+10;
+        var legs=[{l:'Cumulative Revenue Lift',c:SC.c.green},{l:'Cumulative Investment',c:SC.c.red},{l:'Net ROI',c:SC.c.blue}];
+        for(var lg=0;lg<legs.length;lg++){
+            cv.fillStyle=legs[lg].c;cv.fillRect(lx2,8,14,10);
+            cv.fillStyle=SC.c.lbl;cv.textAlign='left';cv.textBaseline='top';cv.fillText(legs[lg].l,lx2+18,6);
+            lx2+=cv.measureText(legs[lg].l).width+38;
+        }
+    }
+
+    function initROI(){ updateROI(); }
 
     function buildCohortTable(){
         var tbody=document.getElementById('cohort-body');
