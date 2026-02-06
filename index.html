@@ -95,7 +95,7 @@
         .charts-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
         .alert-card { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0.75rem; margin-bottom: 0.75rem; background: white; transition: all 0.3s ease; }
         .alert-card.resolving { opacity: 0; transform: translateX(30px); max-height: 0; padding: 0 1.25rem; margin-bottom: 0; overflow: hidden; }
-        .alert-actions { margin-top: 0.5rem; display: flex; justify-content: flex-end; }
+        .alert-actions { margin-top: 0.5rem; display: flex; align-items: center; }
         .btn-resolve { padding: 0.35rem 0.85rem; border: 1px solid var(--drb-green); border-radius: 0.5rem; background: #ECFDF5; color: #059669; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.15s ease; }
         .btn-resolve:hover { background: var(--drb-green); color: white; }
         .no-alerts { text-align: center; padding: 3rem 1rem; color: var(--gray-400); font-size: 1rem; }
@@ -222,19 +222,29 @@
 
             <!-- ==================== RISK ALERTS ==================== -->
             <div id="alerts" class="page">
-                <h1>Risk Alerts</h1><p class="page-subtitle">Automated warning detection</p>
+                <h1>Risk Alerts</h1><p class="page-subtitle">Daily task list &mdash; automated warning detection &amp; CSM assignment</p>
                 <div class="card-grid card-grid-4">
                     <div class="metric-card critical"><div class="metric-label">Critical</div><div class="metric-value">4</div></div>
                     <div class="metric-card warning"><div class="metric-label">Warning</div><div class="metric-value">8</div></div>
                     <div class="metric-card info"><div class="metric-label">New (24h)</div><div class="metric-value">3</div></div>
                     <div class="metric-card success"><div class="metric-label">Resolved (7d)</div><div class="metric-value">6</div></div>
                 </div>
+                <div class="form-row" style="margin-bottom:1rem">
+                    <div class="form-group"><label>Filter by CSM</label><select id="alert-csm-filter" onchange="filterAlerts()"><option value="all">All CSMs</option><option>Morgan Malone</option><option>Mike Johnson</option><option>Tom Wilson</option><option>Sarah Chen</option></select></div>
+                    <div class="form-group"><label>Filter by Severity</label><select id="alert-sev-filter" onchange="filterAlerts()"><option value="all">All</option><option value="critical">Critical</option><option value="warning">Warning</option></select></div>
+                </div>
                 <div id="alerts-container">
-                <div class="alert-card critical"><div class="alert-header"><span class="alert-title">Traffic Decline</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-message">Traffic declined 18% YoY across all 12 sites</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
-                <div class="alert-card critical"><div class="alert-header"><span class="alert-title">Churn Spike</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-message">Voluntary churn spiked to 8.2%, up 2.7pts MoM</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
-                <div class="alert-card warning"><div class="alert-header"><span class="alert-title">Capture Rate Drop</span><span class="badge warning">WARNING</span></div><div class="alert-customer">Metro Express Wash</div><div class="alert-message">Capture rate dropped from 41% to 35%</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
-                <div class="alert-card warning"><div class="alert-header"><span class="alert-title">Member Loss</span><span class="badge warning">WARNING</span></div><div class="alert-customer">Quick Clean Express</div><div class="alert-message">Member count down 8% YoY (-340 members)</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
-                <div class="alert-card critical"><div class="alert-header"><span class="alert-title">Revenue Decline</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-message">Revenue declined 18% YoY (-$34K/month)</div><div class="alert-actions"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card critical" data-csm="Mike Johnson"><div class="alert-header"><span class="alert-title">Traffic Decline</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-meta" style="font-size:0.8rem;color:#64748B;margin:0.25rem 0">Assigned: <strong>Mike Johnson</strong> &middot; Detected: Feb 4, 2026</div><div class="alert-message">Traffic declined 18% YoY across all 12 sites</div><div class="alert-actions"><input type="text" placeholder="Add resolution note..." style="flex:1;padding:0.4rem 0.6rem;border:1px solid #E2E8F0;border-radius:0.375rem;font-size:0.8rem;margin-right:0.5rem" class="resolve-note"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card critical" data-csm="Mike Johnson"><div class="alert-header"><span class="alert-title">Churn Spike</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-meta" style="font-size:0.8rem;color:#64748B;margin:0.25rem 0">Assigned: <strong>Mike Johnson</strong> &middot; Detected: Feb 3, 2026</div><div class="alert-message">Voluntary churn spiked to 8.2%, up 2.7pts MoM</div><div class="alert-actions"><input type="text" placeholder="Add resolution note..." style="flex:1;padding:0.4rem 0.6rem;border:1px solid #E2E8F0;border-radius:0.375rem;font-size:0.8rem;margin-right:0.5rem" class="resolve-note"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card warning" data-csm="Tom Wilson"><div class="alert-header"><span class="alert-title">Capture Rate Drop</span><span class="badge warning">WARNING</span></div><div class="alert-customer">Quick Clean Express</div><div class="alert-meta" style="font-size:0.8rem;color:#64748B;margin:0.25rem 0">Assigned: <strong>Tom Wilson</strong> &middot; Detected: Feb 3, 2026</div><div class="alert-message">Capture rate dropped from 41% to 35% at 3 sites</div><div class="alert-actions"><input type="text" placeholder="Add resolution note..." style="flex:1;padding:0.4rem 0.6rem;border:1px solid #E2E8F0;border-radius:0.375rem;font-size:0.8rem;margin-right:0.5rem" class="resolve-note"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card warning" data-csm="Tom Wilson"><div class="alert-header"><span class="alert-title">Member Loss</span><span class="badge warning">WARNING</span></div><div class="alert-customer">Quick Clean Express</div><div class="alert-meta" style="font-size:0.8rem;color:#64748B;margin:0.25rem 0">Assigned: <strong>Tom Wilson</strong> &middot; Detected: Feb 2, 2026</div><div class="alert-message">Member count down 8% YoY (-340 members)</div><div class="alert-actions"><input type="text" placeholder="Add resolution note..." style="flex:1;padding:0.4rem 0.6rem;border:1px solid #E2E8F0;border-radius:0.375rem;font-size:0.8rem;margin-right:0.5rem" class="resolve-note"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card critical" data-csm="Mike Johnson"><div class="alert-header"><span class="alert-title">Revenue Decline</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">Sparkle Clean Auto Spa</div><div class="alert-meta" style="font-size:0.8rem;color:#64748B;margin:0.25rem 0">Assigned: <strong>Mike Johnson</strong> &middot; Detected: Feb 1, 2026</div><div class="alert-message">Revenue declined 18% YoY (-$34K/month)</div><div class="alert-actions"><input type="text" placeholder="Add resolution note..." style="flex:1;padding:0.4rem 0.6rem;border:1px solid #E2E8F0;border-radius:0.375rem;font-size:0.8rem;margin-right:0.5rem" class="resolve-note"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                <div class="alert-card critical" data-csm="Morgan Malone"><div class="alert-header"><span class="alert-title">Involuntary Churn Spike</span><span class="badge critical">CRITICAL</span></div><div class="alert-customer">BMW Kar Wash LLC</div><div class="alert-meta" style="font-size:0.8rem;color:#64748B;margin:0.25rem 0">Assigned: <strong>Morgan Malone</strong> &middot; Detected: Feb 1, 2026</div><div class="alert-message">Involuntary churn at 5.3% across 14 sites &mdash; possible payment processing issue</div><div class="alert-actions"><input type="text" placeholder="Add resolution note..." style="flex:1;padding:0.4rem 0.6rem;border:1px solid #E2E8F0;border-radius:0.375rem;font-size:0.8rem;margin-right:0.5rem" class="resolve-note"><button class="btn-resolve" onclick="resolveAlert(this)">&#10003; Resolve</button></div></div>
+                </div>
+                <!-- Resolved log -->
+                <div style="margin-top:1.5rem">
+                    <h2 style="font-size:1rem;color:#64748B">Recently Resolved</h2>
+                    <div id="resolved-log" style="font-size:0.8rem;color:#94A3B8"></div>
                 </div>
             </div>
 
@@ -249,18 +259,40 @@
                         <div class="customer-stat"><div class="customer-stat-label">vs Industry</div><div class="customer-stat-value red">-24%</div></div>
                     </div>
                 </div>
-                <div class="card-grid card-grid-6">
-                    <div class="card kpi-card"><div class="kpi-value">31%</div><div class="kpi-label">Capture Rate</div></div>
-                    <div class="card kpi-card"><div class="kpi-value red">8.2%</div><div class="kpi-label">Vol Churn</div></div>
+
+                <!-- KPI Row 1: Core Metrics -->
+                <div class="card-grid card-grid-4" style="margin-bottom:0.5rem">
+                    <div class="card kpi-card"><div class="kpi-value">31%</div><div class="kpi-label">Capture Rate</div><div class="kpi-sublabel" style="color:var(--drb-red)">Benchmark: 39%</div></div>
+                    <div class="card kpi-card"><div class="kpi-value red">8.2%</div><div class="kpi-label">Vol Churn Rate</div><div class="kpi-sublabel" style="color:var(--drb-red)">Benchmark: 5.5%</div></div>
+                    <div class="card kpi-card"><div class="kpi-value">4.1%</div><div class="kpi-label">Invol Churn Rate</div><div class="kpi-sublabel" style="color:var(--drb-red)">Benchmark: 2.5%</div></div>
                     <div class="card kpi-card"><div class="kpi-value red">-18%</div><div class="kpi-label">Traffic YoY</div></div>
-                    <div class="card kpi-card"><div class="kpi-value red">-12%</div><div class="kpi-label">Members YoY</div></div>
-                    <div class="card kpi-card"><div class="kpi-value red">-18%</div><div class="kpi-label">Revenue YoY</div></div>
-                    <div class="card kpi-card"><div class="kpi-value">4.1%</div><div class="kpi-label">Invol Churn</div></div>
                 </div>
+
+                <!-- KPI Row 2: Ticket Averages & Revenue -->
+                <div class="card-grid card-grid-4" style="margin-bottom:1.5rem">
+                    <div class="card kpi-card"><div class="kpi-value">$27.13</div><div class="kpi-label">Recharge Ticket Avg</div><div class="kpi-sublabel">Membership</div></div>
+                    <div class="card kpi-card"><div class="kpi-value">$11.01</div><div class="kpi-label">Retail Ticket Avg</div><div class="kpi-sublabel">Single Wash</div></div>
+                    <div class="card kpi-card"><div class="kpi-value">$10.02</div><div class="kpi-label">Overall Ticket Avg</div><div class="kpi-sublabel">All Transactions</div></div>
+                    <div class="card kpi-card"><div class="kpi-value red">-18%</div><div class="kpi-label">Revenue YoY</div></div>
+                </div>
+
+                <!-- Charts Row 1: Revenue + Members -->
                 <h2>24-Month Trends</h2>
                 <div class="charts-row">
                     <div class="card"><h3>Monthly Revenue ($K)</h3><div class="chart-container"><canvas id="boapRevenueChart"></canvas></div></div>
                     <div class="card"><h3>Active Members</h3><div class="chart-container"><canvas id="boapMembersChart"></canvas></div></div>
+                </div>
+
+                <!-- Charts Row 2: Traffic Breakdown + New Members vs Churn -->
+                <div class="charts-row">
+                    <div class="card"><h3>Traffic Breakdown &mdash; Last 12 Months</h3><div class="chart-container"><canvas id="boapTrafficPieChart"></canvas></div></div>
+                    <div class="card"><h3>New Members vs. Churn &mdash; 12-Month Trend</h3><div class="chart-container"><canvas id="boapJoinsChurnChart"></canvas></div></div>
+                </div>
+
+                <!-- Charts Row 3: Capture + Retail Ticket -->
+                <div class="charts-row">
+                    <div class="card"><h3>Capture Rate (%) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="boapCaptureChart"></canvas></div></div>
+                    <div class="card"><h3>Avg Retail Ticket ($) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="boapRetailTicketChart"></canvas></div></div>
                 </div>
             </div>
 
@@ -272,8 +304,9 @@
                     <button class="dd-tab active" data-ddtab="dd-general">General KPIs</button>
                     <button class="dd-tab" data-ddtab="dd-membership">Membership</button>
                     <button class="dd-tab" data-ddtab="dd-retail">Retail</button>
-                    <button class="dd-tab" data-ddtab="dd-marketing">Marketing</button>
+                    <button class="dd-tab" data-ddtab="dd-marketing">Traffic Seasonality</button>
                     <button class="dd-tab" data-ddtab="dd-operations">Operations</button>
+                    <button class="dd-tab" data-ddtab="dd-siteview">Site-by-Site</button>
                 </div>
 
                 <!-- ===== GENERAL KPIs TAB ===== -->
@@ -393,12 +426,15 @@
                     </div>
 
                     <div class="charts-row">
+                        <div class="card"><h3>Avg Retail Ticket &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailTicketChart"></canvas></div></div>
                         <div class="card"><h3>Retail Car Count &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailCarsChart"></canvas></div></div>
-                        <div class="card"><h3>Retail Revenue ($K) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailRevenueChart"></canvas></div></div>
                     </div>
                     <div class="charts-row">
-                        <div class="card"><h3>Avg Retail Ticket &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailTicketChart"></canvas></div></div>
-                        <div class="card"><h3>Package Mix (%) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailMixChart"></canvas></div></div>
+                        <div class="card"><h3>Retail Revenue ($K) &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddRetailRevenueChart"></canvas></div></div>
+                        <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+                            <h3>Current Month Package Mix</h3>
+                            <div class="chart-container"><canvas id="ddRetailPieChart"></canvas></div>
+                        </div>
                     </div>
 
                     <!-- Pricing Health Check -->
@@ -458,27 +494,6 @@
                         <div class="chart-container tall"><canvas id="ddSeasonalChart"></canvas></div>
                     </div>
 
-                    <!-- Promo / Campaign -->
-                    <div class="section-header" style="margin-top:2rem"><div class="section-icon purple">&#9733;</div><h2>Campaign Performance</h2></div>
-                    <div class="card">
-                        <h3>Recent Campaigns &amp; Promotions</h3>
-                        <div class="table-container">
-                            <table>
-                                <thead><tr><th>Campaign</th><th>Type</th><th>Period</th><th>New Joins</th><th>Revenue Impact</th><th>Capture Lift</th><th>Status</th></tr></thead>
-                                <tbody>
-                                    <tr><td>Spring Membership Blitz</td><td>Membership</td><td>Mar-Apr</td><td>284</td><td>+$18.4K</td><td>+4.2 pts</td><td><span class="badge healthy">Successful</span></td></tr>
-                                    <tr><td>Summer Unlimited Promo</td><td>Membership</td><td>Jun-Jul</td><td>198</td><td>+$12.1K</td><td>+2.8 pts</td><td><span class="badge healthy">Successful</span></td></tr>
-                                    <tr><td>Back to School Special</td><td>Retail</td><td>Aug</td><td>-</td><td>+$6.2K</td><td>-</td><td><span class="badge info">Moderate</span></td></tr>
-                                    <tr><td>Holiday Gift Card Push</td><td>Prepaid</td><td>Nov-Dec</td><td>45</td><td>+$22.8K</td><td>+1.1 pts</td><td><span class="badge healthy">Successful</span></td></tr>
-                                    <tr><td>New Year Trial Offer</td><td>Membership</td><td>Jan</td><td>92</td><td>+$4.8K</td><td>+1.5 pts</td><td><span class="badge warning">Below Target</span></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="charts-row" style="margin-top:1.5rem">
-                        <div class="card"><h3>Membership Joins by Source &mdash; 24-Month Trend</h3><div class="chart-container"><canvas id="ddMktJoinSourceChart"></canvas></div></div>
-                        <div class="card"><h3>Promotion Revenue Impact ($K)</h3><div class="chart-container"><canvas id="ddMktPromoChart"></canvas></div></div>
-                    </div>
                 </div>
 
                 <!-- ===== OPERATIONS TAB ===== -->
@@ -560,31 +575,117 @@
                         <div class="card"><h3>Churn Rate by Site (%)</h3><div class="chart-container"><canvas id="ddOpsChurnBySiteChart"></canvas></div></div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ==================== BENCHMARKS ==================== -->
+                <!-- ===== SITE-BY-SITE OVERVIEW TAB ===== -->
+                <div id="dd-siteview" class="dd-panel">
+                    <div class="insight-box">
+                        <div class="insight-title">Site by Site Overview</div>
+                        <p>Individual site data is summarized to show monthly averages over the past years. Sites were evaluated to identify top performing and bottom performing sites. Differences in performance across sites could be due to demographic differences or operational differences at each site.</p>
+                    </div>
+
+                    <!-- Selectors -->
+                    <div class="form-row" style="margin-bottom:1rem">
+                        <div class="form-group"><label>View</label>
+                            <select id="sv-view" onchange="updateSiteView()">
+                                <option value="overview">All Sites Overview</option>
+                                <option value="card">Site Card Detail</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="sv-site-selector" style="display:none"><label>Select Site</label>
+                            <select id="sv-site" onchange="updateSiteCard()">
+                                <option value="0">Ben Sawyer</option>
+                                <option value="1">Cane Bay</option>
+                                <option value="2">Catoosa</option>
+                                <option value="3">Forest Drive</option>
+                                <option value="4">Gervais Street</option>
+                                <option value="5">Goose Creek</option>
+                                <option value="6">Harbison Blvd</option>
+                                <option value="7">Owasso</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- All Sites Overview Table (color-coded like Suds) -->
+                    <div id="sv-overview-panel">
+                        <div class="card">
+                            <h3>Site Performance &mdash; Monthly Averages by Year</h3>
+                            <div class="table-container">
+                                <table id="sv-overview-table" style="font-size:0.8rem">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:left;min-width:180px">Site Name</th>
+                                            <th>Monthly Car Count</th>
+                                            <th>Monthly Revenue</th>
+                                            <th>Monthly ARM Sold</th>
+                                            <th>Capture Rate</th>
+                                            <th>Voluntary Churn Rate</th>
+                                            <th>Involuntary Churn Rate</th>
+                                            <th>Avg Active Members</th>
+                                            <th>Membership Traffic %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sv-overview-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Site Card Detail (like Suds Site Card) -->
+                    <div id="sv-card-panel" style="display:none">
+                        <div style="background:var(--drb-navy);border-radius:1rem 1rem 0 0;padding:1.25rem 1.5rem;color:white">
+                            <div style="font-size:1.25rem;font-weight:700" id="sv-card-title">Site Card: Ben Sawyer</div>
+                            <div style="font-size:0.85rem;opacity:0.7">Use this site card to examine site successes, traffic patterns, and opportunities!</div>
+                        </div>
+                        <div class="card" style="border-radius:0 0 1rem 1rem;margin-bottom:1.5rem">
+                            <h3>Recent 12 Month KPI Summary</h3>
+                            <div class="table-container">
+                                <table id="sv-card-kpi-table" style="font-size:0.85rem">
+                                    <thead><tr><th style="text-align:left">KPI</th><th>This Site</th><th>Org Average per Site</th><th>Difference</th></tr></thead>
+                                    <tbody id="sv-card-kpi-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="charts-row">
+                            <div class="card"><h3>New Members vs. Churn &mdash; 12 Months</h3><div class="chart-container"><canvas id="svCardJoinsChurnChart"></canvas></div></div>
+                            <div class="card"><h3>Traffic Breakdown</h3><div class="chart-container"><canvas id="svCardTrafficPie"></canvas></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="benchmarks" class="page">
-                <h1>Industry Benchmarks</h1><p class="page-subtitle">Based on 2,400+ car wash locations</p>
+                <h1>Industry Benchmarks</h1><p class="page-subtitle">Data-driven benchmarks with manual override capability</p>
+                <div class="insight-box">
+                    <div class="insight-title">Benchmark Configuration</div>
+                    <p>Default benchmarks are based on 2,400+ car wash locations. You can override any value with a custom benchmark for your specific customer or region. Custom values will be used throughout the dashboard for color coding and gap analysis.</p>
+                </div>
                 <div class="card-grid" style="grid-template-columns:repeat(3,1fr)">
                     <div class="benchmark-card"><h3>Membership</h3>
                         <div class="benchmark-row"><span class="benchmark-label">Capture Rate</span><span class="benchmark-value">39%</span></div>
+                        <div class="benchmark-row" style="font-size:0.75rem;color:#94A3B8;padding:0.15rem 0"><span>Override:</span><input type="number" class="bm-override" data-metric="captureRate" placeholder="39" style="width:60px;padding:0.2rem 0.4rem;border:1px solid #E2E8F0;border-radius:0.25rem;font-size:0.75rem;margin-left:0.5rem">%</div>
                         <div class="benchmark-row"><span class="benchmark-label">Top Quartile</span><span class="benchmark-value green">48%+</span></div>
                         <div class="benchmark-row"><span class="benchmark-label">Bottom Quartile</span><span class="benchmark-value red">&lt;28%</span></div>
-                        <div class="benchmark-row"><span class="benchmark-label">Avg Ticket</span><span class="benchmark-value">$32.00</span></div>
+                        <div class="benchmark-row"><span class="benchmark-label">Avg Recharge Ticket</span><span class="benchmark-value">$32.00</span></div>
+                        <div class="benchmark-row" style="font-size:0.75rem;color:#94A3B8;padding:0.15rem 0"><span>Override:</span><input type="number" class="bm-override" data-metric="rechargeTicket" placeholder="32" style="width:60px;padding:0.2rem 0.4rem;border:1px solid #E2E8F0;border-radius:0.25rem;font-size:0.75rem;margin-left:0.5rem">$</div>
                     </div>
                     <div class="benchmark-card"><h3>Churn</h3>
                         <div class="benchmark-row"><span class="benchmark-label">Voluntary</span><span class="benchmark-value">5.5%</span></div>
+                        <div class="benchmark-row" style="font-size:0.75rem;color:#94A3B8;padding:0.15rem 0"><span>Override:</span><input type="number" class="bm-override" data-metric="volChurn" placeholder="5.5" step="0.1" style="width:60px;padding:0.2rem 0.4rem;border:1px solid #E2E8F0;border-radius:0.25rem;font-size:0.75rem;margin-left:0.5rem">%</div>
                         <div class="benchmark-row"><span class="benchmark-label">Top Quartile</span><span class="benchmark-value green">&lt;4.0%</span></div>
                         <div class="benchmark-row"><span class="benchmark-label">Bottom Quartile</span><span class="benchmark-value red">7.5%+</span></div>
                         <div class="benchmark-row"><span class="benchmark-label">Involuntary</span><span class="benchmark-value">2.5%</span></div>
+                        <div class="benchmark-row" style="font-size:0.75rem;color:#94A3B8;padding:0.15rem 0"><span>Override:</span><input type="number" class="bm-override" data-metric="involChurn" placeholder="2.5" step="0.1" style="width:60px;padding:0.2rem 0.4rem;border:1px solid #E2E8F0;border-radius:0.25rem;font-size:0.75rem;margin-left:0.5rem">%</div>
                     </div>
                     <div class="benchmark-card"><h3>Traffic</h3>
                         <div class="benchmark-row"><span class="benchmark-label">Growth YoY</span><span class="benchmark-value">+5%</span></div>
+                        <div class="benchmark-row" style="font-size:0.75rem;color:#94A3B8;padding:0.15rem 0"><span>Override:</span><input type="number" class="bm-override" data-metric="trafficYoY" placeholder="5" style="width:60px;padding:0.2rem 0.4rem;border:1px solid #E2E8F0;border-radius:0.25rem;font-size:0.75rem;margin-left:0.5rem">%</div>
                         <div class="benchmark-row"><span class="benchmark-label">Top Quartile</span><span class="benchmark-value green">+12%+</span></div>
                         <div class="benchmark-row"><span class="benchmark-label">Bottom Quartile</span><span class="benchmark-value red">&lt;-2%</span></div>
                         <div class="benchmark-row"><span class="benchmark-label">Member %</span><span class="benchmark-value">62%</span></div>
+                        <div class="benchmark-row" style="font-size:0.75rem;color:#94A3B8;padding:0.15rem 0"><span>Override:</span><input type="number" class="bm-override" data-metric="memberPct" placeholder="62" style="width:60px;padding:0.2rem 0.4rem;border:1px solid #E2E8F0;border-radius:0.25rem;font-size:0.75rem;margin-left:0.5rem">%</div>
                     </div>
                 </div>
+                <div style="margin-top:1rem;text-align:right"><button onclick="applyBenchmarkOverrides()" style="background:var(--drb-orange);color:white;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-weight:600;cursor:pointer">Apply Custom Benchmarks</button><button onclick="resetBenchmarks()" style="background:#F1F5F9;color:#64748B;border:1px solid #E2E8F0;padding:0.5rem 1.25rem;border-radius:0.5rem;font-weight:600;cursor:pointer;margin-left:0.5rem">Reset to Defaults</button></div>
+                <div id="bm-status" style="margin-top:0.75rem;font-size:0.85rem;color:#10B981;text-align:right"></div>
             </div>
 
             <!-- ==================== ROI & SOLUTIONS ==================== -->
@@ -806,7 +907,27 @@
         </main>
     </div>
 
+    <script>window.__DRB_DATA__ = null;</script>
     <script>
+    /* ============================================================
+       LIVE DATA BRIDGE
+       Injected by Python — window.__DRB_DATA__ contains all KPIs
+       from Snowflake. When present, charts/tables use real data.
+       When absent (demo mode), falls back to generated data.
+       ============================================================ */
+    var D = window.__DRB_DATA__ || null;
+    var LIVE = !!D;
+
+    /* Helper: use live data array or generate fallback */
+    function ld(key, fallbackFn) {
+        if (LIVE && D.trends && D.trends[key]) return D.trends[key];
+        return fallbackFn();
+    }
+    function ldLabels() {
+        if (LIVE && D.trends && D.trends.labels) return D.trends.labels;
+        return ml(D && D.months ? D.months : 12);
+    }
+
     /* ============================================================
        VANILLA CANVAS CHART ENGINE - Zero external dependencies
        ============================================================ */
@@ -955,21 +1076,77 @@
             }
             var step=labels.length>15?3:labels.length>8?2:1;
             for(var sn=0;sn<labels.length;sn++){if(sn%step===0){var sx=pad.l+(sn/(n-1))*cw;c.fillStyle=this.c.lbl;c.textAlign='center';c.textBaseline='top';c.save();c.translate(sx,h-pad.b+8);c.rotate(-0.4);c.fillText(labels[sn],0,0);c.restore();}}
+        },
+
+        pie: function(id, slices, donut) {
+            var c = this.ctx(id); if(!c) return;
+            var w=c._w, h=c._h;
+            c.clearRect(0,0,w,h);
+            var cx=w/2, cy=h/2-10;
+            var r=Math.min(w,h)/2-35;
+            var total=0; for(var i=0;i<slices.length;i++) total+=slices[i].value;
+            var startAngle=-Math.PI/2;
+            for(var j=0;j<slices.length;j++){
+                var sliceAngle=(slices[j].value/total)*Math.PI*2;
+                c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,r,startAngle,startAngle+sliceAngle);c.closePath();
+                c.fillStyle=slices[j].color;c.fill();
+                /* label */
+                var midA=startAngle+sliceAngle/2;
+                var lx=cx+Math.cos(midA)*(r*0.65);
+                var ly=cy+Math.sin(midA)*(r*0.65);
+                var pct=Math.round(slices[j].value/total*100);
+                c.fillStyle='white';c.font='bold 13px -apple-system,sans-serif';c.textAlign='center';c.textBaseline='middle';
+                if(pct>=10) c.fillText(pct+'%',lx,ly);
+                startAngle+=sliceAngle;
+            }
+            if(donut){c.beginPath();c.arc(cx,cy,r*0.45,0,Math.PI*2);c.fillStyle='white';c.fill();}
+            /* legend below */
+            var lx2=w/2-((slices.length*80)/2);
+            c.font='11px -apple-system,sans-serif';
+            for(var k=0;k<slices.length;k++){
+                c.fillStyle=slices[k].color;c.fillRect(lx2,h-22,12,10);
+                c.fillStyle=this.c.lbl;c.textAlign='left';c.textBaseline='top';c.fillText(slices[k].label,lx2+15,h-23);
+                lx2+=c.measureText(slices[k].label).width+30;
+            }
         }
     };
 
     /* RESOLVE ALERTS */
     function resolveAlert(btn) {
         var card = btn.closest('.alert-card');
+        var noteInput = card.querySelector('.resolve-note');
+        var note = noteInput ? noteInput.value.trim() : '';
+        var title = card.querySelector('.alert-title').textContent;
+        var customer = card.querySelector('.alert-customer').textContent;
         card.classList.add('resolving');
         setTimeout(function() {
             card.remove();
             updateAlertCounts();
+            /* Add to resolved log */
+            var log = document.getElementById('resolved-log');
+            if(log){
+                var entry = document.createElement('div');
+                entry.style.cssText = 'padding:0.5rem 0;border-bottom:1px solid #F1F5F9';
+                var ts = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+                entry.innerHTML = '<span style="color:#10B981">&#10003;</span> <strong>'+title+'</strong> &mdash; '+customer+(note?' &mdash; <em>"'+note+'"</em>':'')+' <span style="float:right;font-size:0.7rem">'+ts+'</span>';
+                log.insertBefore(entry, log.firstChild);
+            }
             var container = document.getElementById('alerts-container');
             if (container && container.querySelectorAll('.alert-card').length === 0) {
                 container.innerHTML = '<div class="no-alerts">&#10003; All alerts resolved!</div>';
             }
         }, 350);
+    }
+
+    function filterAlerts(){
+        var csm = document.getElementById('alert-csm-filter').value;
+        var sev = document.getElementById('alert-sev-filter').value;
+        var cards = document.querySelectorAll('#alerts-container .alert-card');
+        cards.forEach(function(c){
+            var csmMatch = csm==='all' || c.getAttribute('data-csm')===csm;
+            var sevMatch = sev==='all' || c.classList.contains(sev);
+            c.style.display = (csmMatch && sevMatch) ? '' : 'none';
+        });
     }
 
     function updateAlertCounts() {
@@ -1017,6 +1194,28 @@
 
     document.getElementById('current-date').textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 
+    /* BENCHMARK OVERRIDES */
+    var customBenchmarks = {};
+    function applyBenchmarkOverrides(){
+        var inputs = document.querySelectorAll('.bm-override');
+        var count = 0;
+        inputs.forEach(function(inp){
+            var v = parseFloat(inp.value);
+            if(!isNaN(v)){
+                customBenchmarks[inp.getAttribute('data-metric')] = v;
+                count++;
+            }
+        });
+        var status = document.getElementById('bm-status');
+        if(status) status.textContent = count > 0 ? '✓ Applied '+count+' custom benchmark'+(count>1?'s':'') : 'No custom values entered';
+    }
+    function resetBenchmarks(){
+        customBenchmarks = {};
+        document.querySelectorAll('.bm-override').forEach(function(inp){ inp.value=''; });
+        var status = document.getElementById('bm-status');
+        if(status) status.textContent = '✓ Reset to industry defaults';
+    }
+
     /* DATA */
     var cust={bmw:{name:'BMW Kar Wash LLC',sites:61,region:'MI',csm:'Morgan Malone',health:'Green',score:2.80,uptime:'99.92%',totalCases:572,openCases:4,avgTtr:2.24,hwSwaps:3,escalations:1},sparkle:{name:'Sparkle Clean Auto Spa',sites:12,region:'AZ',csm:'Mike Johnson',health:'Red',score:1.20,uptime:'97.45%',totalCases:89,openCases:8,avgTtr:4.5,hwSwaps:5,escalations:3},quick:{name:'Quick Clean Express',sites:156,region:'TX',csm:'Tom Wilson',health:'Green',score:3.50,uptime:'99.78%',totalCases:1240,openCases:12,avgTtr:1.8,hwSwaps:8,escalations:2},premier:{name:'Premier Auto Spa',sites:234,region:'CA',csm:'Sarah Chen',health:'Green',score:4.20,uptime:'99.95%',totalCases:1890,openCases:6,avgTtr:1.2,hwSwaps:4,escalations:0}};
 
@@ -1028,7 +1227,32 @@
 
     function initOp(){var m=ml(12);SC.bar('caseByProductChart',['XPT/Kiosk','Cashier','Gate','TunnelWatch','Server','XCC','OTT','ARM'],[572,157,119,111,110,57,51,44],SC.c.blue,true);SC.line('monthlyCaseChart',m,[85,92,78,95,110,88,76,102,98,115,89,95],SC.c.blue,SC.c.bf);SC.line('hardwareSwapsChart',m,[2,1,3,2,4,1,2,3,1,2,3,2],SC.c.orange,SC.c.of);SC.line('escalationsChart',m,[1,0.5,2,1,1,2,0.5,1,2,1,0.5,1],SC.c.red,SC.c.rf);updateOperationalData();}
 
-    function initBoap(){var m=ml(24),rv=[],mm=[];for(var i=0;i<24;i++){rv.push(180-i*3+Math.random()*20);mm.push(2400-i*50+Math.random()*100);}SC.bar('boapRevenueChart',m,rv,SC.c.orange,false);SC.line('boapMembersChart',m,mm,SC.c.green,SC.c.gf);}
+    function initBoap(){
+        var m=ml(24),rv=[],mm=[],cap=[],rtk=[],joins=[],churns=[];
+        for(var i=0;i<24;i++){
+            rv.push(180-i*3+Math.random()*20);
+            mm.push(2400-i*50+Math.random()*100);
+            cap.push(28+Math.random()*8);
+            rtk.push(10+Math.random()*2.5);
+            joins.push(200+Math.random()*120);
+            churns.push(140+Math.random()*100);
+        }
+        SC.bar('boapRevenueChart',m,rv,SC.c.orange,false);
+        SC.line('boapMembersChart',m,mm,SC.c.green,SC.c.gf);
+        SC.line('boapCaptureChart',m,cap,SC.c.blue,SC.c.bf);
+        SC.line('boapRetailTicketChart',m,rtk,SC.c.green,SC.c.gf);
+        /* Traffic Breakdown Donut */
+        SC.pie('boapTrafficPieChart',[
+            {label:'Membership Traffic',value:72,color:SC.c.blue},
+            {label:'Single Wash Traffic',value:25,color:SC.c.orange},
+            {label:'Prepaids Redeemed',value:3,color:SC.c.green}
+        ], true);
+        /* New Members vs Churn */
+        SC.multiLine('boapJoinsChurnChart',m.slice(12),[
+            {label:'ARM Sold',data:joins.slice(12),color:SC.c.green,fill:SC.c.gf},
+            {label:'Total Churned',data:churns.slice(12),color:SC.c.red,fill:SC.c.rf}
+        ]);
+    }
 
     /* ============================================================
        DEEP DIVE INIT - All tabs
@@ -1037,16 +1261,20 @@
         var m=ml(24);
 
         if(tab==='dd-general'){
-            var r=[],ca=[],memP=[],retP=[],ppP=[],avgT=[];
-            for(var i=0;i<24;i++){
-                r.push(150+Math.random()*50);
-                ca.push(8000+Math.random()*4000);
-                var mp=55+Math.random()*8; memP.push(mp*80);
-                retP.push((100-mp-3)*80);
-                ppP.push(3*80);
-                avgT.push(26+Math.random()*5);
-            }
-            SC.bar('ddRevenueChart',m,r,SC.c.orange,false);
+            var m = ldLabels();
+            var r = ld('totalRev', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(150+Math.random()*50); return a; });
+            var ca = ld('carCount', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(8000+Math.random()*4000); return a; });
+            var avgT = ld('retailTicketAvg', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(26+Math.random()*5); return a; });
+
+            /* Convert revenue to $K for chart display */
+            var rK = r.map(function(v){ return LIVE ? v/1000 : v; });
+
+            /* Traffic breakdown */
+            var memP = ld('memberTrafficPct', function(){ var a=[]; for(var i=0;i<m.length;i++){ var mp=55+Math.random()*8; a.push(mp*80); } return a; });
+            var retP = ld('retailTrafficPct', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push((100-55-3)*80); return a; });
+            var ppP  = ld('prepaidTrafficPct', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(3*80); return a; });
+
+            SC.bar('ddRevenueChart',m,rK,SC.c.orange,false);
             SC.bar('ddCarsChart',m,ca,SC.c.blue,false);
             SC.stackedArea('ddTrafficBreakdownChart',m,[
                 {label:'Member',data:memP,color:SC.c.blue},
@@ -1054,58 +1282,83 @@
                 {label:'Prepaid',data:ppP,color:SC.c.green}
             ]);
             SC.line('ddAvgTicketChart',m,avgT,SC.c.green,SC.c.gf);
+
+            /* Update KPI cards if live */
+            if(LIVE && D.totals){
+                var t = D.totals;
+                var genKpis = document.querySelectorAll('#dd-general .kpi-value');
+                if(genKpis.length>=4){
+                    genKpis[0].textContent = '$'+(t.totalRev/1000000).toFixed(2)+'M';
+                    genKpis[1].textContent = (t.carCount/1000).toFixed(0)+'K';
+                    genKpis[2].textContent = '$'+t.overallTicketAvg.toFixed(2);
+                    genKpis[3].textContent = Math.round(t.armRedeem/t.carCount*100)+'%';
+                }
+            }
         }
 
         if(tab==='dd-membership'){
+            var m = ldLabels();
             /* Capture vs Churn */
-            var cap=[],vol=[],inv=[];
-            for(var i2=0;i2<24;i2++){cap.push(35+Math.random()*8);vol.push(4.5+Math.random()*3);inv.push(2+Math.random()*2);}
+            var cap = ld('captureRate', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(35+Math.random()*8); return a; });
+            var vol = ld('volChurnRate', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(4.5+Math.random()*3); return a; });
             SC.multiLine('ddCaptureChurnChart',m,[
                 {label:'Capture Rate %',data:cap,color:SC.c.green,fill:SC.c.gf},
                 {label:'Vol Churn %',data:vol,color:SC.c.red,fill:SC.c.rf}
             ]);
             /* Active Members */
-            var am=[];var base=2200;
-            for(var i3=0;i3<24;i3++){base+=Math.floor(Math.random()*80-20);am.push(base);}
+            var am = ld('activeMembers', function(){ var a=[],base=2200; for(var i=0;i<m.length;i++){base+=Math.floor(Math.random()*80-20);a.push(base);} return a; });
             SC.line('ddActiveMembersChart',m,am,SC.c.blue,SC.c.bf);
             /* Joins vs Churn */
-            var joins=[],churns=[];
-            for(var i4=0;i4<24;i4++){joins.push(250+Math.random()*150);churns.push(120+Math.random()*100);}
+            var joins = ld('armSold', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(250+Math.random()*150); return a; });
+            var churns = ld('totalChurned', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(120+Math.random()*100); return a; });
             SC.multiLine('ddJoinsChurnChart',m,[
                 {label:'New Joins',data:joins,color:SC.c.green,fill:SC.c.gf},
                 {label:'Total Churned',data:churns,color:SC.c.red,fill:SC.c.rf}
             ]);
             /* Member Revenue */
-            var mr=[];
-            for(var i5=0;i5<24;i5++){mr.push(70+Math.random()*30);}
-            SC.line('ddMemberRevenueChart',m,mr,SC.c.orange,SC.c.of);
-            /* Tenure by Plan */
-            SC.bar('ddTenureChart',['Basic','Standard','Premium','Ultimate'],[6.2,8.1,10.4,12.8],SC.c.blue,true);
-            /* LTV by Plan */
-            SC.bar('ddLtvChart',['Basic','Standard','Premium','Ultimate'],[124,210,342,518],SC.c.green,true);
-            /* Cohort Table */
-            buildCohortTable();
+            var mr = ld('memberRev', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(70+Math.random()*30); return a; });
+            var mrK = mr.map(function(v){ return LIVE ? v/1000 : v; });
+            SC.line('ddMemberRevenueChart',m,mrK,SC.c.orange,SC.c.of);
+
+            /* Tenure by Plan - use live plan data if available */
+            if(LIVE && D.plans && D.plans.names.length>0){
+                SC.bar('ddTenureChart',D.plans.names,D.plans.tenures,SC.c.blue,true);
+                SC.bar('ddLtvChart',D.plans.names,D.plans.ltvs,SC.c.green,true);
+            } else {
+                SC.bar('ddTenureChart',['Basic','Standard','Premium','Ultimate'],[6.2,8.1,10.4,12.8],SC.c.blue,true);
+                SC.bar('ddLtvChart',['Basic','Standard','Premium','Ultimate'],[124,210,342,518],SC.c.green,true);
+            }
+
+            /* Tenure/LTV KPI cards */
+            if(LIVE && D.tenure){
+                var tenKpis = document.querySelectorAll('#dd-membership .section-header~.card-grid .kpi-value');
+                /* These are in the Tenure & Lifetime Value section */
+            }
+
+            /* Cohort Table - use live data if available */
+            if(LIVE && D.cohort && D.cohort.labels.length>0){
+                buildCohortTableLive(D.cohort);
+            } else {
+                buildCohortTable();
+            }
         }
 
         if(tab==='dd-retail'){
-            var rc=[],rr=[],rt=[],basicP=[],stdP=[],premP=[],ultP=[];
+            var rc=[],rr=[],rt=[];
             for(var i6=0;i6<24;i6++){
                 rc.push(3000+Math.random()*1500);
                 rr.push(55+Math.random()*25);
                 rt.push(16+Math.random()*5);
-                basicP.push(15+Math.random()*8);
-                stdP.push(30+Math.random()*10);
-                premP.push(28+Math.random()*8);
-                ultP.push(12+Math.random()*8);
             }
             SC.bar('ddRetailCarsChart',m,rc,SC.c.blue,false);
             SC.line('ddRetailRevenueChart',m,rr,SC.c.orange,SC.c.of);
             SC.line('ddRetailTicketChart',m,rt,SC.c.green,SC.c.gf);
-            SC.stackedArea('ddRetailMixChart',m,[
-                {label:'Basic',data:basicP,color:'#94A3B8'},
-                {label:'Standard',data:stdP,color:SC.c.blue},
-                {label:'Premium',data:premP,color:SC.c.green},
-                {label:'Ultimate',data:ultP,color:SC.c.purple}
+            /* Package Mix Pie Chart (current month) */
+            SC.pie('ddRetailPieChart',[
+                {label:'Basic',value:18,color:'#94A3B8'},
+                {label:'Standard',value:35,color:SC.c.blue},
+                {label:'Premium',value:31,color:SC.c.green},
+                {label:'Ultimate',value:16,color:SC.c.purple}
             ]);
         }
 
@@ -1116,14 +1369,6 @@
             SC.bar('ddMktDayChart',['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[1180,1250,1320,1280,1450,1680,1140],SC.c.blue,false);
             /* Seasonal Index */
             SC.bar('ddSeasonalChart',['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],[72,78,95,105,112,118,132,125,110,120,88,75],SC.c.orange,false);
-            /* Joins by Source */
-            var organic=[],promo=[];
-            for(var i8=0;i8<24;i8++){organic.push(150+Math.random()*80);promo.push(50+Math.random()*100);}
-            SC.multiLine('ddMktJoinSourceChart',m,[
-                {label:'Organic',data:organic,color:SC.c.blue,fill:SC.c.bf},
-                {label:'Promotion',data:promo,color:SC.c.orange,fill:SC.c.of}
-            ]);
-            SC.bar('ddMktPromoChart',['Spring Blitz','Summer Promo','Back to School','Holiday Gift','New Year'],[18.4,12.1,6.2,22.8,4.8],SC.c.green,true);
         }
 
         if(tab==='dd-operations'){
@@ -1133,37 +1378,244 @@
             SC.bar('ddOpsCarsPerDayChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[285,248,341,220,268,205,328,234,171,195,163,218],SC.c.green,false);
             SC.bar('ddOpsChurnBySiteChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[5.2,5.8,4.1,6.2,4.8,5.5,3.8,6.0,7.4,6.8,8.1,5.6],SC.c.red,false);
         }
+
+        if(tab==='dd-siteview'){
+            buildSiteOverviewTable();
+        }
+    }
+
+    /* ============================================================
+       SITE-BY-SITE OVERVIEW ENGINE
+       ============================================================ */
+    /* Demo site data modeled after Suds screenshots */
+    var svSites = [
+        {name:'Time To Shine Car Wash - Ben Sawyer', years:{
+            2022:{cars:6877,rev:73376.93,armSold:171,capture:7.51,volChurn:2.60,involChurn:1.26,activeMembers:1453,memPct:63.9},
+            2023:{cars:8322,rev:98640.42,armSold:131,capture:5.55,volChurn:3.17,involChurn:2.19,activeMembers:2102,memPct:70.3},
+            2024:{cars:10014,rev:119014.24,armSold:286,capture:11.96,volChurn:3.71,involChurn:3.00,activeMembers:2906,memPct:77.0},
+            2025:{cars:12840,rev:166418.30,armSold:407,capture:15.18,volChurn:6.08,involChurn:2.37,activeMembers:4250,memPct:81.1}
+        },kpis12:{cars:147615,rev:1932030.15,activeMembers:4142,rechTicket:29.07,retTicket:15.55,capture:15.02,volChurn:5.83,involChurn:2.65}},
+        {name:'Time To Shine Car Wash - Cane Bay', years:{
+            2023:{cars:3098,rev:47062.71,armSold:389,capture:31.16,volChurn:2.81,involChurn:2.35,activeMembers:466,memPct:55.3},
+            2024:{cars:8192,rev:92485.85,armSold:309,capture:12.79,volChurn:5.91,involChurn:6.57,activeMembers:1792,memPct:70.8},
+            2025:{cars:11580,rev:147938.33,armSold:538,capture:21.62,volChurn:7.97,involChurn:4.40,activeMembers:3488,memPct:80.4}
+        },kpis12:{cars:138960,rev:1775259.96,activeMembers:3488,rechTicket:30.12,retTicket:14.80,capture:21.62,volChurn:7.97,involChurn:4.40}},
+        {name:'Time To Shine Car Wash - Catoosa', years:{
+            2022:{cars:8180,rev:89761.56,armSold:131,capture:4.62,volChurn:3.60,involChurn:2.57,activeMembers:1684,memPct:66.1},
+            2023:{cars:8031,rev:89128.73,armSold:105,capture:4.29,volChurn:2.96,involChurn:2.65,activeMembers:1749,memPct:68.3},
+            2024:{cars:7407,rev:85377.27,armSold:141,capture:6.43,volChurn:4.12,involChurn:2.53,activeMembers:1742,memPct:74.2},
+            2025:{cars:7966,rev:88631.57,armSold:122,capture:4.04,volChurn:3.97,involChurn:2.50,activeMembers:1591,memPct:59.8}
+        },kpis12:{cars:95592,rev:1063578.84,activeMembers:1591,rechTicket:28.40,retTicket:15.07,capture:4.04,volChurn:3.97,involChurn:2.50}},
+        {name:'Time To Shine Car Wash - Forest Drive', years:{
+            2022:{cars:10485,rev:134071.78,armSold:246,capture:5.25,volChurn:4.14,involChurn:5.62,activeMembers:2081,memPct:53.9},
+            2023:{cars:10099,rev:131648.54,armSold:200,capture:4.88,volChurn:4.36,involChurn:5.44,activeMembers:2197,memPct:59.3},
+            2024:{cars:10076,rev:118965.28,armSold:333,capture:9.65,volChurn:4.61,involChurn:9.93,activeMembers:2773,memPct:67.3},
+            2025:{cars:12059,rev:149733.24,armSold:481,capture:15.55,volChurn:5.25,involChurn:6.21,activeMembers:4062,memPct:77.3}
+        },kpis12:{cars:144708,rev:1796798.88,activeMembers:4062,rechTicket:28.30,retTicket:15.07,capture:15.55,volChurn:5.25,involChurn:6.21}},
+        {name:'Time to Shine Car Wash - Gervais Street', years:{
+            2024:{cars:4183,rev:36643.80,armSold:237,capture:17.56,volChurn:10.04,involChurn:12.18,activeMembers:807,memPct:63.4},
+            2025:{cars:6698,rev:66335.00,armSold:319,capture:15.45,volChurn:7.91,involChurn:8.80,activeMembers:1652,memPct:69.7}
+        },kpis12:{cars:80376,rev:796020.00,activeMembers:1652,rechTicket:27.50,retTicket:14.20,capture:15.45,volChurn:7.91,involChurn:8.80}},
+        {name:'Time To Shine Car Wash - Goose Creek', years:{
+            2022:{cars:21696,rev:262044.83,armSold:371,capture:6.61,volChurn:3.37,involChurn:3.81,activeMembers:5904,memPct:73.6},
+            2023:{cars:17243,rev:237760.16,armSold:347,capture:8.06,volChurn:3.05,involChurn:3.34,activeMembers:5707,memPct:74.7},
+            2024:{cars:15665,rev:218681.83,armSold:350,capture:11.27,volChurn:3.07,involChurn:5.90,activeMembers:5787,memPct:81.8},
+            2025:{cars:17086,rev:237272.61,armSold:521,capture:17.92,volChurn:4.58,involChurn:4.13,activeMembers:6417,memPct:85.4}
+        },kpis12:{cars:205032,rev:2847271.32,activeMembers:6417,rechTicket:28.30,retTicket:15.07,capture:17.92,volChurn:4.58,involChurn:4.13}},
+        {name:'Time To Shine Car Wash - Harbison Blvd', years:{
+            2023:{cars:3083,rev:34491.37,armSold:124,capture:6.93,volChurn:7.58,involChurn:6.43,activeMembers:342,memPct:28.3},
+            2024:{cars:4826,rev:57685.85,armSold:234,capture:11.53,volChurn:7.49,involChurn:12.79,activeMembers:1126,memPct:57.2},
+            2025:{cars:6830,rev:80608.43,armSold:324,capture:15.70,volChurn:7.32,involChurn:9.27,activeMembers:1952,memPct:69.9}
+        },kpis12:{cars:81960,rev:967301.16,activeMembers:1952,rechTicket:26.80,retTicket:13.90,capture:15.70,volChurn:7.32,involChurn:9.27}},
+        {name:'Time To Shine Car Wash - Owasso', years:{
+            2022:{cars:21184,rev:217128.20,armSold:352,capture:6.64,volChurn:4.04,involChurn:1.62,activeMembers:4952,memPct:73.4},
+            2023:{cars:20465,rev:215042.21,armSold:292,capture:7.21,volChurn:3.19,involChurn:2.12,activeMembers:5208,memPct:78.7},
+            2024:{cars:20684,rev:233361.07,armSold:360,capture:10.05,volChurn:3.34,involChurn:2.87,activeMembers:5877,memPct:83.8},
+            2025:{cars:22541,rev:269919.90,armSold:524,capture:15.18,volChurn:4.87,involChurn:1.71,activeMembers:6905,memPct:86.6}
+        },kpis12:{cars:270492,rev:3239038.80,activeMembers:6905,rechTicket:28.30,retTicket:15.07,capture:15.18,volChurn:4.87,involChurn:1.71}}
+    ];
+
+    /* Org-wide averages for site card comparison */
+    var svOrgAvg = {cars:184522,rev:2164565.86,activeMembers:2681,rechTicket:28.30,retTicket:15.07,capture:16.35,volChurn:5.37,involChurn:5.52};
+
+    function buildSiteOverviewTable(){
+        var tbody = document.getElementById('sv-overview-body');
+        if(!tbody) return;
+        var html = '';
+        for(var i=0;i<svSites.length;i++){
+            var s = svSites[i];
+            var yrs = Object.keys(s.years).sort();
+            /* Site header row */
+            html += '<tr style="background:#1E3A5F;color:white;font-weight:700"><td colspan="9" style="text-align:left;padding:0.5rem 0.75rem">'+s.name+'</td></tr>';
+            for(var y=0;y<yrs.length;y++){
+                var d = s.years[yrs[y]];
+                html += '<tr>';
+                html += '<td style="text-align:left;padding-left:2rem;color:#64748B;font-size:0.75rem">'+yrs[y]+'</td>';
+                html += '<td>'+d.cars.toLocaleString()+'</td>';
+                html += '<td>$'+d.rev.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td>';
+                html += '<td>'+d.armSold+'</td>';
+                html += svColorCell(d.capture, 12, 8, '%', true);
+                html += svColorCell(d.volChurn, 5, 7, '%', false);
+                html += svColorCell(d.involChurn, 3, 6, '%', false);
+                html += '<td>'+d.activeMembers.toLocaleString()+'</td>';
+                html += svColorCell(d.memPct, 70, 50, '%', true);
+                html += '</tr>';
+            }
+        }
+        tbody.innerHTML = html;
+    }
+
+    function svColorCell(val, goodThresh, badThresh, suffix, higherBetter){
+        var bg, fg;
+        if(higherBetter){
+            if(val >= goodThresh){bg='#D1FAE5';fg='#065F46';}
+            else if(val >= badThresh){bg='#FEF3C7';fg='#92400E';}
+            else {bg='#FEE2E2';fg='#991B1B';}
+        } else {
+            if(val <= goodThresh){bg='#D1FAE5';fg='#065F46';}
+            else if(val <= badThresh){bg='#FEF3C7';fg='#92400E';}
+            else {bg='#FEE2E2';fg='#991B1B';}
+        }
+        return '<td style="background:'+bg+';color:'+fg+';font-weight:600">'+val.toFixed(2)+(suffix||'')+'</td>';
+    }
+
+    function updateSiteView(){
+        var v = document.getElementById('sv-view').value;
+        document.getElementById('sv-overview-panel').style.display = v==='overview'?'block':'none';
+        document.getElementById('sv-card-panel').style.display = v==='card'?'block':'none';
+        document.getElementById('sv-site-selector').style.display = v==='card'?'block':'none';
+        if(v==='card') updateSiteCard();
+    }
+
+    function updateSiteCard(){
+        var idx = parseInt(document.getElementById('sv-site').value);
+        var s = svSites[idx];
+        var k = s.kpis12;
+        document.getElementById('sv-card-title').textContent = 'Site Card: ' + s.name.replace(/Time To Shine Car Wash - |Time to Shine Car Wash - /,'');
+
+        /* KPI comparison table */
+        var kpiRows = [
+            {label:'Total Cars Washed',site:k.cars,org:svOrgAvg.cars,fmt:'num'},
+            {label:'Total Revenue',site:k.rev,org:svOrgAvg.rev,fmt:'$'},
+            {label:'Active Unlimited Members (Monthly Avg)',site:k.activeMembers,org:svOrgAvg.activeMembers,fmt:'num'},
+            {label:'Recharge Ticket',site:k.rechTicket,org:svOrgAvg.rechTicket,fmt:'$2'},
+            {label:'Retail Ticket',site:k.retTicket,org:svOrgAvg.retTicket,fmt:'$2'},
+            {label:'Capture Rate',site:k.capture,org:svOrgAvg.capture,fmt:'%'},
+            {label:'Voluntary Churn Rate',site:k.volChurn,org:svOrgAvg.volChurn,fmt:'%inv'},
+            {label:'Involuntary Churn Rate',site:k.involChurn,org:svOrgAvg.involChurn,fmt:'%inv'}
+        ];
+        var tbody = document.getElementById('sv-card-kpi-body');
+        var html = '';
+        for(var i=0;i<kpiRows.length;i++){
+            var r = kpiRows[i];
+            var diff;
+            if(r.org !== 0) diff = ((r.site - r.org)/r.org * 100);
+            else diff = 0;
+            var diffColor = '#64748B';
+            /* For churn, lower is better (invert color) */
+            if(r.fmt==='%inv'){
+                diffColor = diff <= 0 ? '#059669' : '#DC2626';
+            } else {
+                diffColor = diff >= 0 ? '#059669' : '#DC2626';
+            }
+            var siteStr, orgStr;
+            if(r.fmt==='$'){siteStr='$'+r.site.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});orgStr='$'+r.org.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+            else if(r.fmt==='$2'){siteStr='$'+r.site.toFixed(2);orgStr='$'+r.org.toFixed(2);}
+            else if(r.fmt==='%'||r.fmt==='%inv'){siteStr=r.site.toFixed(2)+'%';orgStr=r.org.toFixed(2)+'%';}
+            else{siteStr=r.site.toLocaleString();orgStr=r.org.toLocaleString();}
+            html += '<tr><td style="text-align:left;font-weight:600;background:#EFF6FF">'+r.label+'</td>';
+            html += '<td style="background:#E0F2FE;font-weight:600">'+siteStr+'</td>';
+            html += '<td>'+orgStr+'</td>';
+            html += '<td style="color:'+diffColor+';font-weight:700;background:'+(diff>=0&&r.fmt!=='%inv'||diff<=0&&r.fmt==='%inv'?'#D1FAE5':'#FEE2E2')+'">'+((diff>=0?'+':'')+diff.toFixed(2)+'%')+'</td></tr>';
+        }
+        tbody.innerHTML = html;
+
+        /* Site card charts */
+        var yrs = Object.keys(s.years).sort();
+        var lastYr = s.years[yrs[yrs.length-1]];
+        var memPct = lastYr ? lastYr.memPct : 72;
+        SC.pie('svCardTrafficPie',[
+            {label:'Membership',value:memPct,color:SC.c.blue},
+            {label:'Single Wash',value:100-memPct-2,color:SC.c.orange},
+            {label:'Prepaid',value:2,color:SC.c.green}
+        ], true);
+
+        /* Joins vs Churn bar */
+        var jLabels=[], jData=[], cData=[];
+        for(var y2=0;y2<yrs.length;y2++){
+            jLabels.push(yrs[y2]);
+            jData.push(s.years[yrs[y2]].armSold);
+            var vc = s.years[yrs[y2]].volChurn + s.years[yrs[y2]].involChurn;
+            cData.push(Math.round(s.years[yrs[y2]].armSold * vc / 100));
+        }
+        SC.multiLine('svCardJoinsChurnChart',jLabels,[
+            {label:'ARM Sold',data:jData,color:SC.c.green,fill:SC.c.gf},
+            {label:'Churned',data:cData,color:SC.c.red,fill:SC.c.rf}
+        ]);
     }
 
     /* ============================================================
        ROI & SOLUTIONS ENGINE
        ============================================================ */
-    var roiCustomers = {
-        sparkle: {
-            name: 'Sparkle Clean Auto Spa', sites: 12,
-            memberRevMonthly: 89200, retailRevMonthly: 64500,
-            captureRate: 31, volChurn: 8.2, involChurn: 4.1,
-            memberCount: 2847, retailCars: 3534, avgMemberPrice: 31.50,
-            retailTicket: 18.12, trafficYoY: -18, revenueYoY: -18,
-            tenure: 8.4, ltv: 265, healthScore: 28
-        },
-        metro: {
-            name: 'Metro Express Wash', sites: 8,
-            memberRevMonthly: 72000, retailRevMonthly: 48000,
-            captureRate: 35, volChurn: 6.5, involChurn: 3.8,
-            memberCount: 1920, retailCars: 2800, avgMemberPrice: 29.99,
-            retailTicket: 17.14, trafficYoY: -8, revenueYoY: -10,
-            tenure: 9.1, ltv: 290, healthScore: 45
-        },
-        quick: {
-            name: 'Quick Clean Express', sites: 156,
-            memberRevMonthly: 1240000, retailRevMonthly: 890000,
-            captureRate: 33, volChurn: 7.1, involChurn: 3.5,
-            memberCount: 38400, retailCars: 52000, avgMemberPrice: 32.29,
-            retailTicket: 17.12, trafficYoY: -12, revenueYoY: -14,
-            tenure: 7.8, ltv: 242, healthScore: 38
+    var roiCustomers = {};
+
+    /* If live data is available, build ROI customer from Snowflake totals */
+    if(LIVE && D.totals){
+        var t = D.totals;
+        roiCustomers['live'] = {
+            name: D.client || 'Current Customer',
+            sites: D.siteCount || 1,
+            memberRevMonthly: t.monthlyMemberRev,
+            retailRevMonthly: t.monthlyRetailRev,
+            captureRate: t.captureRate,
+            volChurn: t.volChurnRate,
+            involChurn: t.involChurnRate,
+            memberCount: D.tenure ? D.tenure.activeMemberCount : Math.round(t.netMember/12),
+            retailCars: t.monthlySingleWash,
+            avgMemberPrice: D.tenure ? D.tenure.avgMemberPrice : t.rechargeTicketAvg,
+            retailTicket: t.retailTicketAvg,
+            trafficYoY: 0, /* Would need 24-month query for YoY calc */
+            revenueYoY: 0,
+            tenure: D.tenure ? D.tenure.avgTenureMonths : 0,
+            ltv: D.tenure ? D.tenure.avgLTV : 0,
+            healthScore: 0
+        };
+        /* Update the ROI dropdown to show live customer */
+        var roiSel = document.getElementById('roi-customer-select');
+        if(roiSel){
+            roiSel.innerHTML = '<option value="live">'+(D.client||'Customer')+' ('+D.siteCount+' sites) — LIVE DATA</option>';
         }
-    };
+    }
+
+    /* Fallback demo customers (used when no Snowflake connection) */
+    if(!roiCustomers['live']){
+        roiCustomers = {
+            sparkle: {
+                name: 'Sparkle Clean Auto Spa', sites: 12,
+                memberRevMonthly: 89200, retailRevMonthly: 64500,
+                captureRate: 31, volChurn: 8.2, involChurn: 4.1,
+                memberCount: 2847, retailCars: 3534, avgMemberPrice: 31.50,
+                retailTicket: 18.12, trafficYoY: -18, revenueYoY: -18,
+                tenure: 8.4, ltv: 265, healthScore: 28
+            },
+            metro: {
+                name: 'Metro Express Wash', sites: 8,
+                memberRevMonthly: 72000, retailRevMonthly: 48000,
+                captureRate: 35, volChurn: 6.5, involChurn: 3.8,
+                memberCount: 1920, retailCars: 2800, avgMemberPrice: 29.99,
+                retailTicket: 17.14, trafficYoY: -8, revenueYoY: -10,
+                tenure: 9.1, ltv: 290, healthScore: 45
+            },
+            quick: {
+                name: 'Quick Clean Express', sites: 156,
+                memberRevMonthly: 1240000, retailRevMonthly: 890000,
+                captureRate: 33, volChurn: 7.1, involChurn: 3.5,
+                memberCount: 38400, retailCars: 52000, avgMemberPrice: 32.29,
+                retailTicket: 17.12, trafficYoY: -12, revenueYoY: -14,
+                tenure: 7.8, ltv: 242, healthScore: 38
+            }
+        };
+    }
 
     var benchmarks = { captureRate: 39, volChurn: 5.5, involChurn: 2.5, retailTicket: 18.00, tenure: 10, ltv: 325 };
     /* Patheon lift factors based on 156-site conversion data */
@@ -1412,6 +1864,32 @@
     }
 
     function initROI(){ updateROI(); }
+
+    function buildCohortTableLive(cohort){
+        var tbody=document.getElementById('cohort-body');
+        if(!tbody) return;
+        var rows='';
+        for(var r=0;r<cohort.labels.length;r++){
+            var label = cohort.labels[r];
+            var joined = cohort.joined[r];
+            rows+='<tr><td style="font-weight:600;text-align:left">'+label+'</td><td style="font-weight:600">'+joined+'</td>';
+            for(var c=0;c<12;c++){
+                var ret = cohort.retention[r] ? cohort.retention[r][c+1] : null;
+                if(ret !== null && ret !== undefined){
+                    var bg,fg;
+                    if(ret>=80){bg='#D1FAE5';fg='#065F46';}
+                    else if(ret>=60){bg='#DBEAFE';fg='#1E40AF';}
+                    else if(ret>=40){bg='#FEF3C7';fg='#92400E';}
+                    else{bg='#FEE2E2';fg='#991B1B';}
+                    rows+='<td class="cohort-cell" style="background:'+bg+';color:'+fg+';font-weight:600;font-size:0.8rem">'+ret+'%</td>';
+                } else {
+                    rows+='<td style="color:#CBD5E1">-</td>';
+                }
+            }
+            rows+='</tr>';
+        }
+        tbody.innerHTML=rows;
+    }
 
     function buildCohortTable(){
         var tbody=document.getElementById('cohort-body');
