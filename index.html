@@ -1,74 +1,3 @@
-"""
-DRB Advisory Analytics Dashboard
-Streamlit App - Full HTML dashboard with live Snowflake data integration
-"""
-
-import streamlit as st
-import streamlit.components.v1 as components
-import json
-
-st.set_page_config(
-    page_title="DRB Advisory Analytics",
-    page_icon="\U0001F697",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-
-# ── Sidebar: Snowflake configuration ──────────────────────
-with st.sidebar:
-    st.markdown("### 🔌 Data Connection")
-    use_live_data = st.toggle("Connect to Snowflake", value=False)
-    client_org_code = st.text_input(
-        "Client Org Code",
-        value="XXXXXX",
-        help="The clientorgcode from SiteWatch (e.g., WHITTX)"
-    )
-    data_months = st.selectbox("Lookback Period", [12, 24], index=0)
-
-    if use_live_data:
-        st.info("⏳ Querying Snowflake...")
-        try:
-            from data_layer import build_dashboard_data, to_json
-            payload = build_dashboard_data(client_org_code, data_months)
-            if "error" in payload:
-                st.error(payload["error"])
-                data_json = "null"
-            else:
-                data_json = to_json(payload)
-                st.success(f"✅ Loaded {payload.get('siteCount',0)} sites, {len(payload.get('trends',{}).get('labels',[]))} months")
-        except ImportError:
-            st.warning("snowflake-connector-python not installed. Run:\n`pip install snowflake-connector-python`")
-            data_json = "null"
-        except Exception as e:
-            st.error(f"Connection failed: {e}")
-            data_json = "null"
-    else:
-        data_json = "null"
-        st.caption("Demo mode — using sample data")
-
-st.markdown("""
-    <style>
-        #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-        .block-container {
-            padding: 0 !important;
-            max-width: 100% !important;
-        }
-        .appview-container .main .block-container {
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-        .stDeployButton {display: none;}
-        .stApp { margin: 0; padding: 0; }
-        iframe { border: none !important; }
-        [data-testid="collapsedControl"] {display: none;}
-    </style>
-""", unsafe_allow_html=True)
-
-html_content = r"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -978,7 +907,7 @@ html_content = r"""
         </main>
     </div>
 
-    <script>window.__DRB_DATA__ = %%DATA_PAYLOAD%%;</script>
+    <script>window.__DRB_DATA__ = null;</script>
     <script>
     /* ============================================================
        LIVE DATA BRIDGE
@@ -2016,10 +1945,3 @@ html_content = r"""
     </script>
 </body>
 </html>
-
-"""
-
-# Inject Snowflake data payload into the HTML template
-rendered_html = html_content.replace("%%DATA_PAYLOAD%%", data_json)
-
-components.html(rendered_html, height=5000, scrolling=True)
