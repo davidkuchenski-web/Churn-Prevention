@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --drb-orange: #F26522; --drb-navy: #1E2A3A; --drb-charcoal: #333333;
+            --drb-orange: #f04e23; --drb-navy: #1E2A3A; --drb-charcoal: #333333;
             --drb-blue: #3B82F6; --drb-green: #10B981; --drb-red: #EF4444; --drb-yellow: #F59E0B;
             --drb-purple: #8B5CF6; --drb-teal: #14B8A6;
             --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0; --gray-400: #94A3B8;
@@ -22,7 +22,7 @@
         .nav-section-title { color: rgba(255,255,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
         .nav-item { display: block; width: 100%; padding: 0.65rem 0.75rem; margin: 0.1rem 0; border: none; border-radius: 0.5rem; background: transparent; color: rgba(255,255,255,0.7); font-size: 0.875rem; font-weight: 500; text-align: left; cursor: pointer; transition: all 0.15s ease; }
         .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); }
-        .nav-item.active { background: rgba(242,101,34,0.15); color: var(--drb-orange); border-left: 3px solid var(--drb-orange); }
+        .nav-item.active { background: rgba(240,78,35,0.15); color: #f04e23; border-left: 3px solid #f04e23; }
         .sidebar-divider { border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0; }
         .user-info { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
         .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--drb-orange); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem; }
@@ -138,21 +138,47 @@
 
         @media (max-width: 768px) { .sidebar { width: 100%; height: auto; position: relative; } .main-content { margin-left: 0; } .card-grid-4, .card-grid-5, .card-grid-6 { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } }
     </style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <aside class="sidebar">
-            <div class="logo"><span class="logo-text">DRB</span><span class="logo-subtitle">Pulse</span></div>
+            <div class="logo" style="display:flex;align-items:center;gap:10px;padding:0.5rem 0;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 74" style="height:44px;width:auto;flex-shrink:0">
+  <g><path style="fill:#f04e23" d="M72,11.7v14.54h4V11.71c0-2.21-1.79-4-4-4H57.46v4H72Z"/>
+  <g style="fill:#ffffff"><path d="M16.89,16.98H8v36.9h8.88c4.08,0,8.77-.76,8.77-6.66V23.64c0-5.91-4.68-6.66-8.77-6.66Zm-2.83,4.27h2.83c1.8,0,2.71.81,2.71,2.4v23.57c0,1.59-.91,2.4-2.71,2.4h-2.83V21.24Z"/><path d="M45.78,32.6V23.64c0-5.91-4.68-6.66-8.77-6.66H28.42v36.9h6.05V40.34h1.54l5.24,13.54h6.23l-5.55-14.23c2.61-1.04,3.83-3.3,3.83-7.05Zm-11.3-11.36h2.54c1.8,0,2.71.81,2.71,2.4v10.19c0,1.59-.91,2.4-2.71,2.4h-2.54V21.24Z"/><path d="M63.04,34.98c2.2-1.02,3.31-2.96,3.31-5.78V23.64c0-5.91-4.68-6.66-8.77-6.66H49v36.9h8.88c4.08,0,8.77-.76,8.77-6.66v-6.33c0-3-1.18-4.94-3.6-5.9Zm-2.75-4.55c0,1.59-.91,2.4-2.71,2.4h-2.54V21.24h2.54c1.8,0,2.71.81,2.71,2.4v6.79Zm-5.25,6.51h2.83c1.8,0,2.71.81,2.71,2.4v7.88c0,1.59-.91,2.4-2.71,2.4h-2.83V36.94Z"/></g></g>
+</svg>
+                <div style="display:flex;align-items:center;gap:0">
+  <span style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#f04e23;letter-spacing:4px">PULSE</span>
+  <svg viewBox="0 0 200 30" style="height:22px;width:auto;margin-left:4px;overflow:visible">
+    <defs>
+      <clipPath id="pulse-reveal"><rect x="0" y="0" width="0" height="30">
+        <animate attributeName="width" from="0" to="200" dur="4s" repeatCount="indefinite"/>
+      </rect></clipPath>
+    </defs>
+    <g clip-path="url(#pulse-reveal)">
+      <line x1="0" y1="15" x2="12" y2="15" stroke="#f04e23" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M12,15 L16,3 L20,27 L24,15" fill="none" stroke="#f04e23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="24" y1="15" x2="50" y2="15" stroke="#f04e23" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M50,15 L54,3 L58,27 L62,15" fill="none" stroke="#f04e23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="62" y1="15" x2="88" y2="15" stroke="#f04e23" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M88,15 L92,3 L96,27 L100,15" fill="none" stroke="#f04e23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="100" y1="15" x2="120" y2="15" stroke="#f04e23" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="120" y1="15" x2="200" y2="15" stroke="#f04e23" stroke-width="1.5" stroke-dasharray="2,4" opacity="0.25" stroke-linecap="round"/>
+    </g>
+  </svg>
+</div>
+            </div>
             <p class="nav-section-title">Dashboard</p>
             <nav>
-                <button class="nav-item active" data-page="portfolio">Portfolio Overview</button>
-                <button class="nav-item" data-page="operational">Operational Health</button>
-                <button class="nav-item" data-page="alerts">Risk Alerts</button>
-                <button class="nav-item" data-page="boap">Business on a Page</button>
-                <button class="nav-item" data-page="deepdive">Deep Dive</button>
-                <button class="nav-item" data-page="benchmarks">Industry Benchmarks</button>
-                <button class="nav-item" data-page="roi">ROI &amp; Solutions</button>
-                <button class="nav-item" data-page="settings">Alert Configuration</button>
+                <button class="nav-item active" data-page="portfolio" onclick="switchPage('portfolio',this)">Portfolio Overview</button>
+                <button class="nav-item" data-page="operational" onclick="switchPage('operational',this)">Operational Health</button>
+                <button class="nav-item" data-page="alerts" onclick="switchPage('alerts',this)">Risk Alerts</button>
+                <button class="nav-item" data-page="boap" onclick="switchPage('boap',this)">Business on a Page</button>
+                <button class="nav-item" data-page="deepdive" onclick="switchPage('deepdive',this)">Deep Dive</button>
+                <button class="nav-item" data-page="benchmarks" onclick="switchPage('benchmarks',this)">Industry Benchmarks</button>
+                <button class="nav-item" data-page="roi" onclick="switchPage('roi',this)">ROI &amp; Solutions</button>
+                <button class="nav-item" data-page="settings" onclick="switchPage('settings',this)">Alert Configuration</button>
             </nav>
             <div class="sidebar-divider"></div>
             <div class="user-info">
@@ -684,7 +710,7 @@
                         <div class="benchmark-row" style="font-size:0.75rem;color:#94A3B8;padding:0.15rem 0"><span>Override:</span><input type="number" class="bm-override" data-metric="memberPct" placeholder="62" style="width:60px;padding:0.2rem 0.4rem;border:1px solid #E2E8F0;border-radius:0.25rem;font-size:0.75rem;margin-left:0.5rem">%</div>
                     </div>
                 </div>
-                <div style="margin-top:1rem;text-align:right"><button onclick="applyBenchmarkOverrides()" style="background:var(--drb-orange);color:white;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-weight:600;cursor:pointer">Apply Custom Benchmarks</button><button onclick="resetBenchmarks()" style="background:#F1F5F9;color:#64748B;border:1px solid #E2E8F0;padding:0.5rem 1.25rem;border-radius:0.5rem;font-weight:600;cursor:pointer;margin-left:0.5rem">Reset to Defaults</button></div>
+                <div style="margin-top:1rem;text-align:right"><button onclick="applyBenchmarkOverrides()" style="background:#f04e23;color:white;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-weight:600;cursor:pointer">Apply Custom Benchmarks</button><button onclick="resetBenchmarks()" style="background:#F1F5F9;color:#64748B;border:1px solid #E2E8F0;padding:0.5rem 1.25rem;border-radius:0.5rem;font-weight:600;cursor:pointer;margin-left:0.5rem">Reset to Defaults</button></div>
                 <div id="bm-status" style="margin-top:0.75rem;font-size:0.85rem;color:#10B981;text-align:right"></div>
             </div>
 
@@ -790,7 +816,7 @@
                         <div><div style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Membership Revenue</div><div id="roi-total-mem" style="font-size:1.75rem;font-weight:700;color:var(--drb-green)">+$0</div></div>
                         <div><div style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Retail Revenue</div><div id="roi-total-ret" style="font-size:1.75rem;font-weight:700;color:var(--drb-green)">+$0</div></div>
                         <div><div style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em">Retained Members Value</div><div id="roi-total-churn" style="font-size:1.75rem;font-weight:700;color:var(--drb-green)">+$0</div></div>
-                        <div style="background:var(--drb-orange);border-radius:0.75rem;padding:0.75rem"><div style="font-size:0.7rem;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.05em">Combined Annual Lift</div><div id="roi-total-combined" style="font-size:1.75rem;font-weight:700;color:white">+$0</div></div>
+                        <div style="background:#f04e23;border-radius:0.75rem;padding:0.75rem"><div style="font-size:0.7rem;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.05em">Combined Annual Lift</div><div id="roi-total-combined" style="font-size:1.75rem;font-weight:700;color:white">+$0</div></div>
                     </div>
                 </div>
 
@@ -910,7 +936,7 @@
                             <input type="month" id="pdf-date" value="2026-02">
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="generatePdfExport()" style="background:var(--drb-orange)">📥 Generate PDF Report</button>
+                    <button class="btn btn-primary" onclick="generatePdfExport()" style="background:#f04e23">📥 Generate PDF Report</button>
                     <div id="pdf-status" style="margin-top:0.5rem;font-size:0.8rem;color:#64748B"></div>
                     <p style="font-size:0.75rem;color:#94A3B8;margin-top:0.5rem">💡 <strong>Tip:</strong> For full PDF generation via Streamlit, open the sidebar (☰) and use the PDF Export section there.</p>
                 </div>
@@ -931,6 +957,28 @@
     </div>
 
     <script>window.__DRB_DATA__ = null;</script>
+<script>
+function switchPage(pageId, btn) {
+    // Remove active from all nav items
+    var items = document.querySelectorAll('.nav-item');
+    for (var i = 0; i < items.length; i++) items[i].className = 'nav-item';
+    // Remove active from all pages
+    var pages = document.querySelectorAll('.page');
+    for (var i = 0; i < pages.length; i++) pages[i].className = 'page';
+    // Activate clicked
+    btn.className = 'nav-item active';
+    var target = document.getElementById(pageId);
+    if (target) target.className = 'page active';
+    // Init charts for that page
+    try {
+        if (pageId === 'operational') setTimeout(function(){ initOp(); }, 100);
+        else if (pageId === 'boap') setTimeout(function(){ initBoap(); }, 100);
+        else if (pageId === 'deepdive') setTimeout(function(){ initDD('dd-general'); }, 100);
+        else if (pageId === 'roi') setTimeout(function(){ initROI(); }, 100);
+    } catch(e) { console.log('Chart init:', e); }
+}
+</script>
+
     <script>
     /* ============================================================
        LIVE DATA BRIDGE
@@ -955,7 +1003,7 @@
        VANILLA CANVAS CHART ENGINE - Zero external dependencies
        ============================================================ */
     var SC = {
-        c: { blue:'#3B82F6', orange:'#F26522', green:'#10B981', red:'#EF4444', purple:'#8B5CF6', teal:'#14B8A6',
+        c: { blue:'#3B82F6', orange:'#f04e23', green:'#10B981', red:'#EF4444', purple:'#8B5CF6', teal:'#14B8A6',
              bf:'rgba(59,130,246,0.1)', of:'rgba(242,101,34,0.1)',
              gf:'rgba(16,185,129,0.1)', rf:'rgba(239,68,68,0.1)',
              pf:'rgba(139,92,246,0.1)', tf:'rgba(20,184,166,0.1)',
@@ -1186,37 +1234,7 @@
         }
     }
 
-    /* MAIN NAV */
-    function initNavigation() {
-        var navItems = document.querySelectorAll('.nav-item');
-        var pages = document.querySelectorAll('.page');
-        if (!navItems.length || !pages.length) return;
-        navItems.forEach(function(item){
-            item.addEventListener('click',function(e){
-                e.preventDefault();
-                var targetId = this.getAttribute('data-page');
-                var targetPage = document.getElementById(targetId);
-                if (!targetPage) return;
-                navItems.forEach(function(i){i.classList.remove('active');});
-                pages.forEach(function(p){p.classList.remove('active');});
-                this.classList.add('active');
-                targetPage.classList.add('active');
-                setTimeout(function(){
-                    try {
-                        if(targetId==='operational')initOp();
-                        else if(targetId==='boap')initBoap();
-                        else if(targetId==='deepdive')initDD('dd-general');
-                        else if(targetId==='roi')initROI();
-                    } catch(err) { console.error('Chart init error:', err); }
-                },50);
-            });
-        });
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initNavigation);
-    } else {
-        initNavigation();
-    }
+    /* NAV handled via inline onclick */
 
     /* DEEP DIVE TAB NAV */
     document.querySelectorAll('.dd-tab').forEach(function(tab){
@@ -1291,7 +1309,7 @@
         for(var i=0;i<sitesForTable.length;i++){
             var s = sitesForTable[i];
             var sn = s.name.replace(/Time To Shine Car Wash - |Time to Shine Car Wash - /,'');
-            heatHtml += '<tr style="background:#1E3A5F;color:white;font-weight:700"><td colspan="9" style="text-align:left;padding:6px 10px">'+sn+'</td></tr>';
+            heatHtml += '<tr style="background:#1a4797;color:white;font-weight:700"><td colspan="9" style="text-align:left;padding:6px 10px">'+sn+'</td></tr>';
             var yrs = Object.keys(s.years).sort();
             for(var y=0;y<yrs.length;y++){
                 var d = s.years[yrs[y]];
@@ -1325,28 +1343,29 @@
         w.document.write('.cover h1{font-size:42px;font-weight:700;letter-spacing:1px}.cover h2{font-size:32px;font-weight:300;margin-top:8px}');
         w.document.write('.cover-sub{font-size:14px;color:#D4E1F0;margin-top:16px}');
         w.document.write('.cover-bottom{background:white;padding:20px 40px;text-align:right}');
-        w.document.write('.logo-text{font-size:28px;font-weight:700;color:#1E3A5F;display:inline}.logo-sep{color:#94A3B8;margin:0 4px}.logo-suds{font-size:24px;font-weight:700;color:#E8581B}');
-        w.document.write('.hdr{background:#385E8E;padding:16px 32px;color:white}.hdr h1{font-size:22px;font-weight:700}.hdr p{font-size:11px;color:#B8CCE4;margin-top:2px}');
+        w.document.write('.logo-text{font-size:28px;font-weight:700;color:#1a4797;display:inline}.logo-sep{color:#94A3B8;margin:0 4px}.logo-suds{font-size:24px;font-weight:700;color:#f04e23}');
+        w.document.write('.hdr{background:#2a5cad;padding:16px 32px;color:white}.hdr h1{font-size:22px;font-weight:700}.hdr p{font-size:11px;color:#B8CCE4;margin-top:2px}');
         w.document.write('.hdr-logo{float:right;margin-top:-32px}.hdr-logo .logo-text{color:white;font-size:20px}.hdr-logo .logo-suds{font-size:18px}');
         w.document.write('.divider{height:2px;background:#8FAAD0}');
         w.document.write('.content{padding:16px 32px}');
         w.document.write('.kpi-row{display:flex;gap:10px;margin:12px 0}.kpi-card{flex:1;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:8px 12px;text-align:center}');
-        w.document.write('.kpi-label{font-size:8px;color:#94A3B8;text-transform:uppercase}.kpi-value{font-size:22px;font-weight:700;color:#1E3A5F;margin:2px 0}.kpi-sub{font-size:7px;color:#64748B}');
+        w.document.write('.kpi-label{font-size:8px;color:#94A3B8;text-transform:uppercase}.kpi-value{font-size:22px;font-weight:700;color:#1a4797;margin:2px 0}.kpi-sub{font-size:7px;color:#64748B}');
         w.document.write('.section-div{background:#8FAAD0;min-height:5.4in;display:flex;flex-direction:column;justify-content:center;padding-left:100px}');
-        w.document.write('.section-div h1{font-size:32px;color:#1E3A5F;font-weight:700}.section-div p{font-size:15px;color:#1E3A5F;margin-top:8px}');
+        w.document.write('.section-div h1{font-size:32px;color:#1a4797;font-weight:700}.section-div p{font-size:15px;color:#1a4797;margin-top:8px}');
         w.document.write('table.heat{width:100%;border-collapse:collapse;font-size:9px;margin-top:8px}');
-        w.document.write('table.heat th{background:#385E8E;color:white;padding:5px 8px;font-weight:600;text-align:center}');
+        w.document.write('table.heat th{background:#2a5cad;color:white;padding:5px 8px;font-weight:600;text-align:center}');
         w.document.write('table.heat td{padding:4px 8px;text-align:center;border-bottom:1px solid #F1F5F9}');
         w.document.write('.footer{position:absolute;bottom:8px;left:32px;right:32px;border-top:1px solid #8FAAD0;padding-top:4px;font-size:7px;color:#94A3B8;display:flex;justify-content:space-between}');
-        w.document.write('.toc-item{font-size:16px;color:#1E3A5F;margin:12px 0}.toc-num{font-weight:700;font-size:18px;margin-right:8px}');
-        w.document.write('.action-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#385E8E;color:white;font-weight:700;font-size:13px;margin-right:10px}');
-        w.document.write('.action-title{font-size:14px;font-weight:700;color:#1E3A5F}.action-desc{font-size:10px;color:#333;margin:4px 0 16px 38px}');
+        w.document.write('.toc-item{font-size:16px;color:#1a4797;margin:12px 0}.toc-num{font-weight:700;font-size:18px;margin-right:8px}');
+        w.document.write('.action-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#2a5cad;color:white;font-weight:700;font-size:13px;margin-right:10px}');
+        w.document.write('.action-title{font-size:14px;font-weight:700;color:#1a4797}.action-desc{font-size:10px;color:#333;margin:4px 0 16px 38px}');
         w.document.write('@media print{.no-print{display:none!important}}');
-        w.document.write('</style></head><body>');
+        w.document.write('</style><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+</head><body>');
 
         /* Print button */
-        w.document.write('<div class="no-print" style="background:#1E3A5F;color:white;padding:10px 20px;text-align:center;font-size:14px">');
-        w.document.write('<button onclick="window.print()" style="background:#E8581B;color:white;border:none;padding:8px 24px;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;margin-right:12px">🖨 Print / Save as PDF</button>');
+        w.document.write('<div class="no-print" style="background:#1a4797;color:white;padding:10px 20px;text-align:center;font-size:14px">');
+        w.document.write('<button onclick="window.print()" style="background:#f04e23;color:white;border:none;padding:8px 24px;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;margin-right:12px">🖨 Print / Save as PDF</button>');
         w.document.write('Use <strong>File → Print → Save as PDF</strong> for best results (Landscape orientation)</div>');
 
         var pg = 0;
@@ -1634,7 +1653,7 @@
             var s = svSites[i];
             var yrs = Object.keys(s.years).sort();
             /* Site header row */
-            html += '<tr style="background:#1E3A5F;color:white;font-weight:700"><td colspan="9" style="text-align:left;padding:0.5rem 0.75rem">'+s.name+'</td></tr>';
+            html += '<tr style="background:#1a4797;color:white;font-weight:700"><td colspan="9" style="text-align:left;padding:0.5rem 0.75rem">'+s.name+'</td></tr>';
             for(var y=0;y<yrs.length;y++){
                 var d = s.years[yrs[y]];
                 html += '<tr>';
