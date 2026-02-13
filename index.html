@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRB Advisory Analytics</title>
+    <title>DRB DRB Pulse</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -142,14 +142,14 @@
 <body>
     <div class="app-container">
         <aside class="sidebar">
-            <div class="logo"><span class="logo-text">DRB</span><span class="logo-subtitle">Advisory Analytics</span></div>
+            <div class="logo"><span class="logo-text">DRB</span><span class="logo-subtitle">DRB Pulse</span></div>
             <p class="nav-section-title">Dashboard</p>
             <nav>
                 <button class="nav-item active" data-page="portfolio">Portfolio Overview</button>
                 <button class="nav-item" data-page="operational">Operational Health</button>
                 <button class="nav-item" data-page="alerts">Risk Alerts</button>
                 <button class="nav-item" data-page="boap">Business on a Page</button>
-                <button class="nav-item" data-page="deepdive">Advisory Deep Dive</button>
+                <button class="nav-item" data-page="deepdive">Deep Dive</button>
                 <button class="nav-item" data-page="benchmarks">Industry Benchmarks</button>
                 <button class="nav-item" data-page="roi">ROI &amp; Solutions</button>
                 <button class="nav-item" data-page="settings">Alert Configuration</button>
@@ -298,7 +298,7 @@
 
             <!-- ==================== ADVISORY DEEP DIVE ==================== -->
             <div id="deepdive" class="page">
-                <h1>Advisory Deep Dive</h1><p class="page-subtitle">Detailed analytics by category</p>
+                <h1>Deep Dive</h1><p class="page-subtitle">Detailed analytics by category</p>
 
                 <div class="dd-tabs">
                     <button class="dd-tab active" data-ddtab="dd-general">General KPIs</button>
@@ -891,7 +891,30 @@
 
             <!-- ==================== SETTINGS ==================== -->
             <div id="settings" class="page">
-                <h1>Alert Configuration</h1><p class="page-subtitle">Set custom thresholds to trigger alerts</p>
+                <h1>Settings & Export</h1><p class="page-subtitle">Alert configuration and PDF export</p>
+                <!-- PDF Export Section -->
+                <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--drb-orange)">
+                    <h3 style="color:var(--drb-orange)">📄 Export DRB Pulse PDF</h3>
+                    <p style="font-size:0.85rem;color:#64748B;margin-bottom:0.75rem">Generate a professionally styled PDF report matching the SUDS/DRB DRB Pulse presentation template. Select a customer and click generate.</p>
+                    <div class="form-row">
+                        <div class="form-group"><label>Customer</label>
+                            <select id="pdf-customer">
+                                <option value="bmw">BMW Kar Wash LLC</option>
+                                <option value="sparkle">Sparkle Clean Auto Spa</option>
+                                <option value="quick">Quick Clean Express</option>
+                                <option value="premier">Premier Auto Spa</option>
+                                <option value="tts">Time To Shine Car Wash</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Report Date</label>
+                            <input type="month" id="pdf-date" value="2026-02">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="generatePdfExport()" style="background:var(--drb-orange)">📥 Generate PDF Report</button>
+                    <div id="pdf-status" style="margin-top:0.5rem;font-size:0.8rem;color:#64748B"></div>
+                    <p style="font-size:0.75rem;color:#94A3B8;margin-top:0.5rem">💡 <strong>Tip:</strong> For full PDF generation via Streamlit, open the sidebar (☰) and use the PDF Export section there.</p>
+                </div>
+                <h2 style="margin-top:0">Alert Configuration</h2><p class="page-subtitle">Set custom thresholds to trigger alerts</p>
                 <div class="card-grid" style="grid-template-columns:repeat(2,1fr)">
                     <div class="card"><h3>Capture Rate</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="35"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="28"></div></div></div>
                     <div class="card"><h3>Voluntary Churn</h3><div class="form-row"><div class="form-group"><label>Warning (Above)</label><input type="number" value="6.0"></div><div class="form-group"><label>Critical (Above)</label><input type="number" value="7.5"></div></div></div>
@@ -903,7 +926,7 @@
                 <div style="margin-top:1.5rem"><button class="btn btn-primary">Save Configuration</button><button class="btn btn-secondary" style="margin-left:0.5rem">Reset to Defaults</button></div>
             </div>
 
-            <div class="footer">Data as of: <span id="current-date"></span> &middot; DRB Advisory Analytics</div>
+            <div class="footer">Data as of: <span id="current-date"></span> &middot; DRB DRB Pulse</div>
         </main>
     </div>
 
@@ -1216,732 +1239,146 @@
         if(status) status.textContent = '✓ Reset to industry defaults';
     }
 
-    /* DATA */
-    var cust={bmw:{name:'BMW Kar Wash LLC',sites:61,region:'MI',csm:'Morgan Malone',health:'Green',score:2.80,uptime:'99.92%',totalCases:572,openCases:4,avgTtr:2.24,hwSwaps:3,escalations:1},sparkle:{name:'Sparkle Clean Auto Spa',sites:12,region:'AZ',csm:'Mike Johnson',health:'Red',score:1.20,uptime:'97.45%',totalCases:89,openCases:8,avgTtr:4.5,hwSwaps:5,escalations:3},quick:{name:'Quick Clean Express',sites:156,region:'TX',csm:'Tom Wilson',health:'Green',score:3.50,uptime:'99.78%',totalCases:1240,openCases:12,avgTtr:1.8,hwSwaps:8,escalations:2},premier:{name:'Premier Auto Spa',sites:234,region:'CA',csm:'Sarah Chen',health:'Green',score:4.20,uptime:'99.95%',totalCases:1890,openCases:6,avgTtr:1.2,hwSwaps:4,escalations:0}};
-
-    function genSites(n){var cities=['Detroit','Chicago','Milwaukee','Cleveland','Indianapolis'],plat=['SW & PATH','SW Only','PATH Only','XPT & SW'],s=[];for(var i=1;i<=Math.min(n,20);i++){var h=Math.random()>0.8?'warning':Math.random()>0.95?'critical':'healthy';s.push({name:'Location '+i,city:cities[Math.floor(Math.random()*cities.length)],health:h,uptime:(95+Math.random()*5).toFixed(2),cases:Math.floor(Math.random()*25),open:Math.floor(Math.random()*5),swaps:Math.floor(Math.random()*3),esc:Math.floor(Math.random()*2),csat:(85+Math.random()*15).toFixed(1),plat:plat[Math.floor(Math.random()*plat.length)]});}return s;}
-
-    function updateOperationalData(){var s=document.getElementById('customer-select'),d=cust[s.value];document.getElementById('op-customer-name').textContent=d.name;document.getElementById('op-customer-meta').textContent=d.sites+' Sites \u00B7 '+d.region+' \u00B7 CSM: '+d.csm;document.getElementById('op-health-index').textContent=d.health;document.getElementById('op-health-index').className='customer-stat-value '+d.health.toLowerCase();document.getElementById('op-health-score').textContent=d.score.toFixed(2);document.getElementById('op-uptime').textContent=d.uptime;document.getElementById('op-total-cases').textContent=d.totalCases;document.getElementById('op-open-cases').textContent=d.openCases;document.getElementById('op-avg-ttr').textContent=d.avgTtr;document.getElementById('op-hw-swaps').textContent=d.hwSwaps;document.getElementById('op-escalations').textContent=d.escalations;var sites=genSites(d.sites),tb=document.getElementById('sites-table-body');tb.innerHTML=sites.map(function(x){return'<tr><td>'+x.name+'</td><td>'+x.city+'</td><td><span class="badge '+x.health+'">'+x.health+'</span></td><td>'+x.uptime+'%</td><td>'+x.cases+'</td><td>'+x.open+'</td><td>'+x.swaps+'</td><td>'+x.esc+'</td><td>'+x.csat+'%</td><td>'+x.plat+'</td></tr>';}).join('');}
-
-    function ml(n){var m=[],now=new Date();for(var i=n-1;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth()-i,1);m.push(d.toLocaleDateString('en-US',{month:'short',year:'2-digit'}));}return m;}
-
-    function initOp(){var m=ml(12);SC.bar('caseByProductChart',['XPT/Kiosk','Cashier','Gate','TunnelWatch','Server','XCC','OTT','ARM'],[572,157,119,111,110,57,51,44],SC.c.blue,true);SC.line('monthlyCaseChart',m,[85,92,78,95,110,88,76,102,98,115,89,95],SC.c.blue,SC.c.bf);SC.line('hardwareSwapsChart',m,[2,1,3,2,4,1,2,3,1,2,3,2],SC.c.orange,SC.c.of);SC.line('escalationsChart',m,[1,0.5,2,1,1,2,0.5,1,2,1,0.5,1],SC.c.red,SC.c.rf);updateOperationalData();}
-
-    function initBoap(){
-        var m=ml(24),rv=[],mm=[],cap=[],rtk=[],joins=[],churns=[];
-        for(var i=0;i<24;i++){
-            rv.push(180-i*3+Math.random()*20);
-            mm.push(2400-i*50+Math.random()*100);
-            cap.push(28+Math.random()*8);
-            rtk.push(10+Math.random()*2.5);
-            joins.push(200+Math.random()*120);
-            churns.push(140+Math.random()*100);
-        }
-        SC.bar('boapRevenueChart',m,rv,SC.c.orange,false);
-        SC.line('boapMembersChart',m,mm,SC.c.green,SC.c.gf);
-        SC.line('boapCaptureChart',m,cap,SC.c.blue,SC.c.bf);
-        SC.line('boapRetailTicketChart',m,rtk,SC.c.green,SC.c.gf);
-        /* Traffic Breakdown Donut */
-        SC.pie('boapTrafficPieChart',[
-            {label:'Membership Traffic',value:72,color:SC.c.blue},
-            {label:'Single Wash Traffic',value:25,color:SC.c.orange},
-            {label:'Prepaids Redeemed',value:3,color:SC.c.green}
-        ], true);
-        /* New Members vs Churn */
-        SC.multiLine('boapJoinsChurnChart',m.slice(12),[
-            {label:'ARM Sold',data:joins.slice(12),color:SC.c.green,fill:SC.c.gf},
-            {label:'Total Churned',data:churns.slice(12),color:SC.c.red,fill:SC.c.rf}
-        ]);
-    }
-
     /* ============================================================
-       DEEP DIVE INIT - All tabs
+       PDF EXPORT — PRINT-FRIENDLY VIEW
+       Opens a new window with styled content matching PPTX template.
+       User saves via File > Print > Save as PDF.
        ============================================================ */
-    function initDD(tab){
-        var m=ml(24);
+    function generatePdfExport(){
+        var sel = document.getElementById('pdf-customer');
+        var custKey = sel.value;
+        var custName = sel.options[sel.selectedIndex].text;
+        var dateInput = document.getElementById('pdf-date');
+        var reportDate = dateInput ? dateInput.value : '2026-02';
+        var parts = reportDate.split('-');
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        var dateStr = months[parseInt(parts[1])-1] + ' ' + parts[0];
 
-        if(tab==='dd-general'){
-            var m = ldLabels();
-            var r = ld('totalRev', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(150+Math.random()*50); return a; });
-            var ca = ld('carCount', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(8000+Math.random()*4000); return a; });
-            var avgT = ld('retailTicketAvg', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(26+Math.random()*5); return a; });
+        var status = document.getElementById('pdf-status');
+        if(status) status.innerHTML = '<span style="color:#F59E0B">⏳ Generating print view...</span>';
 
-            /* Convert revenue to $K for chart display */
-            var rK = r.map(function(v){ return LIVE ? v/1000 : v; });
-
-            /* Traffic breakdown */
-            var memP = ld('memberTrafficPct', function(){ var a=[]; for(var i=0;i<m.length;i++){ var mp=55+Math.random()*8; a.push(mp*80); } return a; });
-            var retP = ld('retailTrafficPct', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push((100-55-3)*80); return a; });
-            var ppP  = ld('prepaidTrafficPct', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(3*80); return a; });
-
-            SC.bar('ddRevenueChart',m,rK,SC.c.orange,false);
-            SC.bar('ddCarsChart',m,ca,SC.c.blue,false);
-            SC.stackedArea('ddTrafficBreakdownChart',m,[
-                {label:'Member',data:memP,color:SC.c.blue},
-                {label:'Retail',data:retP,color:SC.c.orange},
-                {label:'Prepaid',data:ppP,color:SC.c.green}
-            ]);
-            SC.line('ddAvgTicketChart',m,avgT,SC.c.green,SC.c.gf);
-
-            /* Update KPI cards if live */
-            if(LIVE && D.totals){
-                var t = D.totals;
-                var genKpis = document.querySelectorAll('#dd-general .kpi-value');
-                if(genKpis.length>=4){
-                    genKpis[0].textContent = '$'+(t.totalRev/1000000).toFixed(2)+'M';
-                    genKpis[1].textContent = (t.carCount/1000).toFixed(0)+'K';
-                    genKpis[2].textContent = '$'+t.overallTicketAvg.toFixed(2);
-                    genKpis[3].textContent = Math.round(t.armRedeem/t.carCount*100)+'%';
-                }
-            }
+        /* Get site data for the customer */
+        var custSites = [];
+        var custKpis = {};
+        if(custKey === 'tts'){
+            custSites = svSites;
+            custKpis = {totalCars:'1,204,464',totalRev:'$15,681,845',activeMembers:'3,776',rechTicket:'$28.30',retTicket:'$15.07',overallTicket:'$13.02',captureRate:'15.18%',volChurn:'5.37%',involChurn:'5.52%',trafficYoY:'+8.4%',revenueYoY:'+12.1%',memberPct:'76.5%'};
+        } else {
+            var c = cust[custKey];
+            custKpis = {totalCars:(c.sites*14200).toLocaleString(),totalRev:'$'+(c.sites*142000).toLocaleString(),activeMembers:(c.sites*220).toLocaleString(),rechTicket:'$29.50',retTicket:'$15.80',overallTicket:'$13.40',captureRate:'18.2%',volChurn:'4.8%',involChurn:'3.2%',trafficYoY:'+5.2%',revenueYoY:'+7.8%',memberPct:'68.5%'};
         }
 
-        if(tab==='dd-membership'){
-            var m = ldLabels();
-            /* Capture vs Churn */
-            var cap = ld('captureRate', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(35+Math.random()*8); return a; });
-            var vol = ld('volChurnRate', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(4.5+Math.random()*3); return a; });
-            SC.multiLine('ddCaptureChurnChart',m,[
-                {label:'Capture Rate %',data:cap,color:SC.c.green,fill:SC.c.gf},
-                {label:'Vol Churn %',data:vol,color:SC.c.red,fill:SC.c.rf}
-            ]);
-            /* Active Members */
-            var am = ld('activeMembers', function(){ var a=[],base=2200; for(var i=0;i<m.length;i++){base+=Math.floor(Math.random()*80-20);a.push(base);} return a; });
-            SC.line('ddActiveMembersChart',m,am,SC.c.blue,SC.c.bf);
-            /* Joins vs Churn */
-            var joins = ld('armSold', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(250+Math.random()*150); return a; });
-            var churns = ld('totalChurned', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(120+Math.random()*100); return a; });
-            SC.multiLine('ddJoinsChurnChart',m,[
-                {label:'New Joins',data:joins,color:SC.c.green,fill:SC.c.gf},
-                {label:'Total Churned',data:churns,color:SC.c.red,fill:SC.c.rf}
-            ]);
-            /* Member Revenue */
-            var mr = ld('memberRev', function(){ var a=[]; for(var i=0;i<m.length;i++) a.push(70+Math.random()*30); return a; });
-            var mrK = mr.map(function(v){ return LIVE ? v/1000 : v; });
-            SC.line('ddMemberRevenueChart',m,mrK,SC.c.orange,SC.c.of);
-
-            /* Tenure by Plan - use live plan data if available */
-            if(LIVE && D.plans && D.plans.names.length>0){
-                SC.bar('ddTenureChart',D.plans.names,D.plans.tenures,SC.c.blue,true);
-                SC.bar('ddLtvChart',D.plans.names,D.plans.ltvs,SC.c.green,true);
-            } else {
-                SC.bar('ddTenureChart',['Basic','Standard','Premium','Ultimate'],[6.2,8.1,10.4,12.8],SC.c.blue,true);
-                SC.bar('ddLtvChart',['Basic','Standard','Premium','Ultimate'],[124,210,342,518],SC.c.green,true);
-            }
-
-            /* Tenure/LTV KPI cards */
-            if(LIVE && D.tenure){
-                var tenKpis = document.querySelectorAll('#dd-membership .section-header~.card-grid .kpi-value');
-                /* These are in the Tenure & Lifetime Value section */
-            }
-
-            /* Cohort Table - use live data if available */
-            if(LIVE && D.cohort && D.cohort.labels.length>0){
-                buildCohortTableLive(D.cohort);
-            } else {
-                buildCohortTable();
-            }
-        }
-
-        if(tab==='dd-retail'){
-            var rc=[],rr=[],rt=[];
-            for(var i6=0;i6<24;i6++){
-                rc.push(3000+Math.random()*1500);
-                rr.push(55+Math.random()*25);
-                rt.push(16+Math.random()*5);
-            }
-            SC.bar('ddRetailCarsChart',m,rc,SC.c.blue,false);
-            SC.line('ddRetailRevenueChart',m,rr,SC.c.orange,SC.c.of);
-            SC.line('ddRetailTicketChart',m,rt,SC.c.green,SC.c.gf);
-            /* Package Mix Pie Chart (current month) */
-            SC.pie('ddRetailPieChart',[
-                {label:'Basic',value:18,color:'#94A3B8'},
-                {label:'Standard',value:35,color:SC.c.blue},
-                {label:'Premium',value:31,color:SC.c.green},
-                {label:'Ultimate',value:16,color:SC.c.purple}
-            ]);
-        }
-
-        if(tab==='dd-marketing'){
-            var mt=[];
-            for(var i7=0;i7<24;i7++){mt.push(7000+Math.random()*5000+Math.sin(i7/2)*2000);}
-            SC.line('ddMktTrafficChart',m,mt,SC.c.blue,SC.c.bf);
-            SC.bar('ddMktDayChart',['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],[1180,1250,1320,1280,1450,1680,1140],SC.c.blue,false);
-            /* Seasonal Index */
-            SC.bar('ddSeasonalChart',['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],[72,78,95,105,112,118,132,125,110,120,88,75],SC.c.orange,false);
-        }
-
-        if(tab==='dd-operations'){
-            buildSiteComparison();
-            SC.bar('ddOpsSiteRevenueChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[142,128,198,115,135,108,185,122,78,96,72,110],SC.c.orange,false);
-            SC.bar('ddOpsSiteCaptureChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[40,36,46,34,42,38,44,35,26,32,28,37],SC.c.blue,false);
-            SC.bar('ddOpsCarsPerDayChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[285,248,341,220,268,205,328,234,171,195,163,218],SC.c.green,false);
-            SC.bar('ddOpsChurnBySiteChart',['Site 1','Site 2','Site 3','Site 4','Site 5','Site 6','Site 7','Site 8','Site 9','Site 10','Site 11','Site 12'],[5.2,5.8,4.1,6.2,4.8,5.5,3.8,6.0,7.4,6.8,8.1,5.6],SC.c.red,false);
-        }
-
-        if(tab==='dd-siteview'){
-            buildSiteOverviewTable();
-        }
-    }
-
-    /* ============================================================
-       SITE-BY-SITE OVERVIEW ENGINE
-       ============================================================ */
-    /* Demo site data modeled after Suds screenshots */
-    var svSites = [
-        {name:'Time To Shine Car Wash - Ben Sawyer', years:{
-            2022:{cars:6877,rev:73376.93,armSold:171,capture:7.51,volChurn:2.60,involChurn:1.26,activeMembers:1453,memPct:63.9},
-            2023:{cars:8322,rev:98640.42,armSold:131,capture:5.55,volChurn:3.17,involChurn:2.19,activeMembers:2102,memPct:70.3},
-            2024:{cars:10014,rev:119014.24,armSold:286,capture:11.96,volChurn:3.71,involChurn:3.00,activeMembers:2906,memPct:77.0},
-            2025:{cars:12840,rev:166418.30,armSold:407,capture:15.18,volChurn:6.08,involChurn:2.37,activeMembers:4250,memPct:81.1}
-        },kpis12:{cars:147615,rev:1932030.15,activeMembers:4142,rechTicket:29.07,retTicket:15.55,capture:15.02,volChurn:5.83,involChurn:2.65}},
-        {name:'Time To Shine Car Wash - Cane Bay', years:{
-            2023:{cars:3098,rev:47062.71,armSold:389,capture:31.16,volChurn:2.81,involChurn:2.35,activeMembers:466,memPct:55.3},
-            2024:{cars:8192,rev:92485.85,armSold:309,capture:12.79,volChurn:5.91,involChurn:6.57,activeMembers:1792,memPct:70.8},
-            2025:{cars:11580,rev:147938.33,armSold:538,capture:21.62,volChurn:7.97,involChurn:4.40,activeMembers:3488,memPct:80.4}
-        },kpis12:{cars:138960,rev:1775259.96,activeMembers:3488,rechTicket:30.12,retTicket:14.80,capture:21.62,volChurn:7.97,involChurn:4.40}},
-        {name:'Time To Shine Car Wash - Catoosa', years:{
-            2022:{cars:8180,rev:89761.56,armSold:131,capture:4.62,volChurn:3.60,involChurn:2.57,activeMembers:1684,memPct:66.1},
-            2023:{cars:8031,rev:89128.73,armSold:105,capture:4.29,volChurn:2.96,involChurn:2.65,activeMembers:1749,memPct:68.3},
-            2024:{cars:7407,rev:85377.27,armSold:141,capture:6.43,volChurn:4.12,involChurn:2.53,activeMembers:1742,memPct:74.2},
-            2025:{cars:7966,rev:88631.57,armSold:122,capture:4.04,volChurn:3.97,involChurn:2.50,activeMembers:1591,memPct:59.8}
-        },kpis12:{cars:95592,rev:1063578.84,activeMembers:1591,rechTicket:28.40,retTicket:15.07,capture:4.04,volChurn:3.97,involChurn:2.50}},
-        {name:'Time To Shine Car Wash - Forest Drive', years:{
-            2022:{cars:10485,rev:134071.78,armSold:246,capture:5.25,volChurn:4.14,involChurn:5.62,activeMembers:2081,memPct:53.9},
-            2023:{cars:10099,rev:131648.54,armSold:200,capture:4.88,volChurn:4.36,involChurn:5.44,activeMembers:2197,memPct:59.3},
-            2024:{cars:10076,rev:118965.28,armSold:333,capture:9.65,volChurn:4.61,involChurn:9.93,activeMembers:2773,memPct:67.3},
-            2025:{cars:12059,rev:149733.24,armSold:481,capture:15.55,volChurn:5.25,involChurn:6.21,activeMembers:4062,memPct:77.3}
-        },kpis12:{cars:144708,rev:1796798.88,activeMembers:4062,rechTicket:28.30,retTicket:15.07,capture:15.55,volChurn:5.25,involChurn:6.21}},
-        {name:'Time to Shine Car Wash - Gervais Street', years:{
-            2024:{cars:4183,rev:36643.80,armSold:237,capture:17.56,volChurn:10.04,involChurn:12.18,activeMembers:807,memPct:63.4},
-            2025:{cars:6698,rev:66335.00,armSold:319,capture:15.45,volChurn:7.91,involChurn:8.80,activeMembers:1652,memPct:69.7}
-        },kpis12:{cars:80376,rev:796020.00,activeMembers:1652,rechTicket:27.50,retTicket:14.20,capture:15.45,volChurn:7.91,involChurn:8.80}},
-        {name:'Time To Shine Car Wash - Goose Creek', years:{
-            2022:{cars:21696,rev:262044.83,armSold:371,capture:6.61,volChurn:3.37,involChurn:3.81,activeMembers:5904,memPct:73.6},
-            2023:{cars:17243,rev:237760.16,armSold:347,capture:8.06,volChurn:3.05,involChurn:3.34,activeMembers:5707,memPct:74.7},
-            2024:{cars:15665,rev:218681.83,armSold:350,capture:11.27,volChurn:3.07,involChurn:5.90,activeMembers:5787,memPct:81.8},
-            2025:{cars:17086,rev:237272.61,armSold:521,capture:17.92,volChurn:4.58,involChurn:4.13,activeMembers:6417,memPct:85.4}
-        },kpis12:{cars:205032,rev:2847271.32,activeMembers:6417,rechTicket:28.30,retTicket:15.07,capture:17.92,volChurn:4.58,involChurn:4.13}},
-        {name:'Time To Shine Car Wash - Harbison Blvd', years:{
-            2023:{cars:3083,rev:34491.37,armSold:124,capture:6.93,volChurn:7.58,involChurn:6.43,activeMembers:342,memPct:28.3},
-            2024:{cars:4826,rev:57685.85,armSold:234,capture:11.53,volChurn:7.49,involChurn:12.79,activeMembers:1126,memPct:57.2},
-            2025:{cars:6830,rev:80608.43,armSold:324,capture:15.70,volChurn:7.32,involChurn:9.27,activeMembers:1952,memPct:69.9}
-        },kpis12:{cars:81960,rev:967301.16,activeMembers:1952,rechTicket:26.80,retTicket:13.90,capture:15.70,volChurn:7.32,involChurn:9.27}},
-        {name:'Time To Shine Car Wash - Owasso', years:{
-            2022:{cars:21184,rev:217128.20,armSold:352,capture:6.64,volChurn:4.04,involChurn:1.62,activeMembers:4952,memPct:73.4},
-            2023:{cars:20465,rev:215042.21,armSold:292,capture:7.21,volChurn:3.19,involChurn:2.12,activeMembers:5208,memPct:78.7},
-            2024:{cars:20684,rev:233361.07,armSold:360,capture:10.05,volChurn:3.34,involChurn:2.87,activeMembers:5877,memPct:83.8},
-            2025:{cars:22541,rev:269919.90,armSold:524,capture:15.18,volChurn:4.87,involChurn:1.71,activeMembers:6905,memPct:86.6}
-        },kpis12:{cars:270492,rev:3239038.80,activeMembers:6905,rechTicket:28.30,retTicket:15.07,capture:15.18,volChurn:4.87,involChurn:1.71}}
-    ];
-
-    /* Org-wide averages for site card comparison */
-    var svOrgAvg = {cars:184522,rev:2164565.86,activeMembers:2681,rechTicket:28.30,retTicket:15.07,capture:16.35,volChurn:5.37,involChurn:5.52};
-
-    function buildSiteOverviewTable(){
-        var tbody = document.getElementById('sv-overview-body');
-        if(!tbody) return;
-        var html = '';
-        for(var i=0;i<svSites.length;i++){
-            var s = svSites[i];
+        /* Build the heatmap HTML */
+        var heatHtml = '';
+        var sitesForTable = custSites.length > 0 ? custSites : [];
+        for(var i=0;i<sitesForTable.length;i++){
+            var s = sitesForTable[i];
+            var sn = s.name.replace(/Time To Shine Car Wash - |Time to Shine Car Wash - /,'');
+            heatHtml += '<tr style="background:#1E3A5F;color:white;font-weight:700"><td colspan="9" style="text-align:left;padding:6px 10px">'+sn+'</td></tr>';
             var yrs = Object.keys(s.years).sort();
-            /* Site header row */
-            html += '<tr style="background:#1E3A5F;color:white;font-weight:700"><td colspan="9" style="text-align:left;padding:0.5rem 0.75rem">'+s.name+'</td></tr>';
             for(var y=0;y<yrs.length;y++){
                 var d = s.years[yrs[y]];
-                html += '<tr>';
-                html += '<td style="text-align:left;padding-left:2rem;color:#64748B;font-size:0.75rem">'+yrs[y]+'</td>';
-                html += '<td>'+d.cars.toLocaleString()+'</td>';
-                html += '<td>$'+d.rev.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td>';
-                html += '<td>'+d.armSold+'</td>';
-                html += svColorCell(d.capture, 12, 8, '%', true);
-                html += svColorCell(d.volChurn, 5, 7, '%', false);
-                html += svColorCell(d.involChurn, 3, 6, '%', false);
-                html += '<td>'+d.activeMembers.toLocaleString()+'</td>';
-                html += svColorCell(d.memPct, 70, 50, '%', true);
-                html += '</tr>';
+                heatHtml += '<tr><td style="padding-left:20px;color:#94A3B8;font-size:10px">'+yrs[y]+'</td>';
+                heatHtml += '<td>'+d.cars.toLocaleString()+'</td>';
+                heatHtml += '<td>$'+d.rev.toLocaleString(undefined,{minimumFractionDigits:2})+'</td>';
+                heatHtml += '<td>'+d.armSold+'</td>';
+                heatHtml += heatCell(d.capture,12,8,true)+'%</td>';
+                heatHtml += heatCell(d.volChurn,5,7,false)+'%</td>';
+                heatHtml += heatCell(d.involChurn,3,6,false)+'%</td>';
+                heatHtml += '<td>'+d.activeMembers.toLocaleString()+'</td>';
+                heatHtml += heatCell(d.memPct,70,50,true)+'%</td></tr>';
             }
         }
-        tbody.innerHTML = html;
-    }
 
-    function svColorCell(val, goodThresh, badThresh, suffix, higherBetter){
-        var bg, fg;
-        if(higherBetter){
-            if(val >= goodThresh){bg='#D1FAE5';fg='#065F46';}
-            else if(val >= badThresh){bg='#FEF3C7';fg='#92400E';}
-            else {bg='#FEE2E2';fg='#991B1B';}
-        } else {
-            if(val <= goodThresh){bg='#D1FAE5';fg='#065F46';}
-            else if(val <= badThresh){bg='#FEF3C7';fg='#92400E';}
-            else {bg='#FEE2E2';fg='#991B1B';}
-        }
-        return '<td style="background:'+bg+';color:'+fg+';font-weight:600">'+val.toFixed(2)+(suffix||'')+'</td>';
-    }
-
-    function updateSiteView(){
-        var v = document.getElementById('sv-view').value;
-        document.getElementById('sv-overview-panel').style.display = v==='overview'?'block':'none';
-        document.getElementById('sv-card-panel').style.display = v==='card'?'block':'none';
-        document.getElementById('sv-site-selector').style.display = v==='card'?'block':'none';
-        if(v==='card') updateSiteCard();
-    }
-
-    function updateSiteCard(){
-        var idx = parseInt(document.getElementById('sv-site').value);
-        var s = svSites[idx];
-        var k = s.kpis12;
-        document.getElementById('sv-card-title').textContent = 'Site Card: ' + s.name.replace(/Time To Shine Car Wash - |Time to Shine Car Wash - /,'');
-
-        /* KPI comparison table */
-        var kpiRows = [
-            {label:'Total Cars Washed',site:k.cars,org:svOrgAvg.cars,fmt:'num'},
-            {label:'Total Revenue',site:k.rev,org:svOrgAvg.rev,fmt:'$'},
-            {label:'Active Unlimited Members (Monthly Avg)',site:k.activeMembers,org:svOrgAvg.activeMembers,fmt:'num'},
-            {label:'Recharge Ticket',site:k.rechTicket,org:svOrgAvg.rechTicket,fmt:'$2'},
-            {label:'Retail Ticket',site:k.retTicket,org:svOrgAvg.retTicket,fmt:'$2'},
-            {label:'Capture Rate',site:k.capture,org:svOrgAvg.capture,fmt:'%'},
-            {label:'Voluntary Churn Rate',site:k.volChurn,org:svOrgAvg.volChurn,fmt:'%inv'},
-            {label:'Involuntary Churn Rate',site:k.involChurn,org:svOrgAvg.involChurn,fmt:'%inv'}
-        ];
-        var tbody = document.getElementById('sv-card-kpi-body');
-        var html = '';
-        for(var i=0;i<kpiRows.length;i++){
-            var r = kpiRows[i];
-            var diff;
-            if(r.org !== 0) diff = ((r.site - r.org)/r.org * 100);
-            else diff = 0;
-            var diffColor = '#64748B';
-            /* For churn, lower is better (invert color) */
-            if(r.fmt==='%inv'){
-                diffColor = diff <= 0 ? '#059669' : '#DC2626';
-            } else {
-                diffColor = diff >= 0 ? '#059669' : '#DC2626';
-            }
-            var siteStr, orgStr;
-            if(r.fmt==='$'){siteStr='$'+r.site.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});orgStr='$'+r.org.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
-            else if(r.fmt==='$2'){siteStr='$'+r.site.toFixed(2);orgStr='$'+r.org.toFixed(2);}
-            else if(r.fmt==='%'||r.fmt==='%inv'){siteStr=r.site.toFixed(2)+'%';orgStr=r.org.toFixed(2)+'%';}
-            else{siteStr=r.site.toLocaleString();orgStr=r.org.toLocaleString();}
-            html += '<tr><td style="text-align:left;font-weight:600;background:#EFF6FF">'+r.label+'</td>';
-            html += '<td style="background:#E0F2FE;font-weight:600">'+siteStr+'</td>';
-            html += '<td>'+orgStr+'</td>';
-            html += '<td style="color:'+diffColor+';font-weight:700;background:'+(diff>=0&&r.fmt!=='%inv'||diff<=0&&r.fmt==='%inv'?'#D1FAE5':'#FEE2E2')+'">'+((diff>=0?'+':'')+diff.toFixed(2)+'%')+'</td></tr>';
-        }
-        tbody.innerHTML = html;
-
-        /* Site card charts */
-        var yrs = Object.keys(s.years).sort();
-        var lastYr = s.years[yrs[yrs.length-1]];
-        var memPct = lastYr ? lastYr.memPct : 72;
-        SC.pie('svCardTrafficPie',[
-            {label:'Membership',value:memPct,color:SC.c.blue},
-            {label:'Single Wash',value:100-memPct-2,color:SC.c.orange},
-            {label:'Prepaid',value:2,color:SC.c.green}
-        ], true);
-
-        /* Joins vs Churn bar */
-        var jLabels=[], jData=[], cData=[];
-        for(var y2=0;y2<yrs.length;y2++){
-            jLabels.push(yrs[y2]);
-            jData.push(s.years[yrs[y2]].armSold);
-            var vc = s.years[yrs[y2]].volChurn + s.years[yrs[y2]].involChurn;
-            cData.push(Math.round(s.years[yrs[y2]].armSold * vc / 100));
-        }
-        SC.multiLine('svCardJoinsChurnChart',jLabels,[
-            {label:'ARM Sold',data:jData,color:SC.c.green,fill:SC.c.gf},
-            {label:'Churned',data:cData,color:SC.c.red,fill:SC.c.rf}
-        ]);
-    }
-
-    /* ============================================================
-       ROI & SOLUTIONS ENGINE
-       ============================================================ */
-    var roiCustomers = {};
-
-    /* If live data is available, build ROI customer from Snowflake totals */
-    if(LIVE && D.totals){
-        var t = D.totals;
-        roiCustomers['live'] = {
-            name: D.client || 'Current Customer',
-            sites: D.siteCount || 1,
-            memberRevMonthly: t.monthlyMemberRev,
-            retailRevMonthly: t.monthlyRetailRev,
-            captureRate: t.captureRate,
-            volChurn: t.volChurnRate,
-            involChurn: t.involChurnRate,
-            memberCount: D.tenure ? D.tenure.activeMemberCount : Math.round(t.netMember/12),
-            retailCars: t.monthlySingleWash,
-            avgMemberPrice: D.tenure ? D.tenure.avgMemberPrice : t.rechargeTicketAvg,
-            retailTicket: t.retailTicketAvg,
-            trafficYoY: 0, /* Would need 24-month query for YoY calc */
-            revenueYoY: 0,
-            tenure: D.tenure ? D.tenure.avgTenureMonths : 0,
-            ltv: D.tenure ? D.tenure.avgLTV : 0,
-            healthScore: 0
-        };
-        /* Update the ROI dropdown to show live customer */
-        var roiSel = document.getElementById('roi-customer-select');
-        if(roiSel){
-            roiSel.innerHTML = '<option value="live">'+(D.client||'Customer')+' ('+D.siteCount+' sites) — LIVE DATA</option>';
-        }
-    }
-
-    /* Fallback demo customers (used when no Snowflake connection) */
-    if(!roiCustomers['live']){
-        roiCustomers = {
-            sparkle: {
-                name: 'Sparkle Clean Auto Spa', sites: 12,
-                memberRevMonthly: 89200, retailRevMonthly: 64500,
-                captureRate: 31, volChurn: 8.2, involChurn: 4.1,
-                memberCount: 2847, retailCars: 3534, avgMemberPrice: 31.50,
-                retailTicket: 18.12, trafficYoY: -18, revenueYoY: -18,
-                tenure: 8.4, ltv: 265, healthScore: 28
-            },
-            metro: {
-                name: 'Metro Express Wash', sites: 8,
-                memberRevMonthly: 72000, retailRevMonthly: 48000,
-                captureRate: 35, volChurn: 6.5, involChurn: 3.8,
-                memberCount: 1920, retailCars: 2800, avgMemberPrice: 29.99,
-                retailTicket: 17.14, trafficYoY: -8, revenueYoY: -10,
-                tenure: 9.1, ltv: 290, healthScore: 45
-            },
-            quick: {
-                name: 'Quick Clean Express', sites: 156,
-                memberRevMonthly: 1240000, retailRevMonthly: 890000,
-                captureRate: 33, volChurn: 7.1, involChurn: 3.5,
-                memberCount: 38400, retailCars: 52000, avgMemberPrice: 32.29,
-                retailTicket: 17.12, trafficYoY: -12, revenueYoY: -14,
-                tenure: 7.8, ltv: 242, healthScore: 38
-            }
-        };
-    }
-
-    var benchmarks = { captureRate: 39, volChurn: 5.5, involChurn: 2.5, retailTicket: 18.00, tenure: 10, ltv: 325 };
-    /* Patheon lift factors based on 156-site conversion data */
-    var patheonLifts = { memberRevPct: 0.21, retailRevPct: 0.035, volChurnReduction: 0.05, involChurnReduction: 0.13 };
-
-    function fmt$(v){ return v>=1000000?'$'+( v/1000000).toFixed(2)+'M':v>=1000?'$'+(v/1000).toFixed(1)+'K':'$'+v.toFixed(0); }
-    function fmtP(v){ return (v>=0?'+':'')+v.toFixed(1)+'%'; }
-
-    function updateROI(){
-        var sel = document.getElementById('roi-customer-select');
-        var c = roiCustomers[sel.value];
-        buildGapCards(c);
-        buildRevenueTables(c);
-        buildROIChart(c);
-        highlightPlatformTable(c);
-    }
-
-    function buildGapCards(c){
-        var container = document.getElementById('roi-gap-cards');
-        var gaps = [];
-
-        if(c.captureRate < benchmarks.captureRate){
-            var capGap = benchmarks.captureRate - c.captureRate;
-            var potentialNewMembers = Math.round(c.retailCars * (capGap/100));
-            var potentialRev = potentialNewMembers * c.avgMemberPrice * 12;
-            gaps.push({
-                title: 'Low Capture Rate',
-                severity: c.captureRate < 30 ? 'critical' : 'warning',
-                kpi: c.captureRate+'%', bench: benchmarks.captureRate+'%', gap: capGap.toFixed(1)+' pts below benchmark',
-                revenue: fmt$(potentialRev)+'/yr if gap closed',
-                solutions: [
-                    {tool:'Patheon EWA', desc:'Dynamic pricing displays highlight membership value at point of sale'},
-                    {tool:'XPT Kiosk', desc:'On-screen comparison charts and limited-time offers drive impulse sign-ups'},
-                    {tool:'Catalyst', desc:'Drip campaigns nurture retail visitors into members via text, email & app'},
-                    {tool:'LPR / FastPass', desc:'Identify frequent retail visitors and serve personalized membership offers'}
-                ],
-                icon:'&#9888;'
-            });
+        function heatCell(v,g,b,hb){
+            var bg,fg;
+            if(hb){bg=v>=g?'#D1FAE5':v>=b?'#FEF3C7':'#FEE2E2';fg=v>=g?'#065F46':v>=b?'#92400E':'#991B1B';}
+            else{bg=v<=g?'#D1FAE5':v<=b?'#FEF3C7':'#FEE2E2';fg=v<=g?'#065F46':v<=b?'#92400E':'#991B1B';}
+            return '<td style="background:'+bg+';color:'+fg+';font-weight:600">'+v.toFixed(2);
         }
 
-        if(c.volChurn > benchmarks.volChurn){
-            var churnGap = c.volChurn - benchmarks.volChurn;
-            var savedMembers = Math.round(c.memberCount * (churnGap/100));
-            var savedRev = savedMembers * c.avgMemberPrice * 12;
-            gaps.push({
-                title: 'High Voluntary Churn',
-                severity: c.volChurn > 7 ? 'critical' : 'warning',
-                kpi: c.volChurn+'%', bench: benchmarks.volChurn+'%', gap: churnGap.toFixed(1)+' pts above benchmark',
-                revenue: fmt$(savedRev)+'/yr in retained revenue',
-                solutions: [
-                    {tool:'Plan Management', desc:'Flexible pause, downgrade & seasonal options reduce cancellations'},
-                    {tool:'Milestone Recognition', desc:'Celebrate membership anniversaries & wash counts to build loyalty'},
-                    {tool:'Catalyst Communications', desc:'Re-engagement campaigns target at-risk members before they cancel'},
-                    {tool:'Multi-Vehicle Plans', desc:'Increase household share of wallet and raise switching costs'}
-                ],
-                icon:'&#9660;'
-            });
+        /* Open print window */
+        var w = window.open('','_blank','width=1100,height=850');
+        w.document.write('<!DOCTYPE html><html><head><title>'+custName+' DRB Pulse</title>');
+        w.document.write('<style>');
+        w.document.write('@page{size:landscape;margin:0.4in}');
+        w.document.write('*{margin:0;padding:0;box-sizing:border-box}body{font-family:Helvetica,Arial,sans-serif;color:#333;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
+        w.document.write('.page{page-break-after:always;position:relative;width:100%;min-height:7.5in;padding:0}');
+        w.document.write('.cover{background:#6B8DB9;min-height:5.4in;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white}');
+        w.document.write('.cover h1{font-size:42px;font-weight:700;letter-spacing:1px}.cover h2{font-size:32px;font-weight:300;margin-top:8px}');
+        w.document.write('.cover-sub{font-size:14px;color:#D4E1F0;margin-top:16px}');
+        w.document.write('.cover-bottom{background:white;padding:20px 40px;text-align:right}');
+        w.document.write('.logo-text{font-size:28px;font-weight:700;color:#1E3A5F;display:inline}.logo-sep{color:#94A3B8;margin:0 4px}.logo-suds{font-size:24px;font-weight:700;color:#E8581B}');
+        w.document.write('.hdr{background:#385E8E;padding:16px 32px;color:white}.hdr h1{font-size:22px;font-weight:700}.hdr p{font-size:11px;color:#B8CCE4;margin-top:2px}');
+        w.document.write('.hdr-logo{float:right;margin-top:-32px}.hdr-logo .logo-text{color:white;font-size:20px}.hdr-logo .logo-suds{font-size:18px}');
+        w.document.write('.divider{height:2px;background:#8FAAD0}');
+        w.document.write('.content{padding:16px 32px}');
+        w.document.write('.kpi-row{display:flex;gap:10px;margin:12px 0}.kpi-card{flex:1;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:8px 12px;text-align:center}');
+        w.document.write('.kpi-label{font-size:8px;color:#94A3B8;text-transform:uppercase}.kpi-value{font-size:22px;font-weight:700;color:#1E3A5F;margin:2px 0}.kpi-sub{font-size:7px;color:#64748B}');
+        w.document.write('.section-div{background:#8FAAD0;min-height:5.4in;display:flex;flex-direction:column;justify-content:center;padding-left:100px}');
+        w.document.write('.section-div h1{font-size:32px;color:#1E3A5F;font-weight:700}.section-div p{font-size:15px;color:#1E3A5F;margin-top:8px}');
+        w.document.write('table.heat{width:100%;border-collapse:collapse;font-size:9px;margin-top:8px}');
+        w.document.write('table.heat th{background:#385E8E;color:white;padding:5px 8px;font-weight:600;text-align:center}');
+        w.document.write('table.heat td{padding:4px 8px;text-align:center;border-bottom:1px solid #F1F5F9}');
+        w.document.write('.footer{position:absolute;bottom:8px;left:32px;right:32px;border-top:1px solid #8FAAD0;padding-top:4px;font-size:7px;color:#94A3B8;display:flex;justify-content:space-between}');
+        w.document.write('.toc-item{font-size:16px;color:#1E3A5F;margin:12px 0}.toc-num{font-weight:700;font-size:18px;margin-right:8px}');
+        w.document.write('.action-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#385E8E;color:white;font-weight:700;font-size:13px;margin-right:10px}');
+        w.document.write('.action-title{font-size:14px;font-weight:700;color:#1E3A5F}.action-desc{font-size:10px;color:#333;margin:4px 0 16px 38px}');
+        w.document.write('@media print{.no-print{display:none!important}}');
+        w.document.write('</style></head><body>');
+
+        /* Print button */
+        w.document.write('<div class="no-print" style="background:#1E3A5F;color:white;padding:10px 20px;text-align:center;font-size:14px">');
+        w.document.write('<button onclick="window.print()" style="background:#E8581B;color:white;border:none;padding:8px 24px;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;margin-right:12px">🖨 Print / Save as PDF</button>');
+        w.document.write('Use <strong>File → Print → Save as PDF</strong> for best results (Landscape orientation)</div>');
+
+        var pg = 0;
+        function footer(){ return '<div class="footer"><span>DRB DRB Pulse — '+custName+'</span><span>Page '+(++pg)+'</span></div>'; }
+
+        /* Cover */
+        w.document.write('<div class="page"><div class="cover"><h1>'+custName.toUpperCase()+'</h1><h2>DRB Pulse</h2><div class="cover-sub">Created '+dateStr+'</div><div class="cover-sub" style="font-size:12px">by SUDS Creative and DRB</div></div><div class="divider"></div><div class="cover-bottom"><span class="logo-text">DRB</span><span class="logo-sep">|</span><span class="logo-suds">suds.</span></div></div>');
+
+        /* TOC */
+        w.document.write('<div class="page"><div class="hdr"><h1>Overview</h1><p>Table of Contents</p><div class="hdr-logo"><span class="logo-text">DRB</span> <span class="logo-suds">suds.</span></div></div><div class="divider"></div><div class="content" style="padding-top:32px">');
+        var tocItems = ['Key Performance Indicators — General','Key Performance Indicators — Membership','Site by Site Analysis','Action Items & Recommendations'];
+        for(var t=0;t<tocItems.length;t++) w.document.write('<div class="toc-item"><span class="toc-num">'+(t+1)+'</span> – '+tocItems[t]+'</div>');
+        w.document.write('</div>'+footer()+'</div>');
+
+        /* Section: KPI General */
+        w.document.write('<div class="page"><div class="section-div"><h1>Key Performance</h1><h1>Indicators: General</h1><p>Wash Performance</p><p>Traffic Breakdown</p></div><div class="divider"></div><div class="cover-bottom"><span class="logo-text">DRB</span><span class="logo-sep">|</span><span class="logo-suds">suds.</span></div></div>');
+
+        /* Wash Performance */
+        w.document.write('<div class="page"><div class="hdr"><h1>Wash Performance</h1><p>The bottom line is revenue and total cars washed.</p><div class="hdr-logo"><span class="logo-text">DRB</span> <span class="logo-suds">suds.</span></div></div><div class="divider"></div><div class="content">');
+        w.document.write('<div class="kpi-row">');
+        var wk = [['Total Cars (12mo)',custKpis.totalCars,custKpis.trafficYoY+' YoY'],['Total Revenue (12mo)',custKpis.totalRev,custKpis.revenueYoY+' YoY'],['Active Members',custKpis.activeMembers,'Monthly avg'],['Recharge Ticket',custKpis.rechTicket,'Benchmark: $32.00'],['Retail Ticket',custKpis.retTicket,'Benchmark: $18.00'],['Overall Ticket',custKpis.overallTicket,'']];
+        for(var k=0;k<wk.length;k++) w.document.write('<div class="kpi-card"><div class="kpi-label">'+wk[k][0]+'</div><div class="kpi-value">'+wk[k][1]+'</div><div class="kpi-sub">'+wk[k][2]+'</div></div>');
+        w.document.write('</div></div>'+footer()+'</div>');
+
+        /* Section: Membership */
+        w.document.write('<div class="page"><div class="section-div"><h1>Key Performance</h1><h1>Indicators: Membership</h1><p>Membership Overview</p><p>Capture vs. Churn</p></div><div class="divider"></div><div class="cover-bottom"><span class="logo-text">DRB</span><span class="logo-sep">|</span><span class="logo-suds">suds.</span></div></div>');
+
+        /* Membership Overview */
+        w.document.write('<div class="page"><div class="hdr"><h1>Membership Overview</h1><p>What are the trends in your membership quantities and value?</p><div class="hdr-logo"><span class="logo-text">DRB</span> <span class="logo-suds">suds.</span></div></div><div class="divider"></div><div class="content">');
+        w.document.write('<div class="kpi-row">');
+        var mk = [['Active Members',custKpis.activeMembers,''],['Capture Rate',custKpis.captureRate,'Benchmark: 39%'],['Vol. Churn',custKpis.volChurn,'Benchmark: 5.5%'],['Invol. Churn',custKpis.involChurn,'Benchmark: 2.5%'],['Recharge Ticket',custKpis.rechTicket,'Benchmark: $32.00'],['Membership %',custKpis.memberPct,'Benchmark: 62%']];
+        for(var k=0;k<mk.length;k++) w.document.write('<div class="kpi-card"><div class="kpi-label">'+mk[k][0]+'</div><div class="kpi-value">'+mk[k][1]+'</div><div class="kpi-sub">'+mk[k][2]+'</div></div>');
+        w.document.write('</div></div>'+footer()+'</div>');
+
+        /* Site by Site Overview */
+        if(heatHtml){
+            w.document.write('<div class="page"><div class="hdr"><h1>Site by Site Overview</h1><p>Which sites have the highest or lowest performance across key metrics?</p><div class="hdr-logo"><span class="logo-text">DRB</span> <span class="logo-suds">suds.</span></div></div><div class="divider"></div><div class="content">');
+            w.document.write('<table class="heat"><tr><th>Site Name</th><th>Car Count</th><th>Revenue</th><th>ARM Sold</th><th>Capture</th><th>Vol Churn</th><th>Invol Churn</th><th>Active Mbrs</th><th>Mem %</th></tr>');
+            w.document.write(heatHtml);
+            w.document.write('</table></div>'+footer()+'</div>');
         }
 
-        if(c.involChurn > benchmarks.involChurn){
-            var invGap = c.involChurn - benchmarks.involChurn;
-            var invSaved = Math.round(c.memberCount * (invGap/100));
-            var invSavedRev = invSaved * c.avgMemberPrice * 12;
-            gaps.push({
-                title: 'High Involuntary Churn',
-                severity: c.involChurn > 3.5 ? 'critical' : 'warning',
-                kpi: c.involChurn+'%', bench: benchmarks.involChurn+'%', gap: invGap.toFixed(1)+' pts above benchmark',
-                revenue: fmt$(invSavedRev)+'/yr recoverable',
-                solutions: [
-                    {tool:'Automated Payment Recovery', desc:'Smart retry logic & card updater services recapture failed payments'},
-                    {tool:'Text & Email Alerts', desc:'Notify members of expiring cards and payment issues before they churn'},
-                    {tool:'Patheon ARM Billing', desc:'Advanced recurring billing engine with higher success rates than SiteWatch'}
-                ],
-                icon:'&#9888;'
-            });
-        }
+        /* Action Items */
+        w.document.write('<div class="page"><div class="hdr"><h1>Action Items</h1><p>Strategic advice based on your data</p><div class="hdr-logo"><span class="logo-text">DRB</span> <span class="logo-suds">suds.</span></div></div><div class="divider"></div><div class="content" style="padding-top:24px">');
+        var actions = [['Launch Membership Campaign','Recommended when data shows a large percentage of retail washers and low capture rates.'],['Launch Retail Traffic Campaigns','Recommended if data shows overall drops in traffic or a very large percentage of membership washes.'],['Conduct Pricing Analysis','Recommended if ticket averages are volatile or have shown recent change.'],['Create Seasonality-Based Marketing Strategy','Recommended to create a series of marketing approaches to maintain year-round support.']];
+        for(var a=0;a<actions.length;a++) w.document.write('<div style="margin-bottom:16px"><span class="action-num">'+(a+1)+'</span><span class="action-title">'+actions[a][0]+'</span><div class="action-desc">'+actions[a][1]+'</div></div>');
+        w.document.write('</div>'+footer()+'</div>');
 
-        if(c.trafficYoY < -5){
-            gaps.push({
-                title: 'Declining Traffic',
-                severity: c.trafficYoY < -12 ? 'critical' : 'warning',
-                kpi: c.trafficYoY+'% YoY', bench: '+5% YoY', gap: Math.abs(c.trafficYoY - 5)+' pts below benchmark',
-                revenue: 'Compounds all other revenue gaps',
-                solutions: [
-                    {tool:'Catalyst Marketing', desc:'Targeted promotions, seasonal campaigns & referral programs drive traffic'},
-                    {tool:'Loyalty Points', desc:'Earn & redeem points system creates repeat visit incentives'},
-                    {tool:'Pay As You Go', desc:'Proxy membership usage drives incremental retail visits via Patheon EWA'},
-                    {tool:'Digital Marketing Integration', desc:'Opt-in collection for SMS/email campaigns to dormant customers'}
-                ],
-                icon:'&#9660;'
-            });
-        }
+        /* Back cover */
+        w.document.write('<div class="page"><div style="background:#6B8DB9;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white"><h1 style="font-size:36px">Thank You</h1><p style="font-size:16px;color:#D4E1F0;margin-top:8px">'+custName+' — DRB Pulse</p><div style="margin-top:40px"><span class="logo-text" style="color:white;font-size:28px">DRB</span><span class="logo-sep" style="color:#D4E1F0">|</span><span class="logo-suds" style="font-size:24px">suds.</span></div></div></div>');
 
-        var html = '';
-        for(var i=0;i<gaps.length;i++){
-            var g = gaps[i];
-            html += '<div class="card" style="border-left:4px solid '+(g.severity==='critical'?'var(--drb-red)':'var(--drb-orange)')+';margin-bottom:1rem;padding:1.25rem">';
-            html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">';
-            html += '<div style="flex:1;min-width:280px">';
-            html += '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem"><span style="font-size:1.1rem">'+g.icon+'</span><span style="font-weight:700;font-size:1rem;color:var(--gray-800)">'+g.title+'</span><span class="badge '+g.severity+'">'+(g.severity==='critical'?'CRITICAL':'WARNING')+'</span></div>';
-            html += '<div style="display:flex;gap:2rem;margin-bottom:0.75rem;flex-wrap:wrap">';
-            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Current</span><div style="font-size:1.5rem;font-weight:700;color:'+(g.severity==='critical'?'var(--drb-red)':'var(--drb-orange)')+'">'+g.kpi+'</div></div>';
-            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Benchmark</span><div style="font-size:1.5rem;font-weight:700;color:var(--drb-green)">'+g.bench+'</div></div>';
-            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Gap</span><div style="font-size:1rem;font-weight:600;color:var(--gray-700);margin-top:0.35rem">'+g.gap+'</div></div>';
-            html += '<div><span style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase">Revenue Impact</span><div style="font-size:1rem;font-weight:600;color:var(--drb-green);margin-top:0.35rem">'+g.revenue+'</div></div>';
-            html += '</div></div>';
-            html += '<div style="flex:1;min-width:320px;background:var(--gray-50);border-radius:0.75rem;padding:1rem">';
-            html += '<div style="font-size:0.7rem;font-weight:600;color:var(--drb-orange);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem">Recommended Patheon &amp; DRB Solutions</div>';
-            for(var j=0;j<g.solutions.length;j++){
-                var s = g.solutions[j];
-                html += '<div style="margin-bottom:0.4rem;font-size:0.85rem"><strong style="color:var(--drb-navy)">'+s.tool+':</strong> <span style="color:var(--gray-600)">'+s.desc+'</span></div>';
-            }
-            html += '</div></div></div>';
-        }
-
-        if(gaps.length===0){
-            html = '<div class="card" style="border-left:4px solid var(--drb-green);padding:1.5rem;text-align:center"><span style="font-size:1.5rem;color:var(--drb-green)">&#10003;</span><br><strong>This customer is performing at or above benchmarks across all key metrics.</strong><br><span style="color:var(--gray-500)">Focus on scaling and optimization with Patheon&rsquo;s advanced tools.</span></div>';
-        }
-
-        container.innerHTML = html;
-    }
-
-    function buildRevenueTables(c){
-        var memLift = c.memberRevMonthly * patheonLifts.memberRevPct;
-        var memNew = c.memberRevMonthly + memLift;
-        var retLift = c.retailRevMonthly * patheonLifts.retailRevPct;
-        var retNew = c.retailRevMonthly + retLift;
-        var volChurnNew = c.volChurn * (1 - patheonLifts.volChurnReduction);
-        var involChurnNew = c.involChurn * (1 - patheonLifts.involChurnReduction);
-        var savedVol = Math.round(c.memberCount * ((c.volChurn - volChurnNew)/100));
-        var savedInvol = Math.round(c.memberCount * ((c.involChurn - involChurnNew)/100));
-        var churnSavedRev = (savedVol + savedInvol) * c.avgMemberPrice * 12;
-
-        document.getElementById('roi-membership-body').innerHTML =
-            '<tr><td style="font-weight:600">Monthly Membership Revenue</td><td>'+fmt$(c.memberRevMonthly)+'</td><td style="font-weight:600">'+fmt$(memNew)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(memLift)+'</td></tr>'+
-            '<tr><td style="font-weight:600">Annual Membership Revenue</td><td>'+fmt$(c.memberRevMonthly*12)+'</td><td style="font-weight:600">'+fmt$(memNew*12)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(memLift*12)+'</td></tr>';
-
-        document.getElementById('roi-retail-body').innerHTML =
-            '<tr><td style="font-weight:600">Monthly Retail Revenue</td><td>'+fmt$(c.retailRevMonthly)+'</td><td style="font-weight:600">'+fmt$(retNew)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(retLift)+'</td></tr>'+
-            '<tr><td style="font-weight:600">Annual Retail Revenue</td><td>'+fmt$(c.retailRevMonthly*12)+'</td><td style="font-weight:600">'+fmt$(retNew*12)+'</td><td style="color:var(--drb-green);font-weight:700">+'+fmt$(retLift*12)+'</td></tr>';
-
-        document.getElementById('roi-churn-body').innerHTML =
-            '<tr><td style="font-weight:600">Voluntary Churn Rate</td><td>'+c.volChurn+'%</td><td style="font-weight:600">'+volChurnNew.toFixed(1)+'%</td><td style="color:var(--drb-green);font-weight:700">-'+((c.volChurn-volChurnNew).toFixed(1))+' pts</td></tr>'+
-            '<tr><td style="font-weight:600">Involuntary Churn Rate</td><td>'+c.involChurn+'%</td><td style="font-weight:600">'+involChurnNew.toFixed(1)+'%</td><td style="color:var(--drb-green);font-weight:700">-'+((c.involChurn-involChurnNew).toFixed(1))+' pts</td></tr>'+
-            '<tr><td style="font-weight:600">Members Saved / Month</td><td>&mdash;</td><td style="font-weight:600">'+(savedVol+savedInvol)+' members</td><td style="color:var(--drb-green);font-weight:700">'+fmt$(churnSavedRev)+'/yr value</td></tr>';
-
-        document.getElementById('roi-total-mem').textContent = '+'+fmt$(memLift*12);
-        document.getElementById('roi-total-ret').textContent = '+'+fmt$(retLift*12);
-        document.getElementById('roi-total-churn').textContent = '+'+fmt$(churnSavedRev);
-        var combined = memLift*12 + retLift*12 + churnSavedRev;
-        document.getElementById('roi-total-combined').textContent = '+'+fmt$(combined);
-    }
-
-    function highlightPlatformTable(c){
-        var rows = {retail:'roi-row-retail', membership:'roi-row-membership', churn:'roi-row-churn'};
-        /* reset */
-        for(var k in rows){var el=document.getElementById(rows[k]);if(el)el.style.background='';}
-        if(c.captureRate<benchmarks.captureRate || c.trafficYoY<-5)document.getElementById('roi-row-retail').style.background='#FEF2F2';
-        if(c.captureRate<benchmarks.captureRate)document.getElementById('roi-row-membership').style.background='#FEF2F2';
-        if(c.volChurn>benchmarks.volChurn||c.involChurn>benchmarks.involChurn)document.getElementById('roi-row-churn').style.background='#FEF2F2';
-    }
-
-    function buildROIChart(c){
-        var memLiftMo = c.memberRevMonthly * patheonLifts.memberRevPct;
-        var retLiftMo = c.retailRevMonthly * patheonLifts.retailRevPct;
-        var volChurnNew = c.volChurn * (1 - patheonLifts.volChurnReduction);
-        var involChurnNew = c.involChurn * (1 - patheonLifts.involChurnReduction);
-        var savedMo = (Math.round(c.memberCount*((c.volChurn-volChurnNew)/100)) + Math.round(c.memberCount*((c.involChurn-involChurnNew)/100))) * c.avgMemberPrice;
-        var totalLiftMo = memLiftMo + retLiftMo + savedMo;
-        var investPerSite = 25000;
-        var monthlyPerSite = 756;
-        var totalInvest = c.sites * investPerSite;
-        var sitesPerMonth = Math.max(2, Math.ceil(c.sites / 6));
-
-        var labels=[], cumRev=[], cumCost=[], cumNet=[];
-        var rSum=0, cSum=totalInvest*0.3; /* 30% upfront */
-        for(var mo=1;mo<=12;mo++){
-            labels.push('M'+mo);
-            var liveSites = Math.min(c.sites, sitesPerMonth * mo);
-            var pct = liveSites / c.sites;
-            rSum += totalLiftMo * pct;
-            cSum += (mo<=1 ? totalInvest*0.7/3 : mo<=3 ? totalInvest*0.7/3 : 0) + liveSites * monthlyPerSite;
-            cumRev.push(rSum);
-            cumCost.push(cSum);
-            cumNet.push(rSum - cSum);
-        }
-
-        var cv = SC.ctx('roiTimelineChart'); if(!cv) return;
-        var w=cv._w, h=cv._h;
-        var allVals = cumRev.concat(cumCost).concat(cumNet);
-        var mx=Math.max.apply(null,allVals)*1.15;
-        var mn=Math.min.apply(null,allVals)*1.15;
-        if(mn>0)mn=0;
-        var rng=mx-mn;
-        var pad={t:30,r:20,b:50,l:70},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
-        cv.clearRect(0,0,w,h);
-        cv.font='11px -apple-system,sans-serif';
-
-        for(var g=0;g<=4;g++){
-            var gy=h-pad.b-(ch*g/4);
-            var val=mn+(rng*g/4);
-            cv.strokeStyle=SC.c.grid;cv.lineWidth=1;cv.beginPath();cv.moveTo(pad.l,gy);cv.lineTo(w-pad.r,gy);cv.stroke();
-            cv.fillStyle=SC.c.lbl;cv.textAlign='right';cv.textBaseline='middle';
-            cv.fillText(val>=1000000?(val/1000000).toFixed(1)+'M':val>=1000?(val/1000).toFixed(0)+'K':Math.round(val),pad.l-8,gy);
-        }
-
-        function drawL(data,color,dashed){
-            var pts=[];
-            for(var i=0;i<data.length;i++){pts.push({x:pad.l+(i/(data.length-1))*cw,y:h-pad.b-((data[i]-mn)/rng)*ch});}
-            cv.beginPath();
-            if(dashed)cv.setLineDash([6,4]);else cv.setLineDash([]);
-            for(var k=0;k<pts.length;k++){if(k===0)cv.moveTo(pts[k].x,pts[k].y);else cv.lineTo(pts[k].x,pts[k].y);}
-            cv.strokeStyle=color;cv.lineWidth=2.5;cv.stroke();cv.setLineDash([]);
-            for(var m=0;m<pts.length;m++){cv.beginPath();cv.arc(pts[m].x,pts[m].y,3,0,Math.PI*2);cv.fillStyle=color;cv.fill();cv.strokeStyle='white';cv.lineWidth=1.5;cv.stroke();}
-        }
-
-        /* fill net area */
-        var netPts=[];
-        for(var i=0;i<cumNet.length;i++){netPts.push({x:pad.l+(i/(cumNet.length-1))*cw,y:h-pad.b-((cumNet[i]-mn)/rng)*ch});}
-        var zeroY=h-pad.b-((0-mn)/rng)*ch;
-        cv.beginPath();cv.moveTo(netPts[0].x,zeroY);
-        for(var j=0;j<netPts.length;j++)cv.lineTo(netPts[j].x,netPts[j].y);
-        cv.lineTo(netPts[netPts.length-1].x,zeroY);cv.closePath();
-        cv.fillStyle='rgba(16,185,129,0.12)';cv.fill();
-
-        /* zero line */
-        cv.beginPath();cv.moveTo(pad.l,zeroY);cv.lineTo(w-pad.r,zeroY);cv.strokeStyle='#94A3B8';cv.lineWidth=1;cv.setLineDash([4,4]);cv.stroke();cv.setLineDash([]);
-
-        drawL(cumRev, SC.c.green, false);
-        drawL(cumCost, SC.c.red, true);
-        drawL(cumNet, SC.c.blue, false);
-
-        /* labels */
-        for(var n=0;n<labels.length;n++){
-            var lx=pad.l+(n/(labels.length-1))*cw;
-            cv.fillStyle=SC.c.lbl;cv.textAlign='center';cv.textBaseline='top';cv.fillText(labels[n],lx,h-pad.b+8);
-        }
-        /* legend */
-        var lx2=pad.l+10;
-        var legs=[{l:'Cumulative Revenue Lift',c:SC.c.green},{l:'Cumulative Investment',c:SC.c.red},{l:'Net ROI',c:SC.c.blue}];
-        for(var lg=0;lg<legs.length;lg++){
-            cv.fillStyle=legs[lg].c;cv.fillRect(lx2,8,14,10);
-            cv.fillStyle=SC.c.lbl;cv.textAlign='left';cv.textBaseline='top';cv.fillText(legs[lg].l,lx2+18,6);
-            lx2+=cv.measureText(legs[lg].l).width+38;
-        }
-    }
-
-    function initROI(){ updateROI(); }
-
-    function buildCohortTableLive(cohort){
-        var tbody=document.getElementById('cohort-body');
-        if(!tbody) return;
-        var rows='';
-        for(var r=0;r<cohort.labels.length;r++){
-            var label = cohort.labels[r];
-            var joined = cohort.joined[r];
-            rows+='<tr><td style="font-weight:600;text-align:left">'+label+'</td><td style="font-weight:600">'+joined+'</td>';
-            for(var c=0;c<12;c++){
-                var ret = cohort.retention[r] ? cohort.retention[r][c+1] : null;
-                if(ret !== null && ret !== undefined){
-                    var bg,fg;
-                    if(ret>=80){bg='#D1FAE5';fg='#065F46';}
-                    else if(ret>=60){bg='#DBEAFE';fg='#1E40AF';}
-                    else if(ret>=40){bg='#FEF3C7';fg='#92400E';}
-                    else{bg='#FEE2E2';fg='#991B1B';}
-                    rows+='<td class="cohort-cell" style="background:'+bg+';color:'+fg+';font-weight:600;font-size:0.8rem">'+ret+'%</td>';
-                } else {
-                    rows+='<td style="color:#CBD5E1">-</td>';
-                }
-            }
-            rows+='</tr>';
-        }
-        tbody.innerHTML=rows;
-    }
-
-    function buildCohortTable(){
-        var tbody=document.getElementById('cohort-body');
-        if(!tbody) return;
-        var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var now=new Date();
-        var rows='';
-        for(var r=0;r<8;r++){
-            var md=new Date(now.getFullYear(),now.getMonth()-11+r,1);
-            var label=months[md.getMonth()]+' '+String(md.getFullYear()).slice(2);
-            var joined=Math.floor(200+Math.random()*200);
-            rows+='<tr><td style="font-weight:600;text-align:left">'+label+'</td><td style="font-weight:600">'+joined+'</td>';
-            var maxCols=12-r;
-            for(var c=0;c<12;c++){
-                if(c<maxCols){
-                    var ret=Math.max(15,Math.round(100-c*8-Math.random()*5));
-                    var bg,fg;
-                    if(ret>=80){bg='#D1FAE5';fg='#065F46';}
-                    else if(ret>=60){bg='#DBEAFE';fg='#1E40AF';}
-                    else if(ret>=40){bg='#FEF3C7';fg='#92400E';}
-                    else{bg='#FEE2E2';fg='#991B1B';}
-                    rows+='<td class="cohort-cell" style="background:'+bg+';color:'+fg+';font-weight:600;font-size:0.8rem">'+ret+'%</td>';
-                } else {
-                    rows+='<td style="color:#CBD5E1">-</td>';
-                }
-            }
-            rows+='</tr>';
-        }
-        tbody.innerHTML=rows;
-    }
-
-    function buildSiteComparison(){
-        var tbody=document.getElementById('site-comparison-body');
-        if(!tbody) return;
-        var sites=[
-            {name:'Site 1',cars:8550,rev:'$142K',ticket:'$16.62',cap:'40%',churn:'5.2%',memPct:'62%',rank:3,status:'healthy'},
-            {name:'Site 2',cars:7440,rev:'$128K',ticket:'$17.20',cap:'36%',churn:'5.8%',memPct:'55%',rank:5,status:'info'},
-            {name:'Site 3',cars:10240,rev:'$198K',ticket:'$19.34',cap:'46%',churn:'4.1%',memPct:'68%',rank:1,status:'healthy'},
-            {name:'Site 4',cars:6600,rev:'$115K',ticket:'$17.42',cap:'34%',churn:'6.2%',memPct:'52%',rank:8,status:'warning'},
-            {name:'Site 5',cars:8040,rev:'$135K',ticket:'$16.79',cap:'42%',churn:'4.8%',memPct:'64%',rank:4,status:'healthy'},
-            {name:'Site 6',cars:6480,rev:'$108K',ticket:'$16.67',cap:'38%',churn:'5.5%',memPct:'58%',rank:7,status:'info'},
-            {name:'Site 7',cars:9850,rev:'$185K',ticket:'$18.78',cap:'44%',churn:'3.8%',memPct:'66%',rank:2,status:'healthy'},
-            {name:'Site 8',cars:7320,rev:'$122K',ticket:'$16.67',cap:'35%',churn:'6.0%',memPct:'54%',rank:6,status:'info'},
-            {name:'Site 9',cars:5120,rev:'$78K',ticket:'$15.23',cap:'26%',churn:'7.4%',memPct:'42%',rank:11,status:'critical'},
-            {name:'Site 10',cars:5850,rev:'$96K',ticket:'$16.41',cap:'32%',churn:'6.8%',memPct:'48%',rank:9,status:'warning'},
-            {name:'Site 11',cars:4890,rev:'$72K',ticket:'$14.72',cap:'28%',churn:'8.1%',memPct:'40%',rank:12,status:'critical'},
-            {name:'Site 12',cars:6540,rev:'$110K',ticket:'$16.82',cap:'37%',churn:'5.6%',memPct:'57%',rank:10,status:'info'}
-        ];
-        tbody.innerHTML=sites.map(function(s){
-            return '<tr><td style="font-weight:600">'+s.name+'</td><td>'+s.cars.toLocaleString()+'</td><td>'+s.rev+'</td><td>'+s.ticket+'</td><td>'+s.cap+'</td><td>'+s.churn+'</td><td>'+s.memPct+'</td><td>#'+s.rank+'</td><td><span class="badge '+s.status+'">'+(s.status==='critical'?'Below Avg':s.status==='warning'?'Watch':s.status==='healthy'?'Strong':'On Track')+'</span></td></tr>';
-        }).join('');
-    }
-    </script>
-</body>
-</html>
+        w.document.write('</body></html>
