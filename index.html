@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRB Pulse</title>
+    <title>DRB Advisory Analytics</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -142,14 +142,14 @@
 <body>
     <div class="app-container">
         <aside class="sidebar">
-            <div class="logo"><span class="logo-text">DRB</span><span class="logo-subtitle">DRB Pulse</span></div>
+            <div class="logo"><span class="logo-text">DRB</span><span class="logo-subtitle">Advisory Analytics</span></div>
             <p class="nav-section-title">Dashboard</p>
             <nav>
                 <button class="nav-item active" data-page="portfolio">Portfolio Overview</button>
                 <button class="nav-item" data-page="operational">Operational Health</button>
                 <button class="nav-item" data-page="alerts">Risk Alerts</button>
                 <button class="nav-item" data-page="boap">Business on a Page</button>
-                <button class="nav-item" data-page="deepdive">Deep Dive</button>
+                <button class="nav-item" data-page="deepdive">Advisory Deep Dive</button>
                 <button class="nav-item" data-page="benchmarks">Industry Benchmarks</button>
                 <button class="nav-item" data-page="roi">ROI &amp; Solutions</button>
                 <button class="nav-item" data-page="settings">Alert Configuration</button>
@@ -298,7 +298,7 @@
 
             <!-- ==================== ADVISORY DEEP DIVE ==================== -->
             <div id="deepdive" class="page">
-                <h1>Deep Dive</h1><p class="page-subtitle">Detailed analytics by category</p>
+                <h1>Advisory Deep Dive</h1><p class="page-subtitle">Detailed analytics by category</p>
 
                 <div class="dd-tabs">
                     <button class="dd-tab active" data-ddtab="dd-general">General KPIs</button>
@@ -894,8 +894,8 @@
                 <h1>Settings & Export</h1><p class="page-subtitle">Alert configuration and PDF export</p>
                 <!-- PDF Export Section -->
                 <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--drb-orange)">
-                    <h3 style="color:var(--drb-orange)">📄 Export DRB Pulse PDF</h3>
-                    <p style="font-size:0.85rem;color:#64748B;margin-bottom:0.75rem">Generate a professionally styled PDF report matching the SUDS/DRB Pulse presentation template. Select a customer and click generate.</p>
+                    <h3 style="color:var(--drb-orange)">📄 Export Advisory Analytics PDF</h3>
+                    <p style="font-size:0.85rem;color:#64748B;margin-bottom:0.75rem">Generate a professionally styled PDF report matching the SUDS/DRB Advisory Analytics presentation template. Select a customer and click generate.</p>
                     <div class="form-row">
                         <div class="form-group"><label>Customer</label>
                             <select id="pdf-customer">
@@ -926,7 +926,7 @@
                 <div style="margin-top:1.5rem"><button class="btn btn-primary">Save Configuration</button><button class="btn btn-secondary" style="margin-left:0.5rem">Reset to Defaults</button></div>
             </div>
 
-            <div class="footer">Data as of: <span id="current-date"></span> &middot; DRB Pulse</div>
+            <div class="footer">Data as of: <span id="current-date"></span> &middot; DRB Advisory Analytics</div>
         </main>
     </div>
 
@@ -1187,49 +1187,31 @@
     }
 
     /* MAIN NAV */
-    function initNavigation() {
-        var navItems = document.querySelectorAll('.nav-item');
-        var pages = document.querySelectorAll('.page');
-        if (!navItems.length) { console.error('No nav items found'); return; }
-        if (!pages.length) { console.error('No pages found'); return; }
-        navItems.forEach(function(item){
-            item.addEventListener('click',function(e){
-                e.preventDefault();
-                var targetId = this.getAttribute('data-page');
-                var targetPage = document.getElementById(targetId);
-                if (!targetPage) { console.error('Page not found:', targetId); return; }
-                navItems.forEach(function(i){i.classList.remove('active');});
-                pages.forEach(function(p){p.classList.remove('active');});
-                this.classList.add('active');
-                targetPage.classList.add('active');
-                setTimeout(function(){
-                    try {
-                        if(targetId==='operational')initOp();
-                        else if(targetId==='boap')initBoap();
-                        else if(targetId==='deepdive')initDD('dd-general');
-                        else if(targetId==='roi')initROI();
-                    } catch(err) { console.error('Chart init error:', err); }
-                },50);
-            });
+    document.querySelectorAll('.nav-item').forEach(function(item){
+        item.addEventListener('click',function(){
+            document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+            document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+            this.classList.add('active');
+            document.getElementById(this.dataset.page).classList.add('active');
+            var pg=this.dataset.page;
+            setTimeout(function(){
+                if(pg==='operational')initOp();
+                else if(pg==='boap')initBoap();
+                else if(pg==='deepdive')initDD('dd-general');
+                else if(pg==='roi')initROI();
+            },50);
         });
-    }
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initNavigation);
-    } else {
-        initNavigation();
-    }
+    });
 
     /* DEEP DIVE TAB NAV */
     document.querySelectorAll('.dd-tab').forEach(function(tab){
-        tab.addEventListener('click',function(e){
-            e.preventDefault();
+        tab.addEventListener('click',function(){
             document.querySelectorAll('.dd-tab').forEach(function(t){t.classList.remove('active');});
             document.querySelectorAll('.dd-panel').forEach(function(p){p.classList.remove('active');});
             this.classList.add('active');
             var targetId = this.dataset.ddtab;
-            var targetPanel = document.getElementById(targetId);
-            if (targetPanel) targetPanel.classList.add('active');
-            setTimeout(function(){ try { initDD(targetId); } catch(err) { console.error('DD init error:', err); } },50);
+            document.getElementById(targetId).classList.add('active');
+            setTimeout(function(){ initDD(targetId); },50);
         });
     });
 
@@ -1317,7 +1299,7 @@
 
         /* Open print window */
         var w = window.open('','_blank','width=1100,height=850');
-        w.document.write('<!DOCTYPE html><html><head><title>'+custName+' DRB Pulse</title>');
+        w.document.write('<!DOCTYPE html><html><head><title>'+custName+' Advisory Analytics</title>');
         w.document.write('<style>');
         w.document.write('@page{size:landscape;margin:0.4in}');
         w.document.write('*{margin:0;padding:0;box-sizing:border-box}body{font-family:Helvetica,Arial,sans-serif;color:#333;-webkit-print-color-adjust:exact;print-color-adjust:exact}');
@@ -1351,10 +1333,10 @@
         w.document.write('Use <strong>File → Print → Save as PDF</strong> for best results (Landscape orientation)</div>');
 
         var pg = 0;
-        function footer(){ return '<div class="footer"><span>DRB Pulse — '+custName+'</span><span>Page '+(++pg)+'</span></div>'; }
+        function footer(){ return '<div class="footer"><span>DRB Advisory Analytics — '+custName+'</span><span>Page '+(++pg)+'</span></div>'; }
 
         /* Cover */
-        w.document.write('<div class="page"><div class="cover"><h1>'+custName.toUpperCase()+'</h1><h2>DRB Pulse</h2><div class="cover-sub">Created '+dateStr+'</div><div class="cover-sub" style="font-size:12px">by SUDS Creative and DRB</div></div><div class="divider"></div><div class="cover-bottom"><span class="logo-text">DRB</span><span class="logo-sep">|</span><span class="logo-suds">suds.</span></div></div>');
+        w.document.write('<div class="page"><div class="cover"><h1>'+custName.toUpperCase()+'</h1><h2>Advisory Analytics</h2><div class="cover-sub">Created '+dateStr+'</div><div class="cover-sub" style="font-size:12px">by SUDS Creative and DRB</div></div><div class="divider"></div><div class="cover-bottom"><span class="logo-text">DRB</span><span class="logo-sep">|</span><span class="logo-suds">suds.</span></div></div>');
 
         /* TOC */
         w.document.write('<div class="page"><div class="hdr"><h1>Overview</h1><p>Table of Contents</p><div class="hdr-logo"><span class="logo-text">DRB</span> <span class="logo-suds">suds.</span></div></div><div class="divider"></div><div class="content" style="padding-top:32px">');
@@ -1397,6 +1379,6 @@
         w.document.write('</div>'+footer()+'</div>');
 
         /* Back cover */
-        w.document.write('<div class="page"><div style="background:#6B8DB9;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white"><h1 style="font-size:36px">Thank You</h1><p style="font-size:16px;color:#D4E1F0;margin-top:8px">'+custName+' — DRB Pulse</p><div style="margin-top:40px"><span class="logo-text" style="color:white;font-size:28px">DRB</span><span class="logo-sep" style="color:#D4E1F0">|</span><span class="logo-suds" style="font-size:24px">suds.</span></div></div></div>');
+        w.document.write('<div class="page"><div style="background:#6B8DB9;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white"><h1 style="font-size:36px">Thank You</h1><p style="font-size:16px;color:#D4E1F0;margin-top:8px">'+custName+' — Advisory Analytics</p><div style="margin-top:40px"><span class="logo-text" style="color:white;font-size:28px">DRB</span><span class="logo-sep" style="color:#D4E1F0">|</span><span class="logo-suds" style="font-size:24px">suds.</span></div></div></div>');
 
         w.document.write('</body></html>
