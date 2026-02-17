@@ -88,9 +88,25 @@
         .btn { padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s ease; }
         .btn-primary { background: var(--drb-orange); color: white; } .btn-primary:hover { background: #E55A1B; }
         .btn-secondary { background: var(--gray-100); color: var(--gray-700); } .btn-secondary:hover { background: var(--gray-200); }
-        .chart-container { position: relative; height: 280px; margin-top: 1rem; }
+        .chart-container { position: relative; height: 280px; width: 100%; margin-top: 1rem; }
         .chart-container.small { height: 200px; }
         .chart-container.tall { height: 340px; }
+        .health-bar { width:100%;height:6px;border-radius:3px;background:var(--gray-200);margin-top:4px;overflow:hidden }
+        .health-bar-fill { height:100%;border-radius:3px;transition:width 0.3s }
+        #org-suggestions .org-item { padding:8px 12px;cursor:pointer;font-size:0.85rem;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center }
+        #org-suggestions .org-item:hover { background:#f0f4ff }
+        #org-suggestions .org-item .org-code { font-family:monospace;font-size:0.8rem;color:var(--gray-500) }
+        #org-suggestions .org-item .org-type { font-size:0.7rem;padding:2px 6px;border-radius:3px;text-transform:uppercase;font-weight:600 }
+        #org-suggestions .org-item .org-type.org-tag { background:#DBEAFE;color:#1E40AF }
+        #org-suggestions .org-item .org-type.site-tag { background:#D1FAE5;color:#065F46 }
+        .cfg-tab.active { color:#1a4797 !important;border-bottom-color:#1a4797 !important }
+        .cfg-panel { display:none } .cfg-panel.active { display:block }
+        .cfg-input { padding:0.35rem 0.5rem;border:1px solid var(--gray-200);border-radius:0.375rem;font-size:0.8rem;outline:none;background:white }
+        .cfg-input:focus { border-color:#3B82F6;box-shadow:0 0 0 2px rgba(59,130,246,0.1) }
+        .btn-icon { background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--gray-500);padding:0 4px;line-height:1 }
+        .btn-icon:hover { color:#EF4444 }
+        input[type="range"] { height:6px;border-radius:3px }
+
         .chart-container canvas { width: 100% !important; height: 100% !important; }
         .charts-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
         .alert-card { border-left: 4px solid; padding: 1rem 1.25rem; border-radius: 0.75rem; margin-bottom: 0.75rem; background: white; transition: all 0.3s ease; }
@@ -178,7 +194,7 @@
                 <button class="nav-item" data-page="deepdive" onclick="switchPage('deepdive',this)">Deep Dive</button>
                 <button class="nav-item" data-page="benchmarks" onclick="switchPage('benchmarks',this)">Industry Benchmarks</button>
                 <button class="nav-item" data-page="roi" onclick="switchPage('roi',this)">ROI &amp; Solutions</button>
-                <button class="nav-item" data-page="settings" onclick="switchPage('settings',this)">Alert Configuration</button>
+                <button class="nav-item" data-page="settings" onclick="switchPage('settings',this)">Configuration</button>
             </nav>
             <div class="sidebar-divider"></div>
             <div class="user-info">
@@ -198,14 +214,14 @@
                 </div>
                 <div class="card">
                     <h2>Customer Overview</h2>
-                    <div class="table-container"><table><thead><tr><th>Customer</th><th>Sites</th><th>Health</th><th>Capture %</th><th>Churn %</th><th>Traffic YoY</th><th>Revenue YoY</th><th>Status</th><th>CSM</th></tr></thead>
+                    <div class="table-container"><table><thead><tr><th>Customer</th><th>Org Code</th><th>Sites</th><th>Operational</th><th>Business</th><th>Overall</th><th>Capture %</th><th>Churn %</th><th>Traffic YoY</th><th>Revenue YoY</th><th>CSM</th></tr></thead>
                     <tbody>
-                        <tr><td>Sparkle Clean Auto Spa</td><td>12</td><td>28</td><td>31%</td><td>8.2%</td><td>-18%</td><td>-18%</td><td><span class="badge critical">Critical</span></td><td>Mike Johnson</td></tr>
-                        <tr><td>Metro Express Wash</td><td>8</td><td>45</td><td>35%</td><td>6.5%</td><td>-8%</td><td>-10%</td><td><span class="badge warning">Warning</span></td><td>Sarah Chen</td></tr>
-                        <tr><td>Shine Time Car Wash</td><td>5</td><td>72</td><td>42%</td><td>4.2%</td><td>+5%</td><td>+6%</td><td><span class="badge healthy">Healthy</span></td><td>Mike Johnson</td></tr>
-                        <tr><td>Quick Clean Express</td><td>156</td><td>38</td><td>33%</td><td>7.1%</td><td>-12%</td><td>-14%</td><td><span class="badge warning">Warning</span></td><td>Tom Wilson</td></tr>
-                        <tr><td>Premier Auto Spa</td><td>234</td><td>85</td><td>48%</td><td>3.8%</td><td>+12%</td><td>+14%</td><td><span class="badge healthy">Healthy</span></td><td>Sarah Chen</td></tr>
-                        <tr><td>Crystal Clear Wash</td><td>45</td><td>52</td><td>38%</td><td>5.9%</td><td>-3%</td><td>-2%</td><td><span class="badge info">On Track</span></td><td>Tom Wilson</td></tr>
+                        <tr><td>Sparkle Clean Auto Spa</td><td style="font-family:monospace;font-size:0.8rem">SPA-042</td><td>12</td><td><span class="badge warning">1.8</span></td><td><span class="badge critical">0.8</span></td><td><span class="badge critical">1.2</span></td><td>31%</td><td>8.2%</td><td style="color:#EF4444">-18%</td><td style="color:#EF4444">-18%</td><td>Mike Johnson</td></tr>
+                        <tr><td>Metro Express Wash</td><td style="font-family:monospace;font-size:0.8rem">MEW-008</td><td>8</td><td><span class="badge info">2.6</span></td><td><span class="badge warning">2.0</span></td><td><span class="badge warning">2.3</span></td><td>35%</td><td>6.5%</td><td style="color:#EF4444">-8%</td><td style="color:#EF4444">-10%</td><td>Sarah Chen</td></tr>
+                        <tr><td>Shine Time Car Wash</td><td style="font-family:monospace;font-size:0.8rem">STC-005</td><td>5</td><td><span class="badge healthy">3.8</span></td><td><span class="badge healthy">3.5</span></td><td><span class="badge healthy">3.6</span></td><td>42%</td><td>4.2%</td><td style="color:#10B981">+5%</td><td style="color:#10B981">+6%</td><td>Mike Johnson</td></tr>
+                        <tr><td>Quick Clean Express</td><td style="font-family:monospace;font-size:0.8rem">QCE-118</td><td>156</td><td><span class="badge healthy">3.8</span></td><td><span class="badge info">3.2</span></td><td><span class="badge healthy">3.5</span></td><td>33%</td><td>7.1%</td><td style="color:#EF4444">-12%</td><td style="color:#EF4444">-14%</td><td>Tom Wilson</td></tr>
+                        <tr><td>Premier Auto Spa</td><td style="font-family:monospace;font-size:0.8rem">PAS-200</td><td>234</td><td><span class="badge healthy">4.5</span></td><td><span class="badge healthy">4.0</span></td><td><span class="badge healthy">4.2</span></td><td>48%</td><td>3.8%</td><td style="color:#10B981">+12%</td><td style="color:#10B981">+14%</td><td>Sarah Chen</td></tr>
+                        <tr><td>Crystal Clear Wash</td><td style="font-family:monospace;font-size:0.8rem">CCW-045</td><td>45</td><td><span class="badge info">3.0</span></td><td><span class="badge info">2.5</span></td><td><span class="badge info">2.8</span></td><td>38%</td><td>5.9%</td><td style="color:#EF4444">-3%</td><td style="color:#EF4444">-2%</td><td>Tom Wilson</td></tr>
                     </tbody></table></div>
                 </div>
             </div>
@@ -214,14 +230,21 @@
             <div id="operational" class="page">
                 <h1>Operational Health</h1><p class="page-subtitle">System performance and support metrics</p>
                 <div class="form-row">
-                    <div class="form-group"><label>Select Customer</label><select id="customer-select" onchange="updateOperationalData()"><option value="bmw">BMW Kar Wash LLC (61 sites)</option><option value="sparkle">Sparkle Clean Auto Spa (12 sites)</option><option value="quick">Quick Clean Express (156 sites)</option><option value="premier">Premier Auto Spa (234 sites)</option></select></div>
-                    <div class="form-group"><label>Time Period</label><select><option>Last 30 Days</option><option>Last 60 Days</option><option>Last 90 Days</option></select></div>
+                    <div class="form-group" style="flex:2;position:relative">
+                        <label>Org Code / Site Code</label>
+                        <input type="text" id="org-search" placeholder="Search by org or site code..." autocomplete="off" style="width:100%;padding:0.5rem 0.75rem;border:1px solid var(--gray-200);border-radius:0.5rem;font-size:0.875rem;outline:none" onfocus="showOrgSuggestions()" oninput="filterOrgSuggestions()">
+                        <input type="hidden" id="customer-select" value="bmw">
+                        <div id="org-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--gray-200);border-radius:0 0 0.5rem 0.5rem;max-height:220px;overflow-y:auto;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.1)"></div>
+                    </div>
+                    <div class="form-group"><label>Start Date</label><input type="date" id="date-start" style="padding:0.5rem 0.75rem;border:1px solid var(--gray-200);border-radius:0.5rem;font-size:0.875rem"></div>
+                    <div class="form-group"><label>End Date</label><input type="date" id="date-end" style="padding:0.5rem 0.75rem;border:1px solid var(--gray-200);border-radius:0.5rem;font-size:0.875rem"></div>
                 </div>
                 <div class="customer-header">
-                    <div class="customer-info"><h2 id="op-customer-name">BMW Kar Wash LLC</h2><div class="customer-meta" id="op-customer-meta">61 Sites &middot; MI &middot; CSM: Morgan Malone</div></div>
+                    <div class="customer-info"><h2 id="op-customer-name">BMW Kar Wash LLC</h2><div class="customer-meta" id="op-customer-meta">BMW-001 &middot; 61 Sites &middot; MI &middot; CSM: Morgan Malone</div></div>
                     <div class="customer-stats">
-                        <div class="customer-stat"><div class="customer-stat-label">Health Index</div><div class="customer-stat-value green" id="op-health-index">Green</div></div>
-                        <div class="customer-stat"><div class="customer-stat-label">Score</div><div class="customer-stat-value" id="op-health-score">2.80</div></div>
+                        <div class="customer-stat"><div class="customer-stat-label">Operational</div><div class="customer-stat-value" id="op-opHealth" style="font-size:1.1rem">3.40</div><div class="health-bar" id="op-opBar"></div></div>
+                        <div class="customer-stat"><div class="customer-stat-label">Business</div><div class="customer-stat-value" id="op-bizHealth" style="font-size:1.1rem">2.20</div><div class="health-bar" id="op-bizBar"></div></div>
+                        <div class="customer-stat" style="border-left:2px solid var(--gray-200);padding-left:1rem"><div class="customer-stat-label">Overall</div><div class="customer-stat-value" id="op-overallHealth" style="font-size:1.3rem;font-weight:800">2.80</div><div class="health-bar" id="op-overallBar"></div></div>
                     </div>
                 </div>
                 <h2>Summary Metrics</h2>
@@ -232,6 +255,11 @@
                     <div class="card kpi-card"><div class="kpi-value" id="op-avg-ttr">2.24</div><div class="kpi-label">Avg TTR (Days)</div></div>
                     <div class="card kpi-card"><div class="kpi-value" id="op-hw-swaps">3</div><div class="kpi-label">Hardware Swaps</div></div>
                     <div class="card kpi-card"><div class="kpi-value" id="op-escalations">1</div><div class="kpi-label">Escalations</div></div>
+                </div>
+                <div class="card" style="margin-bottom:1rem">
+                    <h3>Health Score Over Time</h3>
+                    <p style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.5rem">12-month trend &mdash; Operational, Business &amp; Overall health. Scale: 0 (Critical) to 5 (Excellent).</p>
+                    <div class="chart-container tall"><canvas id="healthScoreChart"></canvas></div>
                 </div>
                 <div class="charts-row">
                     <div class="card"><h3>Case Volume by Product</h3><div class="chart-container"><canvas id="caseByProductChart"></canvas></div></div>
@@ -917,39 +945,170 @@
 
             <!-- ==================== SETTINGS ==================== -->
             <div id="settings" class="page">
-                <h1>Settings & Export</h1><p class="page-subtitle">Alert configuration and PDF export</p>
-                <!-- PDF Export Section -->
-                <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--drb-orange)">
-                    <h3 style="color:var(--drb-orange)">📄 Export DRB Pulse PDF</h3>
-                    <p style="font-size:0.85rem;color:#64748B;margin-bottom:0.75rem">Generate a professionally styled PDF report matching the SUDS/DRB Pulse presentation template. Select a customer and click generate.</p>
-                    <div class="form-row">
-                        <div class="form-group"><label>Customer</label>
-                            <select id="pdf-customer">
-                                <option value="bmw">BMW Kar Wash LLC</option>
-                                <option value="sparkle">Sparkle Clean Auto Spa</option>
-                                <option value="quick">Quick Clean Express</option>
-                                <option value="premier">Premier Auto Spa</option>
-                                <option value="tts">Time To Shine Car Wash</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Report Date</label>
-                            <input type="month" id="pdf-date" value="2026-02">
+                <h1>Configuration</h1><p class="page-subtitle">Health scoring, alert thresholds, and export settings</p>
+
+                <!-- Config Sub-tabs -->
+                <div style="display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid var(--gray-200)">
+                    <button class="cfg-tab active" data-cfgtab="health-config" onclick="switchCfgTab('health-config',this)" style="padding:0.6rem 1.25rem;font-size:0.875rem;font-weight:600;border:none;background:none;cursor:pointer;color:var(--gray-500);border-bottom:2px solid transparent;margin-bottom:-2px">Health Score</button>
+                    <button class="cfg-tab" data-cfgtab="alert-config" onclick="switchCfgTab('alert-config',this)" style="padding:0.6rem 1.25rem;font-size:0.875rem;font-weight:600;border:none;background:none;cursor:pointer;color:var(--gray-500);border-bottom:2px solid transparent;margin-bottom:-2px">Alert Thresholds</button>
+                    <button class="cfg-tab" data-cfgtab="export-config" onclick="switchCfgTab('export-config',this)" style="padding:0.6rem 1.25rem;font-size:0.875rem;font-weight:600;border:none;background:none;cursor:pointer;color:var(--gray-500);border-bottom:2px solid transparent;margin-bottom:-2px">PDF Export</button>
+                </div>
+
+                <!-- ===== HEALTH SCORE CONFIG TAB ===== -->
+                <div id="health-config" class="cfg-panel active">
+
+                    <!-- Overall Health Weights -->
+                    <div class="card" style="margin-bottom:1.5rem;border-left:4px solid #1a4797">
+                        <h3 style="margin-bottom:0.25rem">Overall Health Score</h3>
+                        <p style="font-size:0.8rem;color:var(--gray-500);margin-bottom:1rem">Define how Operational and Business scores combine into the Overall score.</p>
+                        <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap">
+                            <div style="flex:1;min-width:200px">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                                    <label style="font-size:0.85rem;font-weight:600;color:#3B82F6">Operational Weight</label>
+                                    <span id="overall-op-weight-val" style="font-weight:700;font-size:1rem;color:#3B82F6">40%</span>
+                                </div>
+                                <input type="range" id="overall-op-weight" min="0" max="100" value="40" oninput="updateOverallWeights()" style="width:100%;accent-color:#3B82F6">
+                            </div>
+                            <div style="flex:1;min-width:200px">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                                    <label style="font-size:0.85rem;font-weight:600;color:#f04e23">Business Weight</label>
+                                    <span id="overall-biz-weight-val" style="font-weight:700;font-size:1rem;color:#f04e23">60%</span>
+                                </div>
+                                <input type="range" id="overall-biz-weight" min="0" max="100" value="60" oninput="updateOverallWeights()" style="width:100%;accent-color:#f04e23" disabled>
+                            </div>
+                            <div style="text-align:center;padding:0.75rem 1.5rem;background:#f8fafc;border-radius:0.5rem;border:1px solid var(--gray-200)">
+                                <div style="font-size:0.7rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px">Formula</div>
+                                <div style="font-family:monospace;font-size:0.85rem;margin-top:4px"><span style="color:#3B82F6">Op</span> &times; <span id="formula-op">0.40</span> + <span style="color:#f04e23">Biz</span> &times; <span id="formula-biz">0.60</span></div>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="generatePdfExport()" style="background:#f04e23">📥 Generate PDF Report</button>
-                    <div id="pdf-status" style="margin-top:0.5rem;font-size:0.8rem;color:#64748B"></div>
-                    <p style="font-size:0.75rem;color:#94A3B8;margin-top:0.5rem">💡 <strong>Tip:</strong> For full PDF generation via Streamlit, open the sidebar (☰) and use the PDF Export section there.</p>
+
+                    <!-- Operational Health KPIs -->
+                    <div class="card" style="margin-bottom:1.5rem;border-left:4px solid #3B82F6">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                            <div>
+                                <h3 style="margin-bottom:0.25rem;color:#3B82F6">Operational Health Score</h3>
+                                <p style="font-size:0.8rem;color:var(--gray-500)">System reliability &amp; support effectiveness. Each KPI is weighted and scored against thresholds.</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="addKpiRow('op-kpi-table')" style="font-size:0.8rem;white-space:nowrap">+ Add KPI</button>
+                        </div>
+                        <div class="table-container" style="margin-top:0.75rem">
+                            <table id="op-kpi-table">
+                                <thead><tr>
+                                    <th style="text-align:left;width:22%">KPI</th>
+                                    <th style="width:10%">Weight</th>
+                                    <th style="width:10%">Direction</th>
+                                    <th style="width:14%">Healthy</th>
+                                    <th style="width:14%">At Risk</th>
+                                    <th style="width:14%">Critical</th>
+                                    <th style="width:8%">Score</th>
+                                    <th style="width:5%"></th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr><td><input type="text" value="Cases per Site" class="cfg-input" style="width:100%"></td><td><input type="number" value="25" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="lower">Lower &#9660;</option><option value="higher">Higher &#9650;</option></select></td><td><input type="text" value="< 5" class="cfg-input" style="width:100%"></td><td><input type="text" value="5 - 12" class="cfg-input" style="width:100%"></td><td><input type="text" value="> 12" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge healthy" style="font-size:0.75rem">4.2</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="XPT Reboots per Site" class="cfg-input" style="width:100%"></td><td><input type="number" value="15" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="lower">Lower &#9660;</option><option value="higher">Higher &#9650;</option></select></td><td><input type="text" value="< 2" class="cfg-input" style="width:100%"></td><td><input type="text" value="2 - 5" class="cfg-input" style="width:100%"></td><td><input type="text" value="> 5" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge healthy" style="font-size:0.75rem">3.8</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="Uptime %" class="cfg-input" style="width:100%"></td><td><input type="number" value="25" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="higher" selected>Higher &#9650;</option><option value="lower">Lower &#9660;</option></select></td><td><input type="text" value="> 99.5%" class="cfg-input" style="width:100%"></td><td><input type="text" value="98 - 99.5%" class="cfg-input" style="width:100%"></td><td><input type="text" value="< 98%" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge healthy" style="font-size:0.75rem">4.5</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="Avg Escalation Age (days)" class="cfg-input" style="width:100%"></td><td><input type="number" value="15" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="lower">Lower &#9660;</option><option value="higher">Higher &#9650;</option></select></td><td><input type="text" value="< 3" class="cfg-input" style="width:100%"></td><td><input type="text" value="3 - 7" class="cfg-input" style="width:100%"></td><td><input type="text" value="> 7" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge info" style="font-size:0.75rem">3.0</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="Open Field Defects" class="cfg-input" style="width:100%"></td><td><input type="number" value="10" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="lower">Lower &#9660;</option><option value="higher">Higher &#9650;</option></select></td><td><input type="text" value="0" class="cfg-input" style="width:100%"></td><td><input type="text" value="1 - 3" class="cfg-input" style="width:100%"></td><td><input type="text" value="> 3" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge healthy" style="font-size:0.75rem">5.0</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="Open Enhancement Requests" class="cfg-input" style="width:100%"></td><td><input type="number" value="10" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="lower">Lower &#9660;</option><option value="higher">Higher &#9650;</option></select></td><td><input type="text" value="0 - 2" class="cfg-input" style="width:100%"></td><td><input type="text" value="3 - 5" class="cfg-input" style="width:100%"></td><td><input type="text" value="> 5" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge info" style="font-size:0.75rem">3.5</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;padding:0.5rem 0.75rem;background:#f0f7ff;border-radius:0.5rem">
+                            <span style="font-size:0.8rem;color:#3B82F6;font-weight:600">Total Weight: <span id="op-total-weight">100</span>%</span>
+                            <span id="op-weight-status" style="font-size:0.75rem">&#10003; Weights sum to 100%</span>
+                        </div>
+                    </div>
+
+                    <!-- Business Health KPIs -->
+                    <div class="card" style="margin-bottom:1.5rem;border-left:4px solid #f04e23">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                            <div>
+                                <h3 style="margin-bottom:0.25rem;color:#f04e23">Business Health Score</h3>
+                                <p style="font-size:0.8rem;color:var(--gray-500)">Membership performance &amp; revenue growth metrics.</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="addKpiRow('biz-kpi-table')" style="font-size:0.8rem;white-space:nowrap">+ Add KPI</button>
+                        </div>
+                        <div class="table-container" style="margin-top:0.75rem">
+                            <table id="biz-kpi-table">
+                                <thead><tr>
+                                    <th style="text-align:left;width:22%">KPI</th>
+                                    <th style="width:10%">Weight</th>
+                                    <th style="width:10%">Direction</th>
+                                    <th style="width:14%">Healthy</th>
+                                    <th style="width:14%">At Risk</th>
+                                    <th style="width:14%">Critical</th>
+                                    <th style="width:8%">Score</th>
+                                    <th style="width:5%"></th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr><td><input type="text" value="Capture Rate %" class="cfg-input" style="width:100%"></td><td><input type="number" value="30" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="higher" selected>Higher &#9650;</option><option value="lower">Lower &#9660;</option></select></td><td><input type="text" value="> 40%" class="cfg-input" style="width:100%"></td><td><input type="text" value="30 - 40%" class="cfg-input" style="width:100%"></td><td><input type="text" value="< 30%" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge info" style="font-size:0.75rem">3.2</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="Voluntary Churn %" class="cfg-input" style="width:100%"></td><td><input type="number" value="30" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="lower">Lower &#9660;</option><option value="higher">Higher &#9650;</option></select></td><td><input type="text" value="< 4%" class="cfg-input" style="width:100%"></td><td><input type="text" value="4 - 7%" class="cfg-input" style="width:100%"></td><td><input type="text" value="> 7%" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge warning" style="font-size:0.75rem">2.0</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="Revenue YoY %" class="cfg-input" style="width:100%"></td><td><input type="number" value="25" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="higher" selected>Higher &#9650;</option><option value="lower">Lower &#9660;</option></select></td><td><input type="text" value="> 5%" class="cfg-input" style="width:100%"></td><td><input type="text" value="-5% to 5%" class="cfg-input" style="width:100%"></td><td><input type="text" value="< -5%" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge info" style="font-size:0.75rem">3.0</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                    <tr><td><input type="text" value="Traffic YoY %" class="cfg-input" style="width:100%"></td><td><input type="number" value="15" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td><td><select class="cfg-input"><option value="higher" selected>Higher &#9650;</option><option value="lower">Lower &#9660;</option></select></td><td><input type="text" value="> 3%" class="cfg-input" style="width:100%"></td><td><input type="text" value="-3% to 3%" class="cfg-input" style="width:100%"></td><td><input type="text" value="< -3%" class="cfg-input" style="width:100%"></td><td style="text-align:center"><span class="badge warning" style="font-size:0.75rem">2.5</span></td><td><button class="btn-icon" onclick="this.closest('tr').remove()" title="Remove">&times;</button></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;padding:0.5rem 0.75rem;background:#fff7ed;border-radius:0.5rem">
+                            <span style="font-size:0.8rem;color:#f04e23;font-weight:600">Total Weight: <span id="biz-total-weight">100</span>%</span>
+                            <span id="biz-weight-status" style="font-size:0.75rem">&#10003; Weights sum to 100%</span>
+                        </div>
+                    </div>
+
+                    <!-- Score Scale Reference -->
+                    <div class="card" style="margin-bottom:1.5rem">
+                        <h3 style="margin-bottom:0.5rem">Score Scale Reference</h3>
+                        <div style="display:flex;gap:0;border-radius:0.5rem;overflow:hidden;height:32px;margin-bottom:0.75rem">
+                            <div style="flex:2;background:linear-gradient(90deg,#FEE2E2,#FEF3C7);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:#991B1B">0 &mdash; 2.0 Critical</div>
+                            <div style="flex:1.5;background:linear-gradient(90deg,#FEF3C7,#D1FAE5);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:#92400E">2.0 &mdash; 3.5 At Risk</div>
+                            <div style="flex:1.5;background:linear-gradient(90deg,#D1FAE5,#A7F3D0);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:#065F46">3.5 &mdash; 5.0 Healthy</div>
+                        </div>
+                        <p style="font-size:0.8rem;color:var(--gray-500)">Each KPI is scored 0&ndash;5 based on where the actual value falls relative to the thresholds above. The weighted average of all KPIs produces the sub-score. Overall Health = (Op &times; Op Weight) + (Biz &times; Biz Weight).</p>
+                    </div>
+
+                    <div style="display:flex;gap:0.75rem">
+                        <button class="btn btn-primary" onclick="saveHealthConfig()" style="background:#1a4797">Save Health Configuration</button>
+                        <button class="btn btn-secondary" onclick="resetHealthConfig()">Reset to Defaults</button>
+                    </div>
                 </div>
-                <h2 style="margin-top:0">Alert Configuration</h2><p class="page-subtitle">Set custom thresholds to trigger alerts</p>
-                <div class="card-grid" style="grid-template-columns:repeat(2,1fr)">
-                    <div class="card"><h3>Capture Rate</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="35"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="28"></div></div></div>
-                    <div class="card"><h3>Voluntary Churn</h3><div class="form-row"><div class="form-group"><label>Warning (Above)</label><input type="number" value="6.0"></div><div class="form-group"><label>Critical (Above)</label><input type="number" value="7.5"></div></div></div>
-                    <div class="card"><h3>Traffic YoY</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="-5"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="-15"></div></div></div>
-                    <div class="card"><h3>Revenue YoY</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="-5"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="-12"></div></div></div>
-                    <div class="card"><h3>Health Score</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="50"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="35"></div></div></div>
-                    <div class="card"><h3>Average Ticket</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="28"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="24"></div></div></div>
+
+                <!-- ===== ALERT THRESHOLDS TAB ===== -->
+                <div id="alert-config" class="cfg-panel" style="display:none">
+                    <h2 style="margin-top:0">Alert Thresholds</h2><p class="page-subtitle" style="margin-bottom:1rem">Set custom thresholds to trigger alerts on the Risk Alerts page.</p>
+                    <div class="card-grid" style="grid-template-columns:repeat(2,1fr)">
+                        <div class="card"><h3>Capture Rate</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="35"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="28"></div></div></div>
+                        <div class="card"><h3>Voluntary Churn</h3><div class="form-row"><div class="form-group"><label>Warning (Above)</label><input type="number" value="6.0"></div><div class="form-group"><label>Critical (Above)</label><input type="number" value="7.5"></div></div></div>
+                        <div class="card"><h3>Traffic YoY</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="-5"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="-15"></div></div></div>
+                        <div class="card"><h3>Revenue YoY</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="-5"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="-12"></div></div></div>
+                        <div class="card"><h3>Health Score</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="2.5"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="1.5"></div></div></div>
+                        <div class="card"><h3>Average Ticket</h3><div class="form-row"><div class="form-group"><label>Warning (Below)</label><input type="number" value="28"></div><div class="form-group"><label>Critical (Below)</label><input type="number" value="24"></div></div></div>
+                    </div>
+                    <div style="margin-top:1.5rem"><button class="btn btn-primary" style="background:#1a4797">Save Thresholds</button><button class="btn btn-secondary" style="margin-left:0.5rem">Reset to Defaults</button></div>
                 </div>
-                <div style="margin-top:1.5rem"><button class="btn btn-primary">Save Configuration</button><button class="btn btn-secondary" style="margin-left:0.5rem">Reset to Defaults</button></div>
+
+                <!-- ===== PDF EXPORT TAB ===== -->
+                <div id="export-config" class="cfg-panel" style="display:none">
+                    <div class="card" style="border-left:4px solid var(--drb-orange)">
+                        <h3 style="color:var(--drb-orange)">Export DRB Pulse PDF</h3>
+                        <p style="font-size:0.85rem;color:#64748B;margin-bottom:0.75rem">Generate a professionally styled PDF report matching the SUDS/DRB Pulse presentation template. Select a customer and click generate.</p>
+                        <div class="form-row">
+                            <div class="form-group"><label>Customer</label>
+                                <select id="pdf-customer">
+                                    <option value="bmw">BMW Kar Wash LLC</option>
+                                    <option value="sparkle">Sparkle Clean Auto Spa</option>
+                                    <option value="quick">Quick Clean Express</option>
+                                    <option value="premier">Premier Auto Spa</option>
+                                    <option value="tts">Time To Shine Car Wash</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Report Date</label>
+                                <input type="month" id="pdf-date" value="2026-02">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="generatePdfExport()" style="background:#f04e23">Generate PDF Report</button>
+                        <div id="pdf-status" style="margin-top:0.5rem;font-size:0.8rem;color:#64748B"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="footer">Data as of: <span id="current-date"></span> &middot; DRB Pulse</div>
@@ -958,24 +1117,32 @@
 
     <script>window.__DRB_DATA__ = null;</script>
 <script>
+window.onerror = function(msg, url, line, col, err) {
+    var d = document.getElementById('debug-bar');
+    if (!d) { d = document.createElement('div'); d.id='debug-bar'; d.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#fee;color:#900;padding:8px 16px;font:12px monospace;z-index:99999;max-height:120px;overflow:auto'; document.body.appendChild(d); }
+    d.innerHTML += 'JS Error: ' + msg + ' (line ' + line + ')<br>';
+    return false;
+};
 function switchPage(pageId, btn) {
-    // Remove active from all nav items
     var items = document.querySelectorAll('.nav-item');
     for (var i = 0; i < items.length; i++) items[i].className = 'nav-item';
-    // Remove active from all pages
     var pages = document.querySelectorAll('.page');
     for (var i = 0; i < pages.length; i++) pages[i].className = 'page';
-    // Activate clicked
     btn.className = 'nav-item active';
     var target = document.getElementById(pageId);
     if (target) target.className = 'page active';
-    // Init charts for that page
-    try {
-        if (pageId === 'operational') setTimeout(function(){ initOp(); }, 100);
-        else if (pageId === 'boap') setTimeout(function(){ initBoap(); }, 100);
-        else if (pageId === 'deepdive') setTimeout(function(){ initDD('dd-general'); }, 100);
-        else if (pageId === 'roi') setTimeout(function(){ initROI(); }, 100);
-    } catch(e) { console.log('Chart init:', e); }
+    function tryInit(attempt) {
+        try {
+            if (pageId === 'operational') initOp();
+            else if (pageId === 'boap') initBoap();
+            else if (pageId === 'deepdive') initDD('dd-general');
+            else if (pageId === 'roi') initROI();
+        } catch(e) {
+            console.error('Chart init attempt ' + attempt + ':', e);
+            if (attempt < 3) setTimeout(function(){ tryInit(attempt+1); }, 300);
+        }
+    }
+    setTimeout(function(){ tryInit(1); }, 150);
 }
 </script>
 
@@ -1011,17 +1178,19 @@ function switchPage(pageId, btn) {
 
         ctx: function(id) {
             var cv = document.getElementById(id);
-            if (!cv) return null;
+            if (!cv) { console.warn('Canvas not found:', id); return null; }
             var p = cv.parentElement;
             var dpr = window.devicePixelRatio || 1;
-            cv.width = p.offsetWidth * dpr;
-            cv.height = p.offsetHeight * dpr;
-            cv.style.width = p.offsetWidth + 'px';
-            cv.style.height = p.offsetHeight + 'px';
+            var pw = p.offsetWidth, ph = p.offsetHeight;
+            if (pw < 10 || ph < 10) { console.warn('Canvas parent too small:', id, pw, ph); return null; }
+            cv.width = pw * dpr;
+            cv.height = ph * dpr;
+            cv.style.width = pw + 'px';
+            cv.style.height = ph + 'px';
             var c = cv.getContext('2d');
             c.scale(dpr, dpr);
-            c._w = p.offsetWidth;
-            c._h = p.offsetHeight;
+            c._w = pw;
+            c._h = ph;
             return c;
         },
 
@@ -1147,6 +1316,62 @@ function switchPage(pageId, btn) {
             }
             var step=labels.length>15?3:labels.length>8?2:1;
             for(var sn=0;sn<labels.length;sn++){if(sn%step===0){var sx=pad.l+(sn/(n-1))*cw;c.fillStyle=this.c.lbl;c.textAlign='center';c.textBaseline='top';c.save();c.translate(sx,h-pad.b+8);c.rotate(-0.4);c.fillText(labels[sn],0,0);c.restore();}}
+        },
+
+        /* Health Score Chart - fixed 0-5 Y-axis with colored zones */
+        healthLine: function(id, labels, datasets) {
+            var c = this.ctx(id); if(!c) return;
+            var w=c._w, h=c._h;
+            var pad={t:25,r:15,b:50,l:55}, cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+            var mn=0, mx=5, rng=5;
+            c.clearRect(0,0,w,h);
+            c.font='11px -apple-system,sans-serif';
+            /* zone bands */
+            var y0=function(v){return h-pad.b-((v-mn)/rng)*ch;};
+            c.fillStyle='rgba(239,68,68,0.06)'; c.fillRect(pad.l,y0(2),cw,y0(0)-y0(2));
+            c.fillStyle='rgba(245,158,11,0.06)'; c.fillRect(pad.l,y0(3.5),cw,y0(2)-y0(3.5));
+            c.fillStyle='rgba(16,185,129,0.06)'; c.fillRect(pad.l,y0(5),cw,y0(3.5)-y0(5));
+            /* zone labels */
+            c.font='10px -apple-system,sans-serif'; c.textAlign='right';
+            c.fillStyle='rgba(239,68,68,0.35)'; c.fillText('Critical',w-pad.r-4,y0(1));
+            c.fillStyle='rgba(245,158,11,0.35)'; c.fillText('At Risk',w-pad.r-4,y0(2.75));
+            c.fillStyle='rgba(16,185,129,0.35)'; c.fillText('Healthy',w-pad.r-4,y0(4.25));
+            /* grid + Y axis: 0,1,2,3,4,5 */
+            c.font='11px -apple-system,sans-serif';
+            for(var g=0;g<=5;g++){
+                var gy=y0(g);
+                c.strokeStyle=this.c.grid;c.lineWidth=1;c.beginPath();c.moveTo(pad.l,gy);c.lineTo(w-pad.r,gy);c.stroke();
+                c.fillStyle=this.c.lbl;c.textAlign='right';c.textBaseline='middle';c.fillText(g.toFixed(1),pad.l-8,gy);
+            }
+            /* zone boundary lines */
+            c.setLineDash([4,4]);c.lineWidth=1;
+            c.strokeStyle='rgba(239,68,68,0.25)';c.beginPath();c.moveTo(pad.l,y0(2));c.lineTo(w-pad.r,y0(2));c.stroke();
+            c.strokeStyle='rgba(16,185,129,0.25)';c.beginPath();c.moveTo(pad.l,y0(3.5));c.lineTo(w-pad.r,y0(3.5));c.stroke();
+            c.setLineDash([]);
+            /* draw lines */
+            for(var ds=0;ds<datasets.length;ds++){
+                var data=datasets[ds].data, lc=datasets[ds].color, lw=datasets[ds].width||2;
+                var pts=[];
+                for(var i=0;i<data.length;i++){pts.push({x:pad.l+(i/(data.length-1))*cw,y:y0(data[i])});}
+                c.beginPath();
+                for(var k=0;k<pts.length;k++){if(k===0)c.moveTo(pts[k].x,pts[k].y);else{var xc=(pts[k-1].x+pts[k].x)/2;c.bezierCurveTo(xc,pts[k-1].y,xc,pts[k].y,pts[k].x,pts[k].y);}}
+                if(datasets[ds].dashed) c.setLineDash(datasets[ds].dashed);
+                c.strokeStyle=lc;c.lineWidth=lw;c.stroke();
+                c.setLineDash([]);
+                for(var m=0;m<pts.length;m++){c.beginPath();c.arc(pts[m].x,pts[m].y,lw>2?3.5:2.5,0,Math.PI*2);c.fillStyle=lc;c.fill();c.strokeStyle='white';c.lineWidth=1.5;c.stroke();}
+            }
+            /* legend */
+            var lx=pad.l+10;
+            c.font='11px -apple-system,sans-serif';
+            for(var lg=0;lg<datasets.length;lg++){
+                if(datasets[lg].dashed){c.setLineDash(datasets[lg].dashed);c.strokeStyle=datasets[lg].color;c.lineWidth=2;c.beginPath();c.moveTo(lx,10);c.lineTo(lx+14,10);c.stroke();c.setLineDash([]);}
+                else{c.fillStyle=datasets[lg].color;c.fillRect(lx,5,14,10);}
+                c.fillStyle=this.c.lbl;c.textAlign='left';c.textBaseline='top';c.fillText(datasets[lg].label,lx+18,4);
+                lx+=c.measureText(datasets[lg].label).width+38;
+            }
+            /* X labels */
+            var step=labels.length>15?3:labels.length>8?2:1;
+            for(var n=0;n<labels.length;n++){if(n%step===0){var nx=pad.l+(n/(labels.length-1))*cw;c.fillStyle=this.c.lbl;c.textAlign='center';c.textBaseline='top';c.save();c.translate(nx,h-pad.b+8);c.rotate(-0.4);c.fillText(labels[n],0,0);c.restore();}}
         },
 
         pie: function(id, slices, donut) {
@@ -1360,8 +1585,7 @@ function switchPage(pageId, btn) {
         w.document.write('.action-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#2a5cad;color:white;font-weight:700;font-size:13px;margin-right:10px}');
         w.document.write('.action-title{font-size:14px;font-weight:700;color:#1a4797}.action-desc{font-size:10px;color:#333;margin:4px 0 16px 38px}');
         w.document.write('@media print{.no-print{display:none!important}}');
-        w.document.write('</style><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
-</head><body>');
+        w.document.write('</style></head><body>');
 
         /* Print button */
         w.document.write('<div class="no-print" style="background:#1a4797;color:white;padding:10px 20px;text-align:center;font-size:14px">');
@@ -1424,15 +1648,104 @@ function switchPage(pageId, btn) {
     }
 
     /* DATA */
-    var cust={bmw:{name:'BMW Kar Wash LLC',sites:61,region:'MI',csm:'Morgan Malone',health:'Green',score:2.80,uptime:'99.92%',totalCases:572,openCases:4,avgTtr:2.24,hwSwaps:3,escalations:1},sparkle:{name:'Sparkle Clean Auto Spa',sites:12,region:'AZ',csm:'Mike Johnson',health:'Red',score:1.20,uptime:'97.45%',totalCases:89,openCases:8,avgTtr:4.5,hwSwaps:5,escalations:3},quick:{name:'Quick Clean Express',sites:156,region:'TX',csm:'Tom Wilson',health:'Green',score:3.50,uptime:'99.78%',totalCases:1240,openCases:12,avgTtr:1.8,hwSwaps:8,escalations:2},premier:{name:'Premier Auto Spa',sites:234,region:'CA',csm:'Sarah Chen',health:'Green',score:4.20,uptime:'99.95%',totalCases:1890,openCases:6,avgTtr:1.2,hwSwaps:4,escalations:0}};
+    var cust={
+    bmw:{name:'BMW Kar Wash LLC',orgCode:'BMW-001',sites:61,region:'MI',csm:'Morgan Malone',
+        opHealth:3.4,bizHealth:2.2,overall:2.80,
+        opHistory:[2.8,2.9,3.0,2.9,3.1,3.0,3.2,3.1,3.3,3.2,3.4,3.4],
+        bizHistory:[1.4,1.5,1.6,1.5,1.7,1.8,1.7,1.9,2.0,2.0,2.1,2.2],
+        overallHistory:[2.1,2.0,2.2,2.3,2.1,2.4,2.5,2.3,2.6,2.7,2.6,2.8],
+        uptime:'99.92%',totalCases:572,openCases:4,avgTtr:2.24,hwSwaps:3,escalations:1,
+        captureRate:'36%',churnRate:'5.8%',trafficYoY:'+3%',revenueYoY:'+5%'},
+    sparkle:{name:'Sparkle Clean Auto Spa',orgCode:'SPA-042',sites:12,region:'AZ',csm:'Mike Johnson',
+        opHealth:1.8,bizHealth:0.8,overall:1.20,
+        opHistory:[3.0,2.8,2.6,2.4,2.3,2.2,2.1,2.0,1.9,1.9,1.8,1.8],
+        bizHistory:[2.2,2.0,1.8,1.6,1.4,1.2,1.1,1.0,0.9,0.9,0.8,0.8],
+        overallHistory:[3.2,3.0,2.8,2.5,2.3,2.1,1.9,1.8,1.6,1.4,1.3,1.2],
+        uptime:'97.45%',totalCases:89,openCases:8,avgTtr:4.5,hwSwaps:5,escalations:3,
+        captureRate:'31%',churnRate:'8.2%',trafficYoY:'-18%',revenueYoY:'-18%'},
+    quick:{name:'Quick Clean Express',orgCode:'QCE-118',sites:156,region:'TX',csm:'Tom Wilson',
+        opHealth:3.8,bizHealth:3.2,overall:3.50,
+        opHistory:[3.2,3.3,3.4,3.5,3.4,3.6,3.5,3.7,3.6,3.8,3.7,3.8],
+        bizHistory:[2.6,2.7,2.8,2.8,2.9,2.9,3.0,3.0,3.1,3.1,3.2,3.2],
+        overallHistory:[3.0,3.1,3.0,3.2,3.1,3.3,3.2,3.4,3.3,3.5,3.4,3.5],
+        uptime:'99.78%',totalCases:1240,openCases:12,avgTtr:1.8,hwSwaps:8,escalations:2,
+        captureRate:'33%',churnRate:'7.1%',trafficYoY:'-12%',revenueYoY:'-14%'},
+    premier:{name:'Premier Auto Spa',orgCode:'PAS-200',sites:234,region:'CA',csm:'Sarah Chen',
+        opHealth:4.5,bizHealth:4.0,overall:4.20,
+        opHistory:[3.6,3.7,3.8,3.9,4.0,4.0,4.1,4.2,4.2,4.3,4.4,4.5],
+        bizHistory:[3.0,3.1,3.2,3.3,3.4,3.5,3.5,3.6,3.7,3.8,3.9,4.0],
+        overallHistory:[3.4,3.5,3.6,3.7,3.8,3.8,3.9,4.0,4.0,4.1,4.1,4.2],
+        uptime:'99.95%',totalCases:1890,openCases:6,avgTtr:1.2,hwSwaps:4,escalations:0,
+        captureRate:'48%',churnRate:'3.8%',trafficYoY:'+12%',revenueYoY:'+14%'}
+    };
+    var orgSiteLookup = [
+        {code:'BMW-001',label:'BMW Kar Wash LLC (Org)',key:'bmw',type:'org'},
+        {code:'BMW-001-S01',label:'BMW Location 1 - Detroit',key:'bmw',type:'site'},
+        {code:'BMW-001-S02',label:'BMW Location 2 - Chicago',key:'bmw',type:'site'},
+        {code:'SPA-042',label:'Sparkle Clean Auto Spa (Org)',key:'sparkle',type:'org'},
+        {code:'SPA-042-S01',label:'Sparkle Location 1 - Phoenix',key:'sparkle',type:'site'},
+        {code:'QCE-118',label:'Quick Clean Express (Org)',key:'quick',type:'org'},
+        {code:'QCE-118-S01',label:'Quick Clean Location 1 - Dallas',key:'quick',type:'site'},
+        {code:'QCE-118-S02',label:'Quick Clean Location 2 - Austin',key:'quick',type:'site'},
+        {code:'PAS-200',label:'Premier Auto Spa (Org)',key:'premier',type:'org'},
+        {code:'PAS-200-S01',label:'Premier Location 1 - LA',key:'premier',type:'site'},
+        {code:'PAS-200-S02',label:'Premier Location 2 - SF',key:'premier',type:'site'}
+    ]
 
     function genSites(n){var cities=['Detroit','Chicago','Milwaukee','Cleveland','Indianapolis'],plat=['SW & PATH','SW Only','PATH Only','XPT & SW'],s=[];for(var i=1;i<=Math.min(n,20);i++){var h=Math.random()>0.8?'warning':Math.random()>0.95?'critical':'healthy';s.push({name:'Location '+i,city:cities[Math.floor(Math.random()*cities.length)],health:h,uptime:(95+Math.random()*5).toFixed(2),cases:Math.floor(Math.random()*25),open:Math.floor(Math.random()*5),swaps:Math.floor(Math.random()*3),esc:Math.floor(Math.random()*2),csat:(85+Math.random()*15).toFixed(1),plat:plat[Math.floor(Math.random()*plat.length)]});}return s;}
 
-    function updateOperationalData(){var s=document.getElementById('customer-select'),d=cust[s.value];document.getElementById('op-customer-name').textContent=d.name;document.getElementById('op-customer-meta').textContent=d.sites+' Sites \u00B7 '+d.region+' \u00B7 CSM: '+d.csm;document.getElementById('op-health-index').textContent=d.health;document.getElementById('op-health-index').className='customer-stat-value '+d.health.toLowerCase();document.getElementById('op-health-score').textContent=d.score.toFixed(2);document.getElementById('op-uptime').textContent=d.uptime;document.getElementById('op-total-cases').textContent=d.totalCases;document.getElementById('op-open-cases').textContent=d.openCases;document.getElementById('op-avg-ttr').textContent=d.avgTtr;document.getElementById('op-hw-swaps').textContent=d.hwSwaps;document.getElementById('op-escalations').textContent=d.escalations;var sites=genSites(d.sites),tb=document.getElementById('sites-table-body');tb.innerHTML=sites.map(function(x){return'<tr><td>'+x.name+'</td><td>'+x.city+'</td><td><span class="badge '+x.health+'">'+x.health+'</span></td><td>'+x.uptime+'%</td><td>'+x.cases+'</td><td>'+x.open+'</td><td>'+x.swaps+'</td><td>'+x.esc+'</td><td>'+x.csat+'%</td><td>'+x.plat+'</td></tr>';}).join('');}
+    function updateOperationalData(){
+        var s=document.getElementById('customer-select'),d=cust[s.value];
+        if(!d) return;
+        document.getElementById('op-customer-name').textContent=d.name;
+        document.getElementById('op-customer-meta').textContent=d.orgCode+' \u00B7 '+d.sites+' Sites \u00B7 '+d.region+' \u00B7 CSM: '+d.csm;
+        /* health scores */
+        function hColor(v){return v>=3.5?'#10B981':v>=2?'#F59E0B':'#EF4444';}
+        function hBarHtml(v){return '<div class="health-bar-fill" style="width:'+(v/5*100)+'%;background:'+hColor(v)+'"></div>';}
+        document.getElementById('op-opHealth').textContent=d.opHealth.toFixed(2);
+        document.getElementById('op-opHealth').style.color=hColor(d.opHealth);
+        document.getElementById('op-opBar').innerHTML=hBarHtml(d.opHealth);
+        document.getElementById('op-bizHealth').textContent=d.bizHealth.toFixed(2);
+        document.getElementById('op-bizHealth').style.color=hColor(d.bizHealth);
+        document.getElementById('op-bizBar').innerHTML=hBarHtml(d.bizHealth);
+        document.getElementById('op-overallHealth').textContent=d.overall.toFixed(2);
+        document.getElementById('op-overallHealth').style.color=hColor(d.overall);
+        document.getElementById('op-overallBar').innerHTML=hBarHtml(d.overall);
+        /* kpis */
+        document.getElementById('op-uptime').textContent=d.uptime;
+        document.getElementById('op-total-cases').textContent=d.totalCases;
+        document.getElementById('op-open-cases').textContent=d.openCases;
+        document.getElementById('op-avg-ttr').textContent=d.avgTtr;
+        document.getElementById('op-hw-swaps').textContent=d.hwSwaps;
+        document.getElementById('op-escalations').textContent=d.escalations;
+        /* health chart */
+        var m=ml(12);
+        SC.healthLine('healthScoreChart',m,[
+            {label:'Operational',data:d.opHistory,color:'#3B82F6',width:2,dashed:[6,3]},
+            {label:'Business',data:d.bizHistory,color:'#f04e23',width:2,dashed:[6,3]},
+            {label:'Overall',data:d.overallHistory,color:'#1a4797',width:3}
+        ]);
+        /* sites table */
+        var sites=genSites(d.sites),tb=document.getElementById('sites-table-body');
+        tb.innerHTML=sites.map(function(x){return'<tr><td>'+x.name+'</td><td>'+x.city+'</td><td><span class="badge '+x.health+'">'+x.health+'</span></td><td>'+x.uptime+'%</td><td>'+x.cases+'</td><td>'+x.open+'</td><td>'+x.swaps+'</td><td>'+x.esc+'</td><td>'+x.csat+'%</td><td>'+x.plat+'</td></tr>';}).join('');
+    }
 
     function ml(n){var m=[],now=new Date();for(var i=n-1;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth()-i,1);m.push(d.toLocaleDateString('en-US',{month:'short',year:'2-digit'}));}return m;}
 
-    function initOp(){var m=ml(12);SC.bar('caseByProductChart',['XPT/Kiosk','Cashier','Gate','TunnelWatch','Server','XCC','OTT','ARM'],[572,157,119,111,110,57,51,44],SC.c.blue,true);SC.line('monthlyCaseChart',m,[85,92,78,95,110,88,76,102,98,115,89,95],SC.c.blue,SC.c.bf);SC.line('hardwareSwapsChart',m,[2,1,3,2,4,1,2,3,1,2,3,2],SC.c.orange,SC.c.of);SC.line('escalationsChart',m,[1,0.5,2,1,1,2,0.5,1,2,1,0.5,1],SC.c.red,SC.c.rf);updateOperationalData();}
+    function initOp(){
+        var m=ml(12);var sel=document.getElementById('customer-select');var d=cust[sel.value];
+        if(!d) return;
+        SC.healthLine('healthScoreChart',m,[
+            {label:'Operational',data:d.opHistory,color:'#3B82F6',width:2,dashed:[6,3]},
+            {label:'Business',data:d.bizHistory,color:'#f04e23',width:2,dashed:[6,3]},
+            {label:'Overall',data:d.overallHistory,color:'#1a4797',width:3}
+        ]);
+        SC.bar('caseByProductChart',['XPT/Kiosk','Cashier','Gate','TunnelWatch','Server','XCC','OTT','ARM'],[572,157,119,111,110,57,51,44],SC.c.blue,true);
+        SC.line('monthlyCaseChart',m,[85,92,78,95,110,88,76,102,98,115,89,95],SC.c.blue,SC.c.bf);
+        SC.line('hardwareSwapsChart',m,[2,1,3,2,4,1,2,3,1,2,3,2],SC.c.orange,SC.c.of);
+        SC.line('escalationsChart',m,[1,0.5,2,1,1,2,0.5,1,2,1,0.5,1],SC.c.red,SC.c.rf);
+        updateOperationalData();
+    }
 
     function initBoap(){
         var m=ml(24),rv=[],mm=[],cap=[],rtk=[],joins=[],churns=[];
@@ -2149,6 +2462,155 @@ function switchPage(pageId, btn) {
             return '<tr><td style="font-weight:600">'+s.name+'</td><td>'+s.cars.toLocaleString()+'</td><td>'+s.rev+'</td><td>'+s.ticket+'</td><td>'+s.cap+'</td><td>'+s.churn+'</td><td>'+s.memPct+'</td><td>#'+s.rank+'</td><td><span class="badge '+s.status+'">'+(s.status==='critical'?'Below Avg':s.status==='warning'?'Watch':s.status==='healthy'?'Strong':'On Track')+'</span></td></tr>';
         }).join('');
     }
+    /* CONFIG TAB SWITCHING */
+    function switchCfgTab(tabId, btn) {
+        var tabs = document.querySelectorAll('.cfg-tab');
+        for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+        var panels = document.querySelectorAll('.cfg-panel');
+        for (var i = 0; i < panels.length; i++) { panels[i].classList.remove('active'); panels[i].style.display = 'none'; }
+        btn.classList.add('active');
+        var target = document.getElementById(tabId);
+        if (target) { target.classList.add('active'); target.style.display = 'block'; }
+    }
+
+    /* OVERALL WEIGHT SLIDER */
+    function updateOverallWeights() {
+        var opW = parseInt(document.getElementById('overall-op-weight').value);
+        var bizW = 100 - opW;
+        document.getElementById('overall-op-weight-val').textContent = opW + '%';
+        document.getElementById('overall-biz-weight-val').textContent = bizW + '%';
+        document.getElementById('overall-biz-weight').value = bizW;
+        document.getElementById('formula-op').textContent = (opW / 100).toFixed(2);
+        document.getElementById('formula-biz').textContent = (bizW / 100).toFixed(2);
+    }
+
+    /* ADD KPI ROW */
+    function addKpiRow(tableId) {
+        var tbody = document.getElementById(tableId).querySelector('tbody');
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><input type="text" value="" placeholder="KPI Name" class="cfg-input" style="width:100%"></td>'
+            + '<td><input type="number" value="0" class="cfg-input cfg-weight" min="0" max="100" style="width:60px">%</td>'
+            + '<td><select class="cfg-input"><option value="lower">Lower &#9660;</option><option value="higher">Higher &#9650;</option></select></td>'
+            + '<td><input type="text" value="" placeholder="e.g. < 5" class="cfg-input" style="width:100%"></td>'
+            + '<td><input type="text" value="" placeholder="e.g. 5 - 10" class="cfg-input" style="width:100%"></td>'
+            + '<td><input type="text" value="" placeholder="e.g. > 10" class="cfg-input" style="width:100%"></td>'
+            + '<td style="text-align:center"><span class="badge info" style="font-size:0.75rem">&mdash;</span></td>'
+            + '<td><button class="btn-icon" onclick="this.closest(\'tr\').remove();updateWeightTotals()" title="Remove">&times;</button></td>';
+        tbody.appendChild(tr);
+        /* attach weight listener */
+        tr.querySelector('.cfg-weight').addEventListener('input', updateWeightTotals);
+        updateWeightTotals();
+    }
+
+    /* WEIGHT TOTAL TRACKING */
+    function updateWeightTotals() {
+        calcTableWeight('op-kpi-table', 'op-total-weight', 'op-weight-status');
+        calcTableWeight('biz-kpi-table', 'biz-total-weight', 'biz-weight-status');
+    }
+    function calcTableWeight(tableId, totalId, statusId) {
+        var tbl = document.getElementById(tableId);
+        if (!tbl) return;
+        var inputs = tbl.querySelectorAll('.cfg-weight');
+        var sum = 0;
+        for (var i = 0; i < inputs.length; i++) sum += parseInt(inputs[i].value) || 0;
+        var el = document.getElementById(totalId);
+        var st = document.getElementById(statusId);
+        if (el) el.textContent = sum;
+        if (st) {
+            if (sum === 100) { st.innerHTML = '<span style="color:#10B981">&#10003; Weights sum to 100%</span>'; }
+            else if (sum > 100) { st.innerHTML = '<span style="color:#EF4444">&#10007; Over by ' + (sum - 100) + '%</span>'; }
+            else { st.innerHTML = '<span style="color:#F59E0B">&#9888; Under by ' + (100 - sum) + '%</span>'; }
+        }
+    }
+
+    /* SAVE / RESET CONFIG */
+    function saveHealthConfig() {
+        var opW = parseInt(document.getElementById('overall-op-weight').value);
+        var bizW = 100 - opW;
+        /* Gather KPI definitions */
+        var opKpis = gatherKpis('op-kpi-table');
+        var bizKpis = gatherKpis('biz-kpi-table');
+        var config = { opWeight: opW / 100, bizWeight: bizW / 100, opKpis: opKpis, bizKpis: bizKpis };
+        window.__healthConfig = config;
+        console.log('Health config saved:', JSON.stringify(config, null, 2));
+        /* Visual confirmation */
+        var btn = event.target;
+        var orig = btn.textContent;
+        btn.textContent = '\u2713 Configuration Saved';
+        btn.style.background = '#10B981';
+        setTimeout(function(){ btn.textContent = orig; btn.style.background = '#1a4797'; }, 2000);
+    }
+    function gatherKpis(tableId) {
+        var rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+        var kpis = [];
+        for (var i = 0; i < rows.length; i++) {
+            var inputs = rows[i].querySelectorAll('input');
+            var selects = rows[i].querySelectorAll('select');
+            kpis.push({
+                name: inputs[0] ? inputs[0].value : '',
+                weight: inputs[1] ? (parseInt(inputs[1].value) || 0) : 0,
+                direction: selects[0] ? selects[0].value : 'lower',
+                healthy: inputs[2] ? inputs[2].value : '',
+                atRisk: inputs[3] ? inputs[3].value : '',
+                critical: inputs[4] ? inputs[4].value : ''
+            });
+        }
+        return kpis;
+    }
+    function resetHealthConfig() {
+        if (!confirm('Reset all health score configuration to defaults?')) return;
+        location.reload();
+    }
+
+    /* Attach weight listeners to existing rows */
+    document.querySelectorAll('.cfg-weight').forEach(function(inp){
+        inp.addEventListener('input', updateWeightTotals);
+    });
+    /* Attach remove buttons */
+    document.querySelectorAll('#op-kpi-table .btn-icon, #biz-kpi-table .btn-icon').forEach(function(btn){
+        btn.addEventListener('click', function(){ setTimeout(updateWeightTotals, 50); });
+    });
+
+    /* ORG/SITE AUTOCOMPLETE */
+    function showOrgSuggestions(){ filterOrgSuggestions(); document.getElementById('org-suggestions').style.display='block'; }
+    function hideOrgSuggestions(){ setTimeout(function(){ document.getElementById('org-suggestions').style.display='none'; },200); }
+    function filterOrgSuggestions(){
+        var q=document.getElementById('org-search').value.toLowerCase();
+        var box=document.getElementById('org-suggestions');
+        var matches=orgSiteLookup.filter(function(o){ return o.code.toLowerCase().indexOf(q)>=0 || o.label.toLowerCase().indexOf(q)>=0; });
+        box.innerHTML=matches.map(function(o){
+            return '<div class="org-item" onclick="selectOrg(\''+o.key+'\',\''+o.code+'\',\''+o.label.replace(/'/g,"\\\\'")+'\')"><div><strong>'+o.label+'</strong></div><div style="display:flex;gap:8px;align-items:center"><span class="org-code">'+o.code+'</span><span class="org-type '+(o.type==='org'?'org-tag':'site-tag')+'">'+o.type+'</span></div></div>';
+        }).join('');
+        if(matches.length===0) box.innerHTML='<div style="padding:12px;color:var(--gray-500);font-size:0.85rem">No matching org or site codes</div>';
+    }
+    function selectOrg(key, code, label){
+        document.getElementById('org-search').value=code+' - '+label.split('(')[0].trim();
+        document.getElementById('customer-select').value=key;
+        document.getElementById('org-suggestions').style.display='none';
+        updateOperationalData();
+        initOp();
+    }
+    document.getElementById('org-search').addEventListener('blur', hideOrgSuggestions);
+
+    /* DATE PICKER DEFAULTS */
+    (function(){
+        var now=new Date();
+        var end=now.toISOString().split('T')[0];
+        var start=new Date(now.getFullYear(),now.getMonth()-1,now.getDate()).toISOString().split('T')[0];
+        var ds=document.getElementById('date-start'), de=document.getElementById('date-end');
+        if(ds) ds.value=start;
+        if(de) de.value=end;
+    })();
+
+    /* Set default search field value */
+    document.getElementById('org-search').value='BMW-001 - BMW Kar Wash LLC';
+
+    /* SELF-TEST: confirm script executed */
+    (function(){
+        var t=document.getElementById('current-date');
+        if(t) t.textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+        console.log('DRB Pulse: All scripts loaded successfully. SC engine:', typeof SC, 'initOp:', typeof initOp);
+    })();
     </script>
 </body>
 </html>
