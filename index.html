@@ -321,7 +321,7 @@
                     <div class="table-container"><table><thead><tr>
                         <th class="sortable" data-sort="client" onclick="sortPortfolio('client')">Customer <span class="sort-arrow">⇅</span></th>
                         <th class="sortable" data-sort="siteCount" onclick="sortPortfolio('siteCount')">Sites <span class="sort-arrow">⇅</span></th>
-                        <th class="sortable" data-sort="health" onclick="sortPortfolio('health')" style="text-align:center"><div>Health <span class="sort-arrow">⇅</span></div><div style="display:flex;gap:2px;font-size:0.55rem;font-weight:500;color:#94A3B8;justify-content:center;margin-top:2px"><span style="width:32px">Overall</span><span style="width:24px">Biz</span><span style="width:24px">Ops</span></div></th>
+                        <th class="sortable" data-sort="health" onclick="sortPortfolio('health')" style="text-align:center">Health <span class="sort-arrow">⇅</span><div style="font-size:0.55rem;font-weight:400;color:#94A3B8;margin-top:1px">B = Business &bull; O = Ops</div></th>
                         <th class="sortable" data-sort="capturePct" onclick="sortPortfolio('capturePct')">Capture % <span class="sort-arrow">↓</span></th>
                         <th class="sortable" data-sort="volChurnPct" onclick="sortPortfolio('volChurnPct')">Vol Churn % <span class="sort-arrow">⇅</span></th>
                         <th class="sortable" data-sort="involChurnPct" onclick="sortPortfolio('involChurnPct')">Invol Churn % <span class="sort-arrow">⇅</span></th>
@@ -2115,11 +2115,13 @@
         var bizH = c.bizHealth || Math.round(_churnS * 0.35 + _revS * 0.25 + _trafS * 0.25 + _capS * 0.15);
         var opsH = c.opsHealth || 50;
         var overH = c.overallHealth || Math.round(bizH * 0.55 + opsH * 0.45);
-        return '<td style="text-align:center"><div style="display:flex;gap:4px;justify-content:center;align-items:baseline">' +
-            '<span style="font-weight:800;font-size:0.95rem;color:' + _hc(overH) + '">' + overH + '</span>' +
-            '<span style="font-size:0.68rem;color:' + _hc(bizH) + ';font-weight:600">' + bizH + '</span>' +
-            '<span style="font-size:0.68rem;color:' + _hc(opsH) + ';font-weight:600">' + opsH + '</span>' +
-        '</div></td>';
+        return '<td style="text-align:center;padding:0.4rem 0.25rem">' +
+            '<div style="font-weight:800;font-size:1rem;color:' + _hc(overH) + ';line-height:1.1">' + overH + '</div>' +
+            '<div style="display:flex;gap:6px;justify-content:center;margin-top:2px">' +
+                '<span style="font-size:0.6rem;color:' + _hc(bizH) + '"><span style="color:#94A3B8">B:</span><strong>' + bizH + '</strong></span>' +
+                '<span style="font-size:0.6rem;color:' + _hc(opsH) + '"><span style="color:#94A3B8">O:</span><strong>' + opsH + '</strong></span>' +
+            '</div>' +
+        '</td>';
     }
 
     function initPortfolio() {
