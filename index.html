@@ -298,6 +298,33 @@
                     <div class="status-card yellow" onclick="toggleStatusFilter('Warning')" style="cursor:pointer;transition:all 0.2s"><div class="status-card-label">Needs Attention</div><div class="status-card-value" id="port-warning">--</div><div class="status-card-footer" id="port-warning-pct"></div></div>
                     <div class="status-card red" onclick="toggleStatusFilter('Critical')" style="cursor:pointer;transition:all 0.2s"><div class="status-card-label">Critical</div><div class="status-card-value" id="port-critical">--</div><div class="status-card-footer" id="port-critical-pct"></div></div>
                 </div>
+
+                <!-- ═══ HEALTH SCORE AGING (24-MONTH YoY) ═══ -->
+                <div class="card" style="margin-bottom:1.25rem">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                        <div><h3 style="margin:0 0 0.15rem 0">Health Score Aging</h3><p style="font-size:0.75rem;color:#64748B;margin:0">Portfolio-wide health trend over 24 months — overall, business, and operational</p></div>
+                        <div style="display:flex;gap:1rem;align-items:center">
+                            <div style="display:flex;gap:0.5rem;align-items:center"><span style="width:10px;height:3px;background:#1A4797;border-radius:2px;display:inline-block"></span><span style="font-size:0.68rem;color:#64748B">Overall</span></div>
+                            <div style="display:flex;gap:0.5rem;align-items:center"><span style="width:10px;height:3px;background:#F04E23;border-radius:2px;display:inline-block"></span><span style="font-size:0.68rem;color:#64748B">Business</span></div>
+                            <div style="display:flex;gap:0.5rem;align-items:center"><span style="width:10px;height:3px;background:#10B981;border-radius:2px;display:inline-block"></span><span style="font-size:0.68rem;color:#64748B">Operational</span></div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:1.5rem;align-items:flex-start">
+                        <div style="flex:2"><div class="chart-container" style="height:240px"><canvas id="port-health-aging-chart"></canvas></div></div>
+                        <div style="flex:1;min-width:280px">
+                            <div style="font-size:0.82rem;font-weight:600;margin-bottom:0.5rem;color:#1E293B">YoY Change</div>
+                            <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.8rem">Overall Health</span><span style="font-weight:700;font-size:0.9rem" id="port-aging-overall-yoy">--</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.8rem">Business Health</span><span style="font-weight:700;font-size:0.9rem" id="port-aging-biz-yoy">--</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.8rem">Operational Health</span><span style="font-weight:700;font-size:0.9rem" id="port-aging-ops-yoy">--</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.8rem">Operators Improved</span><span style="font-weight:700" id="port-aging-improved">--</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:0.4rem 0"><span style="color:#64748B;font-size:0.8rem">Operators Declined</span><span style="font-weight:700" id="port-aging-declined">--</span></div>
+
+                            <div style="font-size:0.82rem;font-weight:600;margin:1rem 0 0.4rem 0;color:#1E293B">Key Drivers of Change</div>
+                            <div id="port-aging-drivers" style="font-size:0.78rem;color:#334155;line-height:1.55"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
                         <h2 style="margin:0">Customer Overview</h2>
@@ -355,6 +382,21 @@
                     <div style="font-size:0.85rem;margin-top:0.5rem">Operational health data is client-specific</div>
                 </div>
                 <div id="oh-content" style="display:none">
+
+                <!-- Client Health Score Aging -->
+                <div id="oh-aging-section" class="card" style="margin-bottom:1.25rem;display:none">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                        <div><h3 style="margin:0 0 0.15rem 0">Operational Health Trend</h3><p style="font-size:0.75rem;color:#64748B;margin:0">24-month operational performance — uptime, support, defects, hardware, FCI</p></div>
+                    </div>
+                    <div style="display:flex;gap:1.5rem;align-items:flex-start">
+                        <div style="flex:2"><div class="chart-container" style="height:220px"><canvas id="oh-aging-chart"></canvas></div></div>
+                        <div style="flex:1;min-width:260px">
+                            <div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.78rem">Ops Health YoY</span><span style="font-weight:700;font-size:0.85rem" id="oh-aging-ops-yoy">--</span></div>
+                            <div style="font-size:0.78rem;font-weight:600;margin:0.5rem 0 0.3rem 0;color:#1E293B">Key Operational Events</div>
+                            <div id="oh-aging-drivers" style="font-size:0.75rem;color:#334155;line-height:1.5;max-height:280px;overflow-y:auto"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Hero Row 1 -->
                 <div class="card-grid card-grid-4" style="margin-bottom:0.75rem">
@@ -545,6 +587,29 @@
                     </div>
                 </div>
 
+                <!-- Health Score Trajectory (24-month) -->
+                <div id="boap-aging-section" class="card" style="margin-bottom:1.25rem;display:none">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                        <div><h3 style="margin:0 0 0.15rem 0">Health Score Trajectory</h3><p style="font-size:0.75rem;color:#64748B;margin:0">24-month trend — what happened and why</p></div>
+                        <div style="display:flex;gap:1rem;align-items:center">
+                            <div style="display:flex;gap:0.4rem;align-items:center"><span style="width:10px;height:3px;background:#1A4797;border-radius:2px;display:inline-block"></span><span style="font-size:0.65rem;color:#64748B">Overall</span></div>
+                            <div style="display:flex;gap:0.4rem;align-items:center"><span style="width:10px;height:3px;background:#F04E23;border-radius:2px;display:inline-block"></span><span style="font-size:0.65rem;color:#64748B">Business</span></div>
+                            <div style="display:flex;gap:0.4rem;align-items:center"><span style="width:10px;height:3px;background:#10B981;border-radius:2px;display:inline-block"></span><span style="font-size:0.65rem;color:#64748B">Operational</span></div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:1.5rem;align-items:flex-start">
+                        <div style="flex:2"><div class="chart-container" style="height:220px"><canvas id="boap-aging-chart"></canvas></div></div>
+                        <div style="flex:1;min-width:260px">
+                            <div style="font-size:0.8rem;font-weight:600;margin-bottom:0.4rem;color:#1E293B">YoY Change</div>
+                            <div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.78rem">Overall</span><span style="font-weight:700;font-size:0.85rem" id="boap-aging-overall-yoy">--</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.78rem">Business</span><span style="font-weight:700;font-size:0.85rem" id="boap-aging-biz-yoy">--</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.78rem">Operational</span><span style="font-weight:700;font-size:0.85rem" id="boap-aging-ops-yoy">--</span></div>
+                            <div style="font-size:0.8rem;font-weight:600;margin:0.6rem 0 0.3rem 0;color:#1E293B">What Changed</div>
+                            <div id="boap-aging-drivers" style="font-size:0.75rem;color:#334155;line-height:1.5;max-height:260px;overflow-y:auto"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- KPI Row 1: Volume & Growth — "Are we growing?" -->
                 <div style="font-size:0.7rem;text-transform:uppercase;color:#94A3B8;font-weight:600;letter-spacing:0.05em;margin-bottom:0.25rem;padding-left:0.25rem">Volume &amp; Growth</div>
                 <div class="card-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:0.75rem">
@@ -650,6 +715,21 @@
                         <div class="customer-stat"><div class="customer-stat-label">Business</div><div class="customer-stat-value" data-kpi="dd-biz-health">--</div></div>
                         <div class="customer-stat"><div class="customer-stat-label">Operational</div><div class="customer-stat-value" data-kpi="dd-ops-health">--</div></div>
                         <div class="customer-stat"><div class="customer-stat-label">vs Industry</div><div class="customer-stat-value" data-kpi="dd-vs-industry">--</div></div>
+                    </div>
+                </div>
+
+                <!-- Business Health Trend (24-month) -->
+                <div id="dd-aging-section" class="card" style="margin-bottom:1rem;display:none">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                        <div><h3 style="margin:0 0 0.15rem 0">Business Health Trend</h3><p style="font-size:0.75rem;color:#64748B;margin:0">24-month business performance trajectory — churn, capture, revenue, traffic</p></div>
+                    </div>
+                    <div style="display:flex;gap:1.5rem;align-items:flex-start">
+                        <div style="flex:2"><div class="chart-container" style="height:200px"><canvas id="dd-aging-chart"></canvas></div></div>
+                        <div style="flex:1;min-width:240px">
+                            <div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #E2E8F0"><span style="color:#64748B;font-size:0.78rem">Business Health YoY</span><span style="font-weight:700;font-size:0.85rem" id="dd-aging-biz-yoy">--</span></div>
+                            <div style="font-size:0.78rem;font-weight:600;margin:0.5rem 0 0.3rem 0;color:#1E293B">Key Business Events</div>
+                            <div id="dd-aging-drivers" style="font-size:0.72rem;color:#334155;line-height:1.45;max-height:200px;overflow-y:auto"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1865,6 +1945,23 @@
         statusCounts:{'Healthy':3,'On Track':2,'Warning':2,'Critical':1},
         totalClients:8,
         refreshedAt:'2025-03-16T08:00:00Z',
+        healthAging:{
+            labels:['Mar 23','Apr 23','May 23','Jun 23','Jul 23','Aug 23','Sep 23','Oct 23','Nov 23','Dec 23','Jan 24','Feb 24','Mar 24','Apr 24','May 24','Jun 24','Jul 24','Aug 24','Sep 24','Oct 24','Nov 24','Dec 24','Jan 25','Feb 25'],
+            overall:[48,49,50,51,52,51,50,48,46,44,45,47,49,51,53,55,56,55,54,53,52,53,55,57],
+            business:[42,43,44,46,47,46,44,42,39,37,38,40,42,44,46,48,49,48,47,45,44,45,47,49],
+            operational:[56,57,58,58,59,58,58,57,56,55,56,57,58,60,62,64,66,65,64,63,63,64,66,68],
+            events:[
+                {month:'Jun 23',type:'positive',label:'Patheon pilot launched at 3 operators — QUICKCLEAN, PRISTINE, RAINMAKER begin migration from SiteWatch',impact:'operational +2'},
+                {month:'Nov 23',type:'negative',label:'Industry-wide traffic decline (-8% avg) driven by mild winter weather in Northeast/Midwest regions',impact:'business -5'},
+                {month:'Mar 24',type:'positive',label:'Patheon Retain (dunning automation) deployed across 34 sites — involuntary churn drops 18% at Patheon operators within 60 days',impact:'business +4'},
+                {month:'Jun 24',type:'positive',label:'DRB Remote Device Management v2 launched — firmware push capability reduces hardware support calls 25% and cuts mean-time-to-repair by 40%',impact:'operational +4'},
+                {month:'Aug 24',type:'negative',label:'Fiserv payment gateway instability (3 major outages in 6 weeks) — affects all SiteWatch operators. FCI rate spikes to 3.8%',impact:'operational -3'},
+                {month:'Oct 24',type:'positive',label:'Gateway failover (Fiserv + Stripe backup) deployed at 42 sites — payment timeout failures drop 80%. Support calls down 12%',impact:'operational +3'},
+                {month:'Dec 24',type:'negative',label:'SPARKLE executive escalation — 3 simultaneous site outages expose infrastructure gaps. BLUEWAVE also reports recurring network failures',impact:'overall -2'},
+                {month:'Jan 25',type:'positive',label:'Infrastructure audit program launched: UPS replacement, managed switch upgrades, Cradlepoint failover at 18 high-risk sites. Site MTTR improves from 68 min to 47 min',impact:'operational +3'},
+                {month:'Feb 25',type:'positive',label:'AI-powered kiosk upsell pilot (ARIA) begins at QUICKCLEAN — early data shows +3.2% capture rate lift at 4 test sites',impact:'business +2'}
+            ]
+        },
         customers:[
         {client:'SPARKLE',siteCount:12,health:28,bizHealth:28,opsHealth:62,overallHealth:43,capturePct:0.068,churnPct:0.123,volChurnPct:0.082,involChurnPct:0.041,trafficYoY:-11.6,revenueYoY:-13.6,status:'Critical',currRevenue:153600,swSites:12,pthSites:0},
         {client:'METRO',siteCount:8,health:45,bizHealth:45,opsHealth:81,overallHealth:61,capturePct:0.095,churnPct:0.087,volChurnPct:0.055,involChurnPct:0.032,trafficYoY:-8,revenueYoY:-10,status:'On Track',currRevenue:120e3,swSites:8,pthSites:0},
@@ -1897,7 +1994,21 @@
                     {id:'ENH-358',title:'LPR confidence score tuning per-site',type:'Hardware',platform:'SiteWatch',requestedBy:'SPARKLE',ageDays:112,priority:'Medium',status:'Under Review',eta:'TBD',shipped:null},
                     {id:'ENH-310',title:'Pay station remote reboot and diagnostics',type:'Hardware',platform:'SiteWatch',requestedBy:'SPARKLE',ageDays:210,priority:'Medium',status:'Backlog',eta:'TBD',shipped:null},
                     {id:'ENH-401',title:'Bulk member import CSV tool',type:'Admin/Portal',platform:'Both',requestedBy:'SPARKLE + 5 others',ageDays:14,priority:'High',status:'Planned',eta:'Q2 Sprint 3',shipped:null}
-                ]},
+                ],
+                healthAging:{
+                    overall:[38,39,40,42,44,43,40,37,34,30,28,30,32,34,36,38,40,39,38,36,35,37,40,43],
+                    business:[32,33,34,36,38,37,34,31,27,23,21,23,25,27,29,31,33,32,30,28,26,28,30,28],
+                    operational:[46,47,48,50,52,51,48,45,43,40,38,40,42,44,46,48,52,50,48,46,46,48,54,62],
+                    events:[
+                        {month:'Nov 23',type:'negative',label:'Traffic declined 18% — new competitor opened 2 miles from site #2 and #5. Lost ~400 retail visits/week.',impact:'business -6'},
+                        {month:'Feb 24',type:'negative',label:'Churn spiked to 12.3% — expired card failures surged after processor migration. No dunning automation in place.',impact:'business -4'},
+                        {month:'Jun 24',type:'positive',label:'DRB CSM engagement: pricing audit identified $2.50 below-market gap on Plus plan. Price increase implemented.',impact:'business +3'},
+                        {month:'Oct 24',type:'positive',label:'Remote Device Management deployed — reduced hardware support calls 30% and cut dispatches from 8/mo to 5/mo.',impact:'operational +4'},
+                        {month:'Dec 24',type:'negative',label:'3 simultaneous site outages from power surge — exposed lack of UPS and surge protection across the fleet.',impact:'operational -6'},
+                        {month:'Jan 25',type:'positive',label:'Infrastructure remediation: UPS installed at 8 sites, surge protectors at all 12. Cradlepoint failover at 2 problem sites.',impact:'operational +8'},
+                        {month:'Feb 25',type:'positive',label:'New signage campaign + attendant incentive program launched. Early capture rate trending up 0.8pp in first 3 weeks.',impact:'business +2'}
+                    ]
+                }},
             'METRO': {callMult:0.9,escMult:0.7,health:81,hwMult:0.6,siteUp:99.82,cloudUp:99.96,siteInc:2,cloudInc:1,defP1:0,defP2:2,fciRate:0.018,
                 topCall:'Membership Billing Question',topCallPct:28,topCause:'Confusing email receipt format after Feb billing update. Members calling to verify charges are legitimate.',topAction:'Deploy updated email template (JIRA-4821) with clear recharge vs. signup line items. Add self-service billing portal link.',topSolution:'Patheon Member Portal + CX Templates',
                 incidents:[
@@ -1908,7 +2019,19 @@
                     {id:'ENH-378',title:'Fleet account management portal',type:'Admin/Portal',platform:'Both',requestedBy:'METRO',ageDays:72,priority:'Medium',status:'Planned',eta:'Q2 2025',shipped:null},
                     {id:'ENH-399',title:'Automated monthly QBR PDF export',type:'Reporting',platform:'Both',requestedBy:'METRO, SUNNYDAY',ageDays:0,priority:'Medium',status:'Shipped',eta:null,shipped:'Feb 24, 2025'},
                     {id:'ENH-335',title:'Multi-site revenue comparison report',type:'Reporting',platform:'Both',requestedBy:'METRO + 2 others',ageDays:162,priority:'Medium',status:'Backlog',eta:'TBD',shipped:null}
-                ]},
+                ],
+                healthAging:{
+                    overall:[52,53,54,55,57,56,55,53,51,49,50,52,54,56,58,59,60,59,58,57,58,59,60,61],
+                    business:[44,45,46,48,50,49,47,45,42,40,41,43,45,47,49,50,51,50,48,46,47,48,48,45],
+                    operational:[62,63,64,64,66,65,65,63,62,60,62,64,66,68,70,72,74,72,70,70,72,74,76,81],
+                    events:[
+                        {month:'Sep 23',type:'negative',label:'Traffic dipped 8% during construction on main road near site #1 — 6-week detour reduced drive-by visibility.',impact:'business -3'},
+                        {month:'Mar 24',type:'positive',label:'Fleet account program launched (12 commercial accounts) — added 340 washes/month of predictable B2B volume.',impact:'business +4'},
+                        {month:'Jul 24',type:'positive',label:'Migrated payment processing to include Stripe fallback. Zero gateway-related downtime since deployment.',impact:'operational +4'},
+                        {month:'Nov 24',type:'positive',label:'Membership plan restructuring: consolidated 5 tiers to 3. Average ticket increased $2.10, voluntary churn dropped 0.8pp.',impact:'business +3'},
+                        {month:'Feb 25',type:'negative',label:'Billing email format change caused support call spike (+35%). Resolved within 2 weeks with template update.',impact:'operational -2'}
+                    ]
+                }},
             'QUICKCLEAN': {callMult:0.5,escMult:0.3,health:94,hwMult:0.4,siteUp:99.91,cloudUp:99.98,siteInc:1,cloudInc:0,defP1:0,defP2:1,fciRate:0.011,
                 topCall:'Software / UI Bug',topCallPct:22,topCause:'QR scanner regression on Android kiosk app v4.1 (JIRA-4798). Intermittent failure on Samsung Galaxy Tab A8 devices.',topAction:'App v4.2 fix in development. Interim: push camera permission via MDM for Samsung tablets. ETA: Mar 22.',topSolution:'Patheon Kiosk App + MDM',
                 incidents:[
@@ -1920,7 +2043,21 @@
                     {id:'ENH-392',title:'AI-powered dynamic pricing recommendations',type:'Kiosk/UI',platform:'Patheon',requestedBy:'QUICKCLEAN',ageDays:42,priority:'Medium',status:'In Development',eta:'May 2025',shipped:null},
                     {id:'ENH-365',title:'Snowflake direct connect for BI teams',type:'Integrations',platform:'Both',requestedBy:'QUICKCLEAN',ageDays:95,priority:'Low',status:'Under Review',eta:'TBD',shipped:null},
                     {id:'ENH-410',title:'Self-service plan change kiosk flow',type:'Kiosk/UI',platform:'Patheon',requestedBy:'QUICKCLEAN',ageDays:0,priority:'High',status:'Shipped',eta:null,shipped:'Mar 10, 2025'}
-                ]}
+                ],
+                healthAging:{
+                    overall:[60,61,62,64,66,66,65,64,63,62,64,66,68,70,72,74,76,76,75,76,78,79,81,82],
+                    business:[54,55,56,58,60,59,58,56,55,54,56,58,60,62,64,66,68,68,67,68,70,70,72,72],
+                    operational:[68,70,72,72,74,75,75,74,74,73,75,77,78,80,82,84,86,86,86,86,88,90,92,94],
+                    events:[
+                        {month:'Jun 23',type:'positive',label:'Migrated from SiteWatch to Patheon across all 24 sites. Day-one improvements in kiosk UX, member self-service, and real-time reporting.',impact:'operational +4'},
+                        {month:'Oct 23',type:'positive',label:'Patheon CX email campaigns launched — reactivated 420 lapsed members in first 90 days.',impact:'business +3'},
+                        {month:'Mar 24',type:'positive',label:'Patheon Retain (dunning) deployed — involuntary churn dropped from 3.8% to 2.5% within 60 days. Saved est. 180 members/quarter.',impact:'business +4'},
+                        {month:'Aug 24',type:'positive',label:'Premium plan tier "Unlimited VIP" launched at $59.99 — 15% of new signups selecting top tier. ARPM increased $4.20.',impact:'business +2'},
+                        {month:'Nov 24',type:'positive',label:'DRB Network Monitoring + Cradlepoint failover deployed at all 24 sites. Zero unplanned network outages since.',impact:'operational +4'},
+                        {month:'Feb 25',type:'positive',label:'ARIA AI kiosk upsell pilot launched at 4 sites — capture rate up 3.2pp at test sites vs. control. Full rollout planned Q2.',impact:'business +2'},
+                        {month:'Mar 25',type:'positive',label:'Self-service plan change kiosk flow shipped (ENH-410). Early data: 12% of plan changes now self-serve, reducing support calls.',impact:'operational +2'}
+                    ]
+                }}
         };
         var p = profiles[code] || profiles['SPARKLE'];
         var base = 15; /* base calls/day per site */
@@ -1980,7 +2117,8 @@
                 kiosk:[fciKiosk-8,fciKiosk-5,fciKiosk-3,fciKiosk,fciKiosk+2,fciKiosk+4,fciKiosk+2,fciKiosk,fciKiosk-2,fciKiosk,fciKiosk+2,fciKiosk].map(function(v){return Math.max(Math.round(v),0);}),
                 lpr:[fciLpr-5,fciLpr-3,fciLpr,fciLpr+2,fciLpr+3,fciLpr+2,fciLpr,fciLpr-2,fciLpr,fciLpr+1,fciLpr,fciLpr].map(function(v){return Math.max(Math.round(v),0);})},
             fciCauses:[{name:'Expired/invalid cards',count:Math.round(fciPayment*0.5),pct:20},{name:'Gateway timeout',count:Math.round(fciPayment*0.3),pct:12},{name:'ARM gate alignment drift',count:Math.round(fciGate*0.5),pct:11},{name:'LPR no-read (dirty lens)',count:Math.round(fciLpr*0.5),pct:5}],
-            incidents:p.incidents||[]
+            incidents:p.incidents||[],
+            healthAging:p.healthAging||null
         };
     }
 
@@ -2124,6 +2262,76 @@
         '</td>';
     }
 
+    function initHealthAging() {
+        var P = window.__DRB_DEMO_PORTFOLIO__;
+        if (!P || !P.healthAging) return;
+        var HA = P.healthAging;
+        var n = HA.overall.length;
+        var half = Math.floor(n / 2);
+
+        /* Chart */
+        if (typeof SC !== 'undefined') {
+            try {
+                SC.multiLine('port-health-aging-chart', HA.labels, [
+                    {label:'Overall', data:HA.overall, color:'#1A4797', fill:'rgba(26,71,151,0.06)', lw:2.5},
+                    {label:'Business', data:HA.business, color:'#F04E23', fill:'rgba(240,78,35,0.04)', lw:2},
+                    {label:'Operational', data:HA.operational, color:'#10B981', fill:'rgba(16,185,129,0.04)', lw:2}
+                ]);
+            } catch(e) { console.error('HealthAging chart:', e); }
+        }
+
+        /* YoY KPIs */
+        function yoyStr(arr) {
+            var cur = arr[n-1], prior = arr[n-13] || arr[0];
+            var delta = cur - prior;
+            var el_color = delta >= 0 ? '#10B981' : '#EF4444';
+            return {text: (delta >= 0 ? '+' : '') + delta + ' pts (' + cur + ' vs ' + prior + ')', color: el_color};
+        }
+        function setYoY(id, result) {
+            var el = document.getElementById(id);
+            if (el) { el.textContent = result.text; el.style.color = result.color; }
+        }
+        setYoY('port-aging-overall-yoy', yoyStr(HA.overall));
+        setYoY('port-aging-biz-yoy', yoyStr(HA.business));
+        setYoY('port-aging-ops-yoy', yoyStr(HA.operational));
+
+        /* Improved / Declined counts */
+        var custs = P.customers || [];
+        var improved = 0, declined = 0;
+        custs.forEach(function(c) {
+            /* Simulate per-client YoY: healthy/on-track = improved, warning/critical = may have declined */
+            if (c.overallHealth >= 55 || (c.revenueYoY || 0) > 0) improved++;
+            else declined++;
+        });
+        var impEl = document.getElementById('port-aging-improved');
+        if (impEl) { impEl.textContent = improved + ' of ' + custs.length; impEl.style.color = '#10B981'; }
+        var decEl = document.getElementById('port-aging-declined');
+        if (decEl) { decEl.textContent = declined + ' of ' + custs.length; decEl.style.color = '#EF4444'; }
+
+        /* Key Drivers */
+        var driversEl = document.getElementById('port-aging-drivers');
+        if (driversEl && HA.events) {
+            /* Show most recent 5 events, newest first */
+            var recent = HA.events.slice().reverse().slice(0, 5);
+            var html = '';
+            recent.forEach(function(ev) {
+                var icon = ev.type === 'positive' ? '\u25B2' : '\u25BC';
+                var iconColor = ev.type === 'positive' ? '#10B981' : '#EF4444';
+                var impactBg = ev.type === 'positive' ? '#F0FDF4' : '#FEF2F2';
+                var impactBorder = ev.type === 'positive' ? '#BBF7D0' : '#FECACA';
+                html += '<div style="padding:0.45rem 0;border-bottom:1px solid #F1F5F9">';
+                html += '<div style="display:flex;gap:0.4rem;align-items:flex-start">';
+                html += '<span style="color:' + iconColor + ';font-size:0.7rem;margin-top:1px;flex-shrink:0">' + icon + '</span>';
+                html += '<div>';
+                html += '<div style="font-size:0.72rem;color:#94A3B8;font-weight:600">' + ev.month + '</div>';
+                html += '<div style="font-size:0.75rem;color:#334155;line-height:1.45">' + ev.label + '</div>';
+                html += '<span style="display:inline-block;margin-top:3px;font-size:0.62rem;font-weight:700;color:' + iconColor + ';background:' + impactBg + ';border:1px solid ' + impactBorder + ';padding:1px 6px;border-radius:3px">' + ev.impact + '</span>';
+                html += '</div></div></div>';
+            });
+            driversEl.innerHTML = html;
+        }
+    }
+
     function initPortfolio() {
         var P = window.__DRB_DEMO_PORTFOLIO__;
         if (!P || !P.customers) return;
@@ -2176,6 +2384,9 @@
         /* Init operational health page */
         try { initOperationalHealth(); } catch(e) { console.error('OpHealth init:', e); }
 
+        /* Health Score Aging Chart */
+        try { initHealthAging(); } catch(e) { console.error('HealthAging init:', e); }
+
         /* Init all data-dependent pages with demo data */
         setTimeout(function(){
             try { buildRiskAlerts(D.portfolio, D.benchmarks || {}); } catch(e){ console.error('Alerts init:', e); }
@@ -2206,8 +2417,8 @@ function switchPage(pageId, btn) {
         requestAnimationFrame(function(){
             setTimeout(function(){
                 try {
-                    if (pageId === 'boap') initBoap();
-                    else if (pageId === 'deepdive') initDD('dd-general');
+                    if (pageId === 'boap') { initBoap(); try{initBoapAging();}catch(e){} }
+                    else if (pageId === 'deepdive') { initDD('dd-general'); try{initDDAging();}catch(e){} }
                     else if (pageId === 'roi') initROI();
                     else if (pageId === 'benchmarks') initBenchmarksPage();
                     else if (pageId === 'industry') initIndustryPage();
@@ -6540,6 +6751,33 @@ function initOperationalHealth() {
     _ohKpi('oh-ops-health', D.operationalHealth || '--', D.operationalHealth || 0);
 
     var OH = D.opHealth;
+
+    /* ══ Operational Health Trend (ops-only) ══ */
+    var agingSection = document.getElementById('oh-aging-section');
+    var HA = OH.healthAging;
+    if (agingSection && HA && HA.operational) {
+        agingSection.style.display = 'block';
+        var _L24 = ['Mar 23','Apr 23','May 23','Jun 23','Jul 23','Aug 23','Sep 23','Oct 23','Nov 23','Dec 23','Jan 24','Feb 24','Mar 24','Apr 24','May 24','Jun 24','Jul 24','Aug 24','Sep 24','Oct 24','Nov 24','Dec 24','Jan 25','Feb 25'];
+        if (typeof SC !== 'undefined') {
+            try {
+                SC.line('oh-aging-chart', _L24, HA.operational, '#10B981', 'rgba(16,185,129,0.08)');
+            } catch(e) { console.error('OH aging chart:', e); }
+        }
+        var n = HA.operational.length;
+        var cur = HA.operational[n-1], prior = n >= 13 ? HA.operational[n-13] : HA.operational[0];
+        var delta = cur - prior;
+        var oyEl = document.getElementById('oh-aging-ops-yoy');
+        if (oyEl) { oyEl.textContent = (delta>=0?'+':'') + delta + ' pts (' + cur + ' vs ' + prior + ')'; oyEl.style.color = delta >= 0 ? '#10B981' : '#EF4444'; }
+
+        /* Filter to operational events only */
+        var drvEl = document.getElementById('oh-aging-drivers');
+        if (drvEl && HA.events) {
+            var opsEvents = HA.events.filter(function(ev) { return ev.impact.indexOf('operational') >= 0 || ev.impact.indexOf('ops') >= 0; });
+            drvEl.innerHTML = _renderAgingEvents(opsEvents.slice().reverse());
+        }
+    } else if (agingSection) {
+        agingSection.style.display = 'none';
+    }
     var totalCalls = OH.dailyCalls.reduce(function(a,b){return a+b;},0);
     var avgDay = (totalCalls/30).toFixed(0);
     var trendPct = ((totalCalls/30 - OH.priorAvgCalls)/OH.priorAvgCalls*100);
@@ -6792,6 +7030,76 @@ function initOperationalHealth() {
                 '<td style="padding:0.45rem;font-size:0.72rem;color:#1A4797;max-width:240px;font-weight:500">'+inc.action+'</td>';
             incBody.appendChild(tr);
         });
+    }
+}
+
+/* ══ Shared aging event renderer ══ */
+function _renderAgingEvents(events) {
+    var html = '';
+    events.forEach(function(ev) {
+        var icon = ev.type === 'positive' ? '\u25B2' : '\u25BC';
+        var ic = ev.type === 'positive' ? '#10B981' : '#EF4444';
+        var ibg = ev.type === 'positive' ? '#F0FDF4' : '#FEF2F2';
+        var ibd = ev.type === 'positive' ? '#BBF7D0' : '#FECACA';
+        html += '<div style="padding:0.35rem 0;border-bottom:1px solid #F1F5F9">';
+        html += '<div style="display:flex;gap:0.35rem;align-items:flex-start">';
+        html += '<span style="color:'+ic+';font-size:0.65rem;margin-top:2px;flex-shrink:0">'+icon+'</span>';
+        html += '<div>';
+        html += '<div style="font-size:0.62rem;color:#94A3B8;font-weight:600">'+ev.month+'</div>';
+        html += '<div style="font-size:0.72rem;color:#334155;line-height:1.4">'+ev.label+'</div>';
+        html += '<span style="display:inline-block;margin-top:2px;font-size:0.58rem;font-weight:700;color:'+ic+';background:'+ibg+';border:1px solid '+ibd+';padding:1px 5px;border-radius:3px">'+ev.impact+'</span>';
+        html += '</div></div></div>';
+    });
+    return html;
+}
+
+/* ══ BOAP Health Aging (all three lines + all events) ══ */
+function initBoapAging() {
+    if (!D || !D.opHealth || !D.opHealth.healthAging) return;
+    var sec = document.getElementById('boap-aging-section');
+    var HA = D.opHealth.healthAging;
+    if (!sec || !HA.overall) return;
+    sec.style.display = 'block';
+    var _L24 = ['Mar 23','Apr 23','May 23','Jun 23','Jul 23','Aug 23','Sep 23','Oct 23','Nov 23','Dec 23','Jan 24','Feb 24','Mar 24','Apr 24','May 24','Jun 24','Jul 24','Aug 24','Sep 24','Oct 24','Nov 24','Dec 24','Jan 25','Feb 25'];
+    if (typeof SC !== 'undefined') {
+        try {
+            SC.multiLine('boap-aging-chart', _L24, [
+                {label:'Overall', data:HA.overall, color:'#1A4797', fill:'rgba(26,71,151,0.06)', lw:2.5},
+                {label:'Business', data:HA.business, color:'#F04E23', fill:'rgba(240,78,35,0.04)', lw:2},
+                {label:'Operational', data:HA.operational, color:'#10B981', fill:'rgba(16,185,129,0.04)', lw:2}
+            ]);
+        } catch(e) { console.error('BOAP aging chart:', e); }
+    }
+    var n = HA.overall.length;
+    function _yoy(arr) { var c=arr[n-1], p=n>=13?arr[n-13]:arr[0], d=c-p; return {text:(d>=0?'+':'')+d+' pts ('+c+' vs '+p+')', color:d>=0?'#10B981':'#EF4444'}; }
+    function _set(id,r) { var el=document.getElementById(id); if(el){el.textContent=r.text;el.style.color=r.color;} }
+    _set('boap-aging-overall-yoy', _yoy(HA.overall));
+    _set('boap-aging-biz-yoy', _yoy(HA.business));
+    _set('boap-aging-ops-yoy', _yoy(HA.operational));
+    var dEl = document.getElementById('boap-aging-drivers');
+    if (dEl && HA.events) dEl.innerHTML = _renderAgingEvents(HA.events.slice().reverse());
+}
+
+/* ══ DD Business Health Aging (business line + business events) ══ */
+function initDDAging() {
+    if (!D || !D.opHealth || !D.opHealth.healthAging) return;
+    var sec = document.getElementById('dd-aging-section');
+    var HA = D.opHealth.healthAging;
+    if (!sec || !HA.business) return;
+    sec.style.display = 'block';
+    var _L24 = ['Mar 23','Apr 23','May 23','Jun 23','Jul 23','Aug 23','Sep 23','Oct 23','Nov 23','Dec 23','Jan 24','Feb 24','Mar 24','Apr 24','May 24','Jun 24','Jul 24','Aug 24','Sep 24','Oct 24','Nov 24','Dec 24','Jan 25','Feb 25'];
+    if (typeof SC !== 'undefined') {
+        try { SC.line('dd-aging-chart', _L24, HA.business, '#F04E23', 'rgba(240,78,35,0.06)'); } catch(e) { console.error('DD aging chart:', e); }
+    }
+    var n = HA.business.length;
+    var cur = HA.business[n-1], prior = n>=13?HA.business[n-13]:HA.business[0];
+    var delta = cur - prior;
+    var byEl = document.getElementById('dd-aging-biz-yoy');
+    if (byEl) { byEl.textContent = (delta>=0?'+':'')+delta+' pts ('+cur+' vs '+prior+')'; byEl.style.color = delta>=0?'#10B981':'#EF4444'; }
+    var dEl = document.getElementById('dd-aging-drivers');
+    if (dEl && HA.events) {
+        var bizEvents = HA.events.filter(function(ev) { return ev.impact.indexOf('business') >= 0 || ev.impact.indexOf('biz') >= 0; });
+        dEl.innerHTML = _renderAgingEvents(bizEvents.slice().reverse());
     }
 }
 
