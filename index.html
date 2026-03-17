@@ -486,38 +486,59 @@
                 <!-- Defect Insight -->
                 <div id="oh-insight-defects" class="card" style="margin-bottom:1rem;border-left:4px solid #EF4444;background:linear-gradient(135deg,#FEF2F2,#FFF)"></div>
 
-                <!-- ═══ CONSUMER INTERACTION SUCCESS RATE ═══ -->
+                <!-- ═══ CONSUMER INTERACTIONS ═══ -->
                 <div class="card" style="margin-bottom:1rem;border-top:3px solid #F04E23">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem">
-                        <div><h3 style="margin:0 0 0.15rem 0">Consumer Interaction Success Rate</h3><p style="font-size:0.75rem;color:#64748B;margin:0">Percentage of customer interactions completed without failure — trailing 30 days</p></div>
-                    </div>
-                    <!-- Hero: Success Rate -->
-                    <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1.25rem;padding:1rem 1.5rem;background:#F8FAFC;border-radius:0.75rem">
-                        <div style="text-align:center;min-width:140px">
-                            <div style="font-size:2.8rem;font-weight:900;line-height:1" id="oh-fci-success-rate">--</div>
-                            <div style="font-size:0.72rem;color:#64748B;margin-top:0.25rem">Success Rate</div>
+                    <h3 style="margin:0 0 0.75rem 0">Consumer Interactions</h3>
+
+                    <!-- LEVEL 1: The Score — Total → Successful vs Unsuccessful -->
+                    <div style="display:flex;align-items:stretch;gap:0;margin-bottom:1.25rem;border-radius:0.75rem;overflow:hidden;border:1px solid #E2E8F0">
+                        <!-- Total -->
+                        <div style="flex:1;padding:1rem;background:#F8FAFC;text-align:center;border-right:1px solid #E2E8F0">
+                            <div style="font-size:0.65rem;color:#64748B;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.35rem">Total Interactions</div>
+                            <div style="font-size:1.8rem;font-weight:800;color:#1A4797" id="oh-fci-total-interactions">--</div>
+                            <div style="font-size:0.68rem;color:#64748B">Trailing 30 days</div>
                         </div>
-                        <div style="width:1px;height:60px;background:#E2E8F0"></div>
-                        <div style="display:flex;gap:2rem;flex:1">
-                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#1A4797" id="oh-fci-total-interactions">--</div><div style="font-size:0.68rem;color:#64748B">Total Interactions</div></div>
-                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#10B981" id="oh-fci-successful">--</div><div style="font-size:0.68rem;color:#64748B">Successful</div></div>
-                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#EF4444" id="oh-fci-failed">--</div><div style="font-size:0.68rem;color:#64748B">Failed</div></div>
-                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700" id="oh-fci-trend">--</div><div style="font-size:0.68rem;color:#64748B">vs Prior Period</div></div>
+                        <!-- Successful -->
+                        <div style="flex:1.2;padding:1rem;background:#F0FDF4;text-align:center;border-right:1px solid #E2E8F0">
+                            <div style="font-size:0.65rem;color:#10B981;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.35rem">✓ Successful</div>
+                            <div style="font-size:1.8rem;font-weight:800;color:#10B981" id="oh-fci-successful">--</div>
+                            <div style="font-size:0.68rem;color:#64748B" id="oh-fci-success-pct">--</div>
+                        </div>
+                        <!-- Unsuccessful = FCI -->
+                        <div style="flex:1.2;padding:1rem;background:#FEF2F2;text-align:center">
+                            <div style="font-size:0.65rem;color:#EF4444;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.35rem">✗ Unsuccessful (FCI)</div>
+                            <div style="font-size:1.8rem;font-weight:800;color:#EF4444" id="oh-fci-failed">--</div>
+                            <div style="font-size:0.68rem;color:#64748B" id="oh-fci-fail-pct">--</div>
                         </div>
                     </div>
-                    <!-- Failure Breakdown -->
-                    <div style="font-size:0.78rem;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.5rem">Where Failures Occur</div>
+
+                    <!-- The Score -->
+                    <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.25rem;padding:0.75rem 1.5rem;background:linear-gradient(135deg,#F8FAFC,#F0FDF4);border-radius:0.75rem;border:1px solid #E2E8F0">
+                        <div style="text-align:center;min-width:120px">
+                            <div style="font-size:0.62rem;color:#64748B;text-transform:uppercase;font-weight:600;letter-spacing:0.04em">Interaction Score</div>
+                            <div style="font-size:2.5rem;font-weight:900;line-height:1.1" id="oh-fci-success-rate">--</div>
+                        </div>
+                        <div style="width:1px;height:50px;background:#E2E8F0"></div>
+                        <div style="font-size:0.82rem;color:#334155;line-height:1.55;flex:1" id="oh-fci-score-context">--</div>
+                        <div style="text-align:center;min-width:90px">
+                            <div style="font-size:0.62rem;color:#64748B;text-transform:uppercase;font-weight:600">vs Prior</div>
+                            <div style="font-size:1.2rem;font-weight:700" id="oh-fci-trend">--</div>
+                        </div>
+                    </div>
+
+                    <!-- LEVEL 2: FCI Breakdown — What went wrong? -->
+                    <div style="font-size:0.78rem;font-weight:600;color:#EF4444;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.5rem">▾ Unsuccessful Interaction Breakdown</div>
                     <div class="card-grid" style="grid-template-columns:repeat(6,1fr);gap:0.5rem;margin-bottom:1rem">
-                        <div style="text-align:center;padding:0.6rem;background:#FEF2F2;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Payment</div><div style="font-size:1.2rem;font-weight:800;color:#EF4444" id="oh-fci-payment">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-payment-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#FFF7ED;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Gates</div><div style="font-size:1.2rem;font-weight:800;color:#F59E0B" id="oh-fci-gate">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-gate-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#EFF6FF;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Kiosk</div><div style="font-size:1.2rem;font-weight:800;color:#3B82F6" id="oh-fci-kiosk">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-kiosk-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#F5F3FF;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">LPR</div><div style="font-size:1.2rem;font-weight:800;color:#8B5CF6" id="oh-fci-lpr">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-lpr-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#F0FDF4;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">RFID</div><div style="font-size:1.2rem;font-weight:800;color:#10B981" id="oh-fci-rfid">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-rfid-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#F8FAFC;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Other</div><div style="font-size:1.2rem;font-weight:800;color:#64748B" id="oh-fci-other">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-other-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#FEF2F2;border-radius:0.5rem"><div style="font-size:0.6rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Payment</div><div style="font-size:1.1rem;font-weight:800;color:#EF4444" id="oh-fci-payment">--</div><div style="font-size:0.58rem;color:#64748B" id="oh-fci-payment-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#FFF7ED;border-radius:0.5rem"><div style="font-size:0.6rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Gates</div><div style="font-size:1.1rem;font-weight:800;color:#F59E0B" id="oh-fci-gate">--</div><div style="font-size:0.58rem;color:#64748B" id="oh-fci-gate-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#EFF6FF;border-radius:0.5rem"><div style="font-size:0.6rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Kiosk</div><div style="font-size:1.1rem;font-weight:800;color:#3B82F6" id="oh-fci-kiosk">--</div><div style="font-size:0.58rem;color:#64748B" id="oh-fci-kiosk-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#F5F3FF;border-radius:0.5rem"><div style="font-size:0.6rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">LPR</div><div style="font-size:1.1rem;font-weight:800;color:#8B5CF6" id="oh-fci-lpr">--</div><div style="font-size:0.58rem;color:#64748B" id="oh-fci-lpr-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#F0FDF4;border-radius:0.5rem"><div style="font-size:0.6rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">RFID</div><div style="font-size:1.1rem;font-weight:800;color:#10B981" id="oh-fci-rfid">--</div><div style="font-size:0.58rem;color:#64748B" id="oh-fci-rfid-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#F8FAFC;border-radius:0.5rem"><div style="font-size:0.6rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Other</div><div style="font-size:1.1rem;font-weight:800;color:#64748B" id="oh-fci-other">--</div><div style="font-size:0.58rem;color:#64748B" id="oh-fci-other-pct">--</div></div>
                     </div>
                     <div class="card-grid" style="grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
-                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">Success Rate Trend (12 months)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-trend-chart"></canvas></div></div>
-                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">Failures by Type (30d)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-type-chart"></canvas></div></div>
+                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">Interaction Score Trend (12 mo)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-trend-chart"></canvas></div></div>
+                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">Failure Breakdown (30d)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-type-chart"></canvas></div></div>
                     </div>
                     <!-- FCI Actionable Insight -->
                     <div id="oh-insight-fci" style="border-left:4px solid #F04E23;background:linear-gradient(135deg,#FEF2F2,#FFF);border-radius:0.5rem;padding:1rem 1.25rem"></div>
@@ -6828,24 +6849,35 @@ function initOperationalHealth() {
     s('oh-def-p3', OH.defects.p3);
     s('oh-def-p4', OH.defects.p4);
 
-    /* ══ Consumer Interaction Success Rate ══ */
+    /* ══ Consumer Interactions ══ */
     var F = OH.fci;
-    /* Total interactions = monthly car count × 30-day factor (each car = 1 interaction) */
     var totalInteractions = (D.totals ? D.totals.monthlyCarCount : 0) || Math.round(F.total / Math.max(F.rate, 0.001));
     var successful = totalInteractions - F.total;
     var successRate = totalInteractions > 0 ? ((successful / totalInteractions) * 100) : 0;
     var priorSuccessRate = ((1 - F.priorRate) * 100);
     var rateDelta = successRate - priorSuccessRate;
 
-    /* Hero KPIs */
+    /* Level 1: Total → Successful / Unsuccessful */
+    s('oh-fci-total-interactions', totalInteractions.toLocaleString());
+    s('oh-fci-successful', successful.toLocaleString());
+    s('oh-fci-success-pct', successRate.toFixed(2) + '% success rate');
+    s('oh-fci-failed', F.total.toLocaleString());
+    s('oh-fci-fail-pct', (100 - successRate).toFixed(2) + '% failure rate');
+
+    /* The Score */
     var srEl = document.getElementById('oh-fci-success-rate');
     if (srEl) { srEl.textContent = successRate.toFixed(1) + '%'; srEl.style.color = successRate >= 99 ? '#10B981' : successRate >= 97 ? '#F59E0B' : '#EF4444'; }
-    s('oh-fci-total-interactions', totalInteractions.toLocaleString());
-    sc('oh-fci-successful', successful.toLocaleString(), '#10B981');
-    sc('oh-fci-failed', F.total.toLocaleString(), '#EF4444');
     sc('oh-fci-trend', (rateDelta>=0?'\u25B2 +':'\u25BC ')+Math.abs(rateDelta).toFixed(2)+'pp', rateDelta>=0?'#10B981':'#EF4444');
 
-    /* Failure breakdown cards */
+    /* Score context narrative */
+    var ctxEl = document.getElementById('oh-fci-score-context');
+    if (ctxEl) {
+        var revLost = Math.round(F.total * 18.50);
+        ctxEl.innerHTML = 'Of <strong>' + totalInteractions.toLocaleString() + '</strong> customer interactions this month, <strong style="color:#10B981">' + successful.toLocaleString() + ' completed successfully</strong> and <strong style="color:#EF4444">' + F.total.toLocaleString() + ' failed</strong>. ' +
+            'Each failed interaction represents a customer who tried to wash but couldn\'t — at an avg ticket of $18.50, that\'s <strong>$' + Math.round(revLost/1000).toLocaleString() + 'K in at-risk revenue</strong>.';
+    }
+
+    /* Level 2: FCI breakdown */
     s('oh-fci-payment', F.payment.count.toLocaleString()); s('oh-fci-payment-pct', F.payment.pct+'% of failures');
     s('oh-fci-gate', F.gate.count.toLocaleString()); s('oh-fci-gate-pct', F.gate.pct+'% of failures');
     s('oh-fci-kiosk', F.kiosk.count.toLocaleString()); s('oh-fci-kiosk-pct', F.kiosk.pct+'% of failures');
