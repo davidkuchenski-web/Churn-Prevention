@@ -486,23 +486,38 @@
                 <!-- Defect Insight -->
                 <div id="oh-insight-defects" class="card" style="margin-bottom:1rem;border-left:4px solid #EF4444;background:linear-gradient(135deg,#FEF2F2,#FFF)"></div>
 
-                <!-- ═══ FAILED CONSUMER INTERACTIONS (FCI) ═══ -->
+                <!-- ═══ CONSUMER INTERACTION SUCCESS RATE ═══ -->
                 <div class="card" style="margin-bottom:1rem;border-top:3px solid #F04E23">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
-                        <div><h3 style="margin:0 0 0.15rem 0">Failed Consumer Interactions (FCI)</h3><p style="font-size:0.75rem;color:#64748B;margin:0">Customer-facing failures by type — trailing 30 days</p></div>
-                        <div style="text-align:right"><div style="font-size:1.5rem;font-weight:800;color:#F04E23" id="oh-fci-total">--</div><div style="font-size:0.72rem;color:#64748B"><span id="oh-fci-rate">--</span> failure rate &bull; <span id="oh-fci-trend" style="font-weight:600">--</span> vs prior</div></div>
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem">
+                        <div><h3 style="margin:0 0 0.15rem 0">Consumer Interaction Success Rate</h3><p style="font-size:0.75rem;color:#64748B;margin:0">Percentage of customer interactions completed without failure — trailing 30 days</p></div>
                     </div>
+                    <!-- Hero: Success Rate -->
+                    <div style="display:flex;gap:1.5rem;align-items:center;margin-bottom:1.25rem;padding:1rem 1.5rem;background:#F8FAFC;border-radius:0.75rem">
+                        <div style="text-align:center;min-width:140px">
+                            <div style="font-size:2.8rem;font-weight:900;line-height:1" id="oh-fci-success-rate">--</div>
+                            <div style="font-size:0.72rem;color:#64748B;margin-top:0.25rem">Success Rate</div>
+                        </div>
+                        <div style="width:1px;height:60px;background:#E2E8F0"></div>
+                        <div style="display:flex;gap:2rem;flex:1">
+                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#1A4797" id="oh-fci-total-interactions">--</div><div style="font-size:0.68rem;color:#64748B">Total Interactions</div></div>
+                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#10B981" id="oh-fci-successful">--</div><div style="font-size:0.68rem;color:#64748B">Successful</div></div>
+                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700;color:#EF4444" id="oh-fci-failed">--</div><div style="font-size:0.68rem;color:#64748B">Failed</div></div>
+                            <div style="text-align:center"><div style="font-size:1.4rem;font-weight:700" id="oh-fci-trend">--</div><div style="font-size:0.68rem;color:#64748B">vs Prior Period</div></div>
+                        </div>
+                    </div>
+                    <!-- Failure Breakdown -->
+                    <div style="font-size:0.78rem;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.5rem">Where Failures Occur</div>
                     <div class="card-grid" style="grid-template-columns:repeat(6,1fr);gap:0.5rem;margin-bottom:1rem">
-                        <div style="text-align:center;padding:0.6rem;background:#FEF2F2;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Payment Failures</div><div style="font-size:1.2rem;font-weight:800;color:#EF4444" id="oh-fci-payment">--</div><div style="font-size:0.65rem;color:#64748B" id="oh-fci-payment-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#FFF7ED;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Gate Failures</div><div style="font-size:1.2rem;font-weight:800;color:#F59E0B" id="oh-fci-gate">--</div><div style="font-size:0.65rem;color:#64748B" id="oh-fci-gate-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#EFF6FF;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Kiosk Failures</div><div style="font-size:1.2rem;font-weight:800;color:#3B82F6" id="oh-fci-kiosk">--</div><div style="font-size:0.65rem;color:#64748B" id="oh-fci-kiosk-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#F5F3FF;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">LPR Misreads</div><div style="font-size:1.2rem;font-weight:800;color:#8B5CF6" id="oh-fci-lpr">--</div><div style="font-size:0.65rem;color:#64748B" id="oh-fci-lpr-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#F0FDF4;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">RFID Misreads</div><div style="font-size:1.2rem;font-weight:800;color:#10B981" id="oh-fci-rfid">--</div><div style="font-size:0.65rem;color:#64748B" id="oh-fci-rfid-pct">--</div></div>
-                        <div style="text-align:center;padding:0.6rem;background:#F8FAFC;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Other</div><div style="font-size:1.2rem;font-weight:800;color:#64748B" id="oh-fci-other">--</div><div style="font-size:0.65rem;color:#64748B" id="oh-fci-other-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#FEF2F2;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Payment</div><div style="font-size:1.2rem;font-weight:800;color:#EF4444" id="oh-fci-payment">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-payment-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#FFF7ED;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Gates</div><div style="font-size:1.2rem;font-weight:800;color:#F59E0B" id="oh-fci-gate">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-gate-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#EFF6FF;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Kiosk</div><div style="font-size:1.2rem;font-weight:800;color:#3B82F6" id="oh-fci-kiosk">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-kiosk-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#F5F3FF;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">LPR</div><div style="font-size:1.2rem;font-weight:800;color:#8B5CF6" id="oh-fci-lpr">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-lpr-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#F0FDF4;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">RFID</div><div style="font-size:1.2rem;font-weight:800;color:#10B981" id="oh-fci-rfid">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-rfid-pct">--</div></div>
+                        <div style="text-align:center;padding:0.6rem;background:#F8FAFC;border-radius:0.5rem"><div style="font-size:0.62rem;color:#64748B;font-weight:600;text-transform:uppercase;margin-bottom:0.2rem">Other</div><div style="font-size:1.2rem;font-weight:800;color:#64748B" id="oh-fci-other">--</div><div style="font-size:0.6rem;color:#64748B" id="oh-fci-other-pct">--</div></div>
                     </div>
                     <div class="card-grid" style="grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
-                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">FCI Trend (12 months)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-trend-chart"></canvas></div></div>
-                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">FCI by Type (30d)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-type-chart"></canvas></div></div>
+                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">Success Rate Trend (12 months)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-trend-chart"></canvas></div></div>
+                        <div><div style="font-size:0.82rem;font-weight:600;margin-bottom:0.4rem">Failures by Type (30d)</div><div class="chart-container" style="height:200px"><canvas id="oh-fci-type-chart"></canvas></div></div>
                     </div>
                     <!-- FCI Actionable Insight -->
                     <div id="oh-insight-fci" style="border-left:4px solid #F04E23;background:linear-gradient(135deg,#FEF2F2,#FFF);border-radius:0.5rem;padding:1rem 1.25rem"></div>
@@ -6813,51 +6828,65 @@ function initOperationalHealth() {
     s('oh-def-p3', OH.defects.p3);
     s('oh-def-p4', OH.defects.p4);
 
-    /* ══ FCI KPIs ══ */
+    /* ══ Consumer Interaction Success Rate ══ */
     var F = OH.fci;
-    s('oh-fci-total', F.total.toLocaleString());
-    var fciTrend = ((F.rate - F.priorRate)/F.priorRate*100);
-    sc('oh-fci-rate', (F.rate*100).toFixed(2)+'%', F.rate > 0.02 ? '#EF4444' : '#10B981');
-    sc('oh-fci-trend', (fciTrend>=0?'\u25B2 +':'\u25BC ')+Math.abs(fciTrend).toFixed(1)+'%', fciTrend>0?'#EF4444':'#10B981');
-    s('oh-fci-payment', F.payment.count.toLocaleString()); s('oh-fci-payment-pct', F.payment.pct+'% of FCIs');
-    s('oh-fci-gate', F.gate.count.toLocaleString()); s('oh-fci-gate-pct', F.gate.pct+'% of FCIs');
-    s('oh-fci-kiosk', F.kiosk.count.toLocaleString()); s('oh-fci-kiosk-pct', F.kiosk.pct+'% of FCIs');
-    s('oh-fci-lpr', F.lpr.count.toLocaleString()); s('oh-fci-lpr-pct', F.lpr.pct+'% of FCIs');
-    var rfidCount = Math.round(F.total * 0.08); var otherCount = F.total - F.payment.count - F.gate.count - F.kiosk.count - F.lpr.count - rfidCount;
-    s('oh-fci-rfid', rfidCount.toLocaleString()); s('oh-fci-rfid-pct', Math.round(rfidCount/F.total*100)+'% of FCIs');
-    s('oh-fci-other', Math.max(otherCount,0).toLocaleString()); s('oh-fci-other-pct', Math.max(Math.round(otherCount/F.total*100),0)+'% of FCIs');
+    /* Total interactions = monthly car count × 30-day factor (each car = 1 interaction) */
+    var totalInteractions = (D.totals ? D.totals.monthlyCarCount : 0) || Math.round(F.total / Math.max(F.rate, 0.001));
+    var successful = totalInteractions - F.total;
+    var successRate = totalInteractions > 0 ? ((successful / totalInteractions) * 100) : 0;
+    var priorSuccessRate = ((1 - F.priorRate) * 100);
+    var rateDelta = successRate - priorSuccessRate;
 
-    /* ══ FCI INSIGHT ══ */
+    /* Hero KPIs */
+    var srEl = document.getElementById('oh-fci-success-rate');
+    if (srEl) { srEl.textContent = successRate.toFixed(1) + '%'; srEl.style.color = successRate >= 99 ? '#10B981' : successRate >= 97 ? '#F59E0B' : '#EF4444'; }
+    s('oh-fci-total-interactions', totalInteractions.toLocaleString());
+    sc('oh-fci-successful', successful.toLocaleString(), '#10B981');
+    sc('oh-fci-failed', F.total.toLocaleString(), '#EF4444');
+    sc('oh-fci-trend', (rateDelta>=0?'\u25B2 +':'\u25BC ')+Math.abs(rateDelta).toFixed(2)+'pp', rateDelta>=0?'#10B981':'#EF4444');
+
+    /* Failure breakdown cards */
+    s('oh-fci-payment', F.payment.count.toLocaleString()); s('oh-fci-payment-pct', F.payment.pct+'% of failures');
+    s('oh-fci-gate', F.gate.count.toLocaleString()); s('oh-fci-gate-pct', F.gate.pct+'% of failures');
+    s('oh-fci-kiosk', F.kiosk.count.toLocaleString()); s('oh-fci-kiosk-pct', F.kiosk.pct+'% of failures');
+    s('oh-fci-lpr', F.lpr.count.toLocaleString()); s('oh-fci-lpr-pct', F.lpr.pct+'% of failures');
+    var rfidCount = Math.round(F.total * 0.08); var otherCount = F.total - F.payment.count - F.gate.count - F.kiosk.count - F.lpr.count - rfidCount;
+    s('oh-fci-rfid', rfidCount.toLocaleString()); s('oh-fci-rfid-pct', Math.round(rfidCount/Math.max(F.total,1)*100)+'% of failures');
+    s('oh-fci-other', Math.max(otherCount,0).toLocaleString()); s('oh-fci-other-pct', Math.max(Math.round(otherCount/Math.max(F.total,1)*100),0)+'% of failures');
+
+    /* ══ FCI INSIGHT — reframed around success rate ══ */
     var fciEl = document.getElementById('oh-insight-fci');
     if (fciEl) {
         var revLost = Math.round(F.total * 18.50);
         fciEl.innerHTML =
-            '<div style="padding:1rem 1.25rem">' +
-            '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem"><span style="font-size:1.1rem">\u26A0\uFE0F</span><strong style="color:#DC2626;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.03em">Root Cause Analysis: Failed Consumer Interactions</strong></div>' +
-            '<p style="font-size:0.85rem;color:#334155;line-height:1.6;margin:0 0 0.75rem 0"><strong>'+F.total.toLocaleString()+' failed interactions this month</strong> at a '+(F.rate*100).toFixed(2)+'% failure rate. '+
-            'Payment failures dominate at '+F.payment.pct+'% of FCIs, driven primarily by <em>expired/invalid cards</em> ('+F.payment.declined+' events) and <em>gateway timeouts</em> ('+F.payment.timeout+' events). '+
-            'Gate failures ('+F.gate.pct+'%) are concentrated at sites with ARM reader alignment drift. '+
-            'At an average ticket of $18.50, these failures represent an estimated <strong>$'+Math.round(revLost/1000).toLocaleString()+'K in at-risk revenue</strong> this month.</p>' +
+            '<div>' +
+            '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem"><span style="font-size:1.1rem">\u26A0\uFE0F</span><strong style="color:#DC2626;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.03em">Root Cause Analysis: ' + (100-successRate).toFixed(1) + '% Failure Rate</strong></div>' +
+            '<p style="font-size:0.85rem;color:#334155;line-height:1.6;margin:0 0 0.75rem 0"><strong>' + F.total.toLocaleString() + ' of ' + totalInteractions.toLocaleString() + ' interactions failed</strong> this month (' + successRate.toFixed(1) + '% success rate). ' +
+            'The largest failure category is <strong>payment processing</strong> at ' + F.payment.count.toLocaleString() + ' failures (' + F.payment.pct + '% of all FCIs), followed by gates (' + F.gate.pct + '%) and kiosk (' + F.kiosk.pct + '%). ' +
+            'At an average ticket of $18.50, failed interactions represent <strong>$' + Math.round(revLost/1000).toLocaleString() + 'K in at-risk revenue</strong> — customers who attempted to pay but couldn\'t.</p>' +
             '<div style="background:white;border:1px solid #FECACA;border-radius:0.5rem;padding:0.75rem 1rem;margin-bottom:0.5rem">' +
-            '<div style="font-weight:700;color:#1A4797;font-size:0.78rem;margin-bottom:0.25rem">\u2705 Recommended Actions (by impact)</div>' +
+            '<div style="font-weight:700;color:#1A4797;font-size:0.78rem;margin-bottom:0.25rem">\u2705 Path to ' + Math.min(99.5, successRate + 1).toFixed(1) + '% Success Rate</div>' +
             '<div style="font-size:0.82rem;color:#334155;line-height:1.5">' +
-            '<strong>1. Card-on-file auto-updater</strong> — eliminates ~60% of payment declines (est. -500 FCIs/mo). Deploy via Patheon Retain.<br>' +
-            '<strong>2. Fiserv retry + Stripe failover</strong> — reduces timeout failures by ~80% (est. -400 FCIs/mo). Already specd in JIRA-4830.<br>' +
-            '<strong>3. ARM gate quarterly calibration</strong> — reduces gate misreads by ~50% (est. -230 FCIs/mo). Add to preventive maintenance schedule.<br>' +
-            '<strong>4. LPR camera maintenance program</strong> — weekly cleaning + heated housings at northern sites (est. -190 FCIs/mo).</div>' +
-            '<div style="font-size:0.72rem;color:#64748B;margin-top:0.35rem"><strong>DRB Solutions:</strong> Patheon Retain (card updater), Payment Gateway Failover, ARM Calibration Toolkit, LPR Maintenance Program</div>' +
+            '<strong>1. Card-on-file auto-updater</strong> — eliminates ~60% of payment declines → +' + (F.payment.count*0.6/totalInteractions*100).toFixed(2) + 'pp success rate<br>' +
+            '<strong>2. Payment gateway failover</strong> — reduces timeouts by ~80% → +' + (F.payment.count*0.24/totalInteractions*100).toFixed(2) + 'pp success rate<br>' +
+            '<strong>3. ARM gate calibration</strong> — reduces gate misreads by ~50% → +' + (F.gate.count*0.5/totalInteractions*100).toFixed(2) + 'pp success rate<br>' +
+            '<strong>4. LPR camera maintenance</strong> — reduces misreads by ~50% → +' + (F.lpr.count*0.5/totalInteractions*100).toFixed(2) + 'pp success rate</div>' +
+            '<div style="font-size:0.72rem;color:#64748B;margin-top:0.35rem"><strong>DRB Solutions:</strong> Patheon Retain, Payment Gateway Failover, ARM Calibration, LPR Maintenance</div>' +
             '</div>' +
-            '<p style="font-size:0.78rem;color:#64748B;margin:0"><strong>Projected impact:</strong> Implementing all 4 actions would reduce monthly FCIs by an estimated <strong>1,320 events</strong> (31% reduction), recovering approximately <strong>$24.4K/month</strong> in at-risk revenue and reducing FCI-related support calls by ~180/month.</p>' +
+            '<p style="font-size:0.78rem;color:#64748B;margin:0"><strong>Projected:</strong> All 4 actions combined would raise success rate from <strong>' + successRate.toFixed(1) + '% → ' + Math.min(99.9, successRate + (F.payment.count*0.84+F.gate.count*0.5+F.lpr.count*0.5)/totalInteractions*100).toFixed(1) + '%</strong>, recovering ~<strong>$' + Math.round(revLost*0.6/1000) + 'K/month</strong> in at-risk revenue.</p>' +
             '</div>';
     }
 
-    /* FCI Charts */
+    /* FCI Charts — trend shows success rate %, type shows failure counts */
     if (typeof SC !== 'undefined') {
-        var fciT = OH.fciMonthly.payment.map(function(v,i){ return v + OH.fciMonthly.gate[i] + OH.fciMonthly.kiosk[i] + OH.fciMonthly.lpr[i]; });
-        try { SC.bar('oh-fci-trend-chart', OH.fciMonthly.labels, fciT, '#DC2626', false); } catch(e){}
-        /* Type breakdown chart */
+        var fciSuccessRates = OH.fciMonthly.payment.map(function(v,i){
+            var monthFails = v + (OH.fciMonthly.gate[i]||0) + (OH.fciMonthly.kiosk[i]||0) + (OH.fciMonthly.lpr[i]||0);
+            var monthTotal = totalInteractions; /* simplified: use current as proxy */
+            return Math.round((1 - monthFails/Math.max(monthTotal,1)) * 10000) / 100;
+        });
+        try { SC.line('oh-fci-trend-chart', OH.fciMonthly.labels, fciSuccessRates, '#10B981', 'rgba(16,185,129,0.08)'); } catch(e){}
         var rfidC = Math.round(F.total * 0.08);
-        try { SC.bar('oh-fci-type-chart', ['Payment','Gate','Kiosk','LPR','RFID'], [F.payment.count,F.gate.count,F.kiosk.count,F.lpr.count,rfidC], '#F04E23', false); } catch(e){}
+        try { SC.bar('oh-fci-type-chart', ['Payment','Gates','Kiosk','LPR','RFID'], [F.payment.count,F.gate.count,F.kiosk.count,F.lpr.count,rfidC], '#F04E23', false); } catch(e){}
     }
 
     /* ══ ACTIONABLE INSIGHT: Support Volume ══ */
