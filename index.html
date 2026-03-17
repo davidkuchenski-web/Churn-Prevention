@@ -2101,6 +2101,27 @@
         }, 400);
     }
 
+    /* Shared health cell renderer for portfolio table */
+    function _healthCell(c) {
+        function _hc(s) { return s >= 60 ? '#10B981' : s >= 40 ? '#64748B' : '#EF4444'; }
+        var _cap = Number(c.capturePct || 0);
+        var _churn = Number(c.churnPct || 0);
+        var _revY = Number(c.revenueYoY || 0);
+        var _trafY = Number(c.trafficYoY || 0);
+        var _capS = Math.max(0, Math.min(100, _cap / 0.12 * 100));
+        var _churnS = Math.max(0, Math.min(100, (0.15 - _churn) / 0.12 * 100));
+        var _revS = Math.max(0, Math.min(100, 55 + _revY * 2));
+        var _trafS = Math.max(0, Math.min(100, 55 + _trafY * 2));
+        var bizH = c.bizHealth || Math.round(_churnS * 0.35 + _revS * 0.25 + _trafS * 0.25 + _capS * 0.15);
+        var opsH = c.opsHealth || 50;
+        var overH = c.overallHealth || Math.round(bizH * 0.55 + opsH * 0.45);
+        return '<td style="text-align:center"><div style="display:flex;gap:4px;justify-content:center;align-items:baseline">' +
+            '<span style="font-weight:800;font-size:0.95rem;color:' + _hc(overH) + '">' + overH + '</span>' +
+            '<span style="font-size:0.68rem;color:' + _hc(bizH) + ';font-weight:600">' + bizH + '</span>' +
+            '<span style="font-size:0.68rem;color:' + _hc(opsH) + ';font-weight:600">' + opsH + '</span>' +
+        '</div></td>';
+    }
+
     function initPortfolio() {
         var P = window.__DRB_DEMO_PORTFOLIO__;
         if (!P || !P.customers) return;
@@ -2146,7 +2167,7 @@
             var trafSign = c.trafficYoY >= 0 ? '+' : '';
             var revSign = c.revenueYoY >= 0 ? '+' : '';
             var platBadge = c.pthSites > 0 ? (c.swSites > 0 ? '<span style="font-size:0.65rem;color:#F04E23;background:#FEF2F2;padding:1px 5px;border-radius:3px;margin-top:2px;display:inline-block">Hybrid</span>' : '<span style="font-size:0.65rem;color:#10B981;background:#F0FDF4;padding:1px 5px;border-radius:3px;margin-top:2px;display:inline-block">Patheon</span>') : '<span style="font-size:0.65rem;color:#64748B;background:#F1F5F9;padding:1px 5px;border-radius:3px;margin-top:2px;display:inline-block">SiteWatch</span>';
-            tr.innerHTML = '<td style="font-weight:600">'+c.client+'</td><td><div style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-weight:600">'+c.siteCount+' sites</span>'+platBadge+'</div></td><td>'+c.health+'</td><td>'+(c.capturePct!=null?(c.capturePct*100).toFixed(1)+'%':'N/A')+'</td><td>'+(c.volChurnPct!=null?(c.volChurnPct*100).toFixed(1)+'%':'N/A')+'</td><td>'+(c.involChurnPct!=null?(c.involChurnPct*100).toFixed(1)+'%':'N/A')+'</td><td style="color:'+((c.trafficYoY||0)>=0?'#10B981':'#EF4444')+'">'+trafSign+(c.trafficYoY||0).toFixed(1)+'%</td><td style="color:'+((c.revenueYoY||0)>=0?'#10B981':'#EF4444')+'">'+revSign+(c.revenueYoY||0).toFixed(1)+'%</td><td><span class="badge '+statusClass+'">'+c.status+'</span></td>';
+            tr.innerHTML = '<td style="font-weight:600">'+c.client+'</td><td><div style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-weight:600">'+c.siteCount+' sites</span>'+platBadge+'</div></td>'+_healthCell(c)+'<td>'+(c.capturePct!=null?(c.capturePct*100).toFixed(1)+'%':'N/A')+'</td><td>'+(c.volChurnPct!=null?(c.volChurnPct*100).toFixed(1)+'%':'N/A')+'</td><td>'+(c.involChurnPct!=null?(c.involChurnPct*100).toFixed(1)+'%':'N/A')+'</td><td style="color:'+((c.trafficYoY||0)>=0?'#10B981':'#EF4444')+'">'+trafSign+(c.trafficYoY||0).toFixed(1)+'%</td><td style="color:'+((c.revenueYoY||0)>=0?'#10B981':'#EF4444')+'">'+revSign+(c.revenueYoY||0).toFixed(1)+'%</td><td><span class="badge '+statusClass+'">'+c.status+'</span></td>';
             tbody.appendChild(tr);
         });
 
@@ -2710,28 +2731,10 @@ function exportPage(pageId) {
             var vc = c.volChurnPct != null ? (Number(c.volChurnPct)*100).toFixed(1) + '%' : 'N/A';
             var ic = c.involChurnPct != null ? (Number(c.involChurnPct)*100).toFixed(1) + '%' : 'N/A';
 
-            /* Compute three health scores for this customer */
-            var _cap = Number(c.capturePct || 0);
-            var _churn = Number(c.churnPct || 0);
-            var _revY = Number(c.revenueYoY || 0);
-            var _trafY = Number(c.trafficYoY || 0);
-            var _capS = Math.max(0, Math.min(100, _cap / 0.12 * 100));
-            var _churnS = Math.max(0, Math.min(100, (0.15 - _churn) / 0.12 * 100));
-            var _revS = Math.max(0, Math.min(100, 55 + _revY * 2));
-            var _trafS = Math.max(0, Math.min(100, 55 + _trafY * 2));
-            var bizH = c.bizHealth || Math.round(_churnS * 0.35 + _revS * 0.25 + _trafS * 0.25 + _capS * 0.15);
-            var opsH = c.opsHealth || 50;
-            var overH = c.overallHealth || Math.round(bizH * 0.55 + opsH * 0.45);
-            function _hc(s) { return s >= 60 ? '#10B981' : s >= 40 ? '#64748B' : '#EF4444'; }
-
             tr.innerHTML =
                 '<td style="font-weight:600">' + c.client + '<\/td>' +
                 '<td><div style="display:flex;flex-direction:column;align-items:flex-start"><span style="font-weight:600">' + c.siteCount + ' sites<\/span>' + _platBadge(c) + '<\/div><\/td>' +
-                '<td style="text-align:center"><div style="display:flex;gap:2px;justify-content:center;align-items:center">' +
-                    '<span style="display:inline-block;width:32px;font-weight:800;font-size:0.9rem;color:' + _hc(overH) + '">' + overH + '<\/span>' +
-                    '<span style="display:inline-block;width:24px;font-size:0.72rem;color:' + _hc(bizH) + ';font-weight:600">' + bizH + '<\/span>' +
-                    '<span style="display:inline-block;width:24px;font-size:0.72rem;color:' + _hc(opsH) + ';font-weight:600">' + opsH + '<\/span>' +
-                '<\/div><\/td>' +
+                _healthCell(c) +
                 '<td>' + (c.capturePct != null ? (Number(c.capturePct)*100).toFixed(1) + '%' : 'N/A') + '<\/td>' +
                 '<td>' + vc + '<\/td>' +
                 '<td>' + ic + '<\/td>' +
